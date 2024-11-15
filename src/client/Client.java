@@ -2,10 +2,15 @@ package client;
 
 import server.entity.Question;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 
-public class Client {
+public class Client extends JFrame implements ActionListener {
+    JPanel panel = new JPanel();
+
     
     Client(){
         int port = 55566;
@@ -32,6 +37,11 @@ public class Client {
     
     public static void main(String[] args) {
         Client client = new Client();
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
     }
 }
