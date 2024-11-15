@@ -19,16 +19,19 @@ public class Handler extends Thread {
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());) {
 
+            //testkategorier
             String[] categories = {"Geografi", "Historia", "Vetenskap"};
 
             while (true) {
                 
+                //Skickar tre kategorier till client
                 out.writeObject(categories);
                 out.flush();
 
+                //Tar emot client svar på kategori
                 String categoryInput = (String) in.readObject();
 
-
+                //Testfrågor beronde på vilken kategori som valdes
                 if (categoryInput.equals("Geografi")) {
                     String[] geoOptions1 = {"Afrika", "Europa", "Asien", "Antarktis"};
                     Question geoQ1 = new Question("Vilken kontinent är den största till ytan?", geoOptions1, "Asien");
@@ -77,6 +80,7 @@ public class Handler extends Thread {
                     out.flush();
                 }
 
+                //Tar emot hur många rätt använadaren hade
                 int score = (int) (in.readObject());
                 System.out.println("Spelaren hade " + score + " rätt!");
 
