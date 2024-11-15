@@ -98,7 +98,7 @@ public class StartWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Please select an avatar.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             // Startar GameWindow med spelarens namn och valda avatar och stänger start fönstret
-            new GameWindow(playerName, selectedAvatar);
+            //new GameWindow(playerName, selectedAvatar);
             dispose();
         }
     }
