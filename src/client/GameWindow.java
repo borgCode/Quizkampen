@@ -1,4 +1,5 @@
-package client.GUI;
+package client;
 
 public class GameWindow {
+    
 }

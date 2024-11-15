@@ -1,4 +1,4 @@
-package server;
+package server.logic;
 
 public class QuestionBank {
     
