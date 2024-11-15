@@ -44,6 +44,7 @@ public class Handler extends Thread {
                     Question[] questions = {geoQ1, geoQ2, geoQ3};
 
                     out.writeObject(questions);
+                    out.flush();
                 } else if (categoryInput.equals("Historia")) {
 
                     String[] histOptions1 = {"André the Giant", "Genghis Khan", "Alexander den store", "Napoleon Bonaparte"};
@@ -58,6 +59,7 @@ public class Handler extends Thread {
                     Question[] questions = {histQ1, histQ2, histQ3};
 
                     out.writeObject(questions);
+                    out.flush();
                 } else if (categoryInput.equals("Vetenskap")) {
 
                     String[] sciOptions1 = {"Jupiter", "Mars", "Venus", "Merkurius"};
@@ -72,9 +74,8 @@ public class Handler extends Thread {
                     Question[] questions = {sciQ1, sciQ2, sciQ3};
 
                     out.writeObject(questions);
-
+                    out.flush();
                 }
-                out.flush();
 
                 int score = (int) (in.readObject());
                 System.out.println("Spelaren hade " + score + " rätt!");
