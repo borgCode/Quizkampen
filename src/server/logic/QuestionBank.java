@@ -158,6 +158,76 @@ public class QuestionBank {
         ArrayList<Question> literatureList = new ArrayList<>(List.of(litQ1, litQ2, litQ3, litQ4, litQ5, litQ6));
         questionMap.put("literature", literatureList);
 
+        //TV spel
+        
+        String[] gameOptions1 = {"Super Mario", "The Legend of Zelda", "Donkey Kong", "Metroid"};
+        Question gameQ1 = new Question("Vilken är den mest kända plattformsspelserien skapad av Nintendo?", gameOptions1, "Super Mario");
+
+        String[] gameOptions2 = {"Minecraft", "Fortnite", "Among Us", "Roblox"};
+        Question gameQ2 = new Question("Vilket spel är känt för sin pixelgrafik och blockiga värld, där spelare kan bygga och överleva?", gameOptions2, "Minecraft");
+
+        String[] gameOptions3 = {"The Elder Scrolls V: Skyrim", "Fallout 4", "World of Warcraft", "Dragon Age: Inquisition"};
+        Question gameQ3 = new Question("Vilken rollspelsserie är känd för sina öppna världar och episka berättelser om fantasy?", gameOptions3, "The Elder Scrolls V: Skyrim");
+
+        String[] gameOptions4 = {"Call of Duty", "Battlefield", "Halo", "Counter-Strike"};
+        Question gameQ4 = new Question("Vilken populär first-person shooter-serie är känd för sina strider och krigsoperationer?", gameOptions4, "Call of Duty");
+
+        String[] gameOptions5 = {"Overwatch", "League of Legends", "Dota 2", "Valorant"};
+        Question gameQ5 = new Question("Vilket spel är känt för sitt fokus på teambaserad taktik och hjältekaraktärer?", gameOptions5, "Overwatch");
+
+        String[] gameOptions6 = {"Pokémon", "Final Fantasy", "Dragon Quest", "Chrono Trigger"};
+        Question gameQ6 = new Question("Vilken populär japansk RPG-serie handlar om att fånga och träna varelser i en fiktiv värld?", gameOptions6, "Pokémon");
+
+        ArrayList<Question> gamesList = new ArrayList<>(List.of(gameQ1, gameQ2, gameQ3, gameQ4, gameQ5, gameQ6));
+        questionMap.put("games", gamesList);
+        
+        //Mat
+
+        String[] foodOptions1 = {"Sushi", "Tacos", "Pizza", "Pasta"};
+        Question foodQ1 = new Question("Vilken rätt kommer ursprungligen från Italien och består av en rund degbas med tomatsås och ost?", foodOptions1, "Pizza");
+
+        String[] foodOptions2 = {"Sushi", "Dim Sum", "Pad Thai", "Ramen"};
+        Question foodQ2 = new Question("Vilken japansk rätt består ofta av ris, rå fisk och andra ingredienser?", foodOptions2, "Sushi");
+
+        String[] foodOptions3 = {"Gnocchi", "Frittata", "Risotto", "Lasagne"};
+        Question foodQ3 = new Question("Vilken italiensk rätt är en krämig risbaserad maträtt som ofta innehåller svamp eller skaldjur?", foodOptions3, "Risotto");
+
+        String[] foodOptions4 = {"Apple", "Banana", "Mango", "Pineapple"};
+        Question foodQ4 = new Question("Vilken frukt är känd för att vara gul när den är mogen och har en söt, mjuk smak?", foodOptions4, "Banana");
+
+        String[] foodOptions5 = {"Baguette", "Ciabatta", "Sourdough", "Pita"};
+        Question foodQ5 = new Question("Vilken typ av bröd är lång och smal och kommer från Frankrike?", foodOptions5, "Baguette");
+
+        String[] foodOptions6 = {"Tiramisu", "Gelato", "Cannoli", "Panna Cotta"};
+        Question foodQ6 = new Question("Vilken italiensk efterrätt är gjord på mascarpone, kaffe och kakao?", foodOptions6, "Tiramisu");
+
+        ArrayList<Question> foodList = new ArrayList<>(List.of(foodQ1, foodQ2, foodQ3, foodQ4, foodQ5, foodQ6));
+        questionMap.put("food", foodList);
+        
+        //TV serier
+
+        String[] tvOptions1 = {"Breaking Bad", "The Sopranos", "Game of Thrones", "Friends"};
+        Question tvQ1 = new Question("Vilken TV-serie handlar om en kemilärare som blir en droghandlare?", tvOptions1, "Breaking Bad");
+
+        String[] tvOptions2 = {"Stranger Things", "The Mandalorian", "The Witcher", "Westworld"};
+        Question tvQ2 = new Question("Vilken TV-serie utspelar sig i en värld där en grupp barn stöter på övernaturliga krafter?", tvOptions2, "Stranger Things");
+
+        String[] tvOptions3 = {"The Office", "Parks and Recreation", "Brooklyn Nine-Nine", "Arrested Development"};
+        Question tvQ3 = new Question("Vilken mockumentary-serie följer livet på ett kontor i Scranton, Pennsylvania?", tvOptions3, "The Office");
+
+        String[] tvOptions4 = {"The Crown", "Downton Abbey", "Vikings", "The Tudors"};
+        Question tvQ4 = new Question("Vilken TV-serie handlar om det brittiska kungahuset och drottning Elizabeth II:s regeringstid?", tvOptions4, "The Crown");
+
+        String[] tvOptions5 = {"Friends", "How I Met Your Mother", "Big Bang Theory", "Two and a Half Men"};
+        Question tvQ5 = new Question("Vilken TV-serie handlar om ett gäng vänner som bor i New York?", tvOptions5, "Friends");
+
+        String[] tvOptions6 = {"Narcos", "Breaking Bad", "Peaky Blinders", "Ozark"};
+        Question tvQ6 = new Question("Vilken serie handlar om en colombiansk drogkartell och dess ledare, Pablo Escobar?", tvOptions6, "Narcos");
+
+        ArrayList<Question> tvList = new ArrayList<>(List.of(tvQ1, tvQ2, tvQ3, tvQ4, tvQ5, tvQ6));
+        questionMap.put("tv", tvList);
+
+
     }
 
     public ArrayList<Question> getRandomQuestionsByCategory(String category) {
