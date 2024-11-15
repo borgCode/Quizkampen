@@ -66,6 +66,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
     }
     //TODO: Panel TIMER?
+    //TODO: ScoreWINDOW
 
     //TODO: KNAPP LYSSNARE
     @Override
