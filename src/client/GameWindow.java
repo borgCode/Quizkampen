@@ -24,6 +24,7 @@ public class GameWindow extends JFrame implements ActionListener {
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         scorePanel.add(scoreButton1);
         scorePanel.add(scoreButton2);
+        scorePanel.add(scoreButton2);
         scorePanel.add(scoreButton3);
         scoreButton1.setPreferredSize(new Dimension(30, 30));
         scoreButton2.setPreferredSize(new Dimension(30, 30));
@@ -58,7 +59,7 @@ public class GameWindow extends JFrame implements ActionListener {
             answerPanel.add(answerButtons[i]);
         }
 
-       setTitle("Quiz Kampen");
+        setTitle("Quiz Kampen");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
@@ -69,41 +70,6 @@ public class GameWindow extends JFrame implements ActionListener {
     //TODO: KNAPP LYSSNARE
     @Override
     public void actionPerformed(ActionEvent e) {
-
-    }
-
-    //TODO: Kategorier
-    CategoryWindow(){
-        JPanel categoryPanel = new JPanel();
-        JButton category1 = new JButton("TEXT");
-        JButton category2 = new JButton("TEXT");
-        JButton category3 = new JButton("TEXT");
-
-        setTitle("Kategori");
-        categoryPanel.setLayout(new FlowLayout());
-        categoryPanel.add(category1);
-        categoryPanel.add(category2);
-        categoryPanel.add(category3);
-        add(categoryPanel);
-
-        category1.addActionListener(this);
-        category2.addActionListener(this);
-        category3.addActionListener(this);
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == category1) {
-                new GameWindow("Kategori 1");
-            } else if (e.getSource() == category2) {
-                new GameWindow("Kategori 2");
-            } else if (e.getSource() == category3) {
-                new GameWindow("Kategori 3");
-            }
-        }
-
 
     }
 
