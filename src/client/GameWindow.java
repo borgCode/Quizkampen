@@ -72,6 +72,41 @@ public class GameWindow extends JFrame implements ActionListener {
 
     }
 
+    //TODO: Kategorier
+    CategoryWindow(){
+        JPanel categoryPanel = new JPanel();
+        JButton category1 = new JButton("TEXT");
+        JButton category2 = new JButton("TEXT");
+        JButton category3 = new JButton("TEXT");
+
+        setTitle("Kategori");
+        categoryPanel.setLayout(new FlowLayout());
+        categoryPanel.add(category1);
+        categoryPanel.add(category2);
+        categoryPanel.add(category3);
+        add(categoryPanel);
+
+        category1.addActionListener(this);
+        category2.addActionListener(this);
+        category3.addActionListener(this);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == category1) {
+                new GameWindow("Kategori 1");
+            } else if (e.getSource() == category2) {
+                new GameWindow("Kategori 2");
+            } else if (e.getSource() == category3) {
+                new GameWindow("Kategori 3");
+            }
+        }
+
+
+    }
+
     public static void main(String[] args) {
         GameWindow gameWindow = new GameWindow();
     }
