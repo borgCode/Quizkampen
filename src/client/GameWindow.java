@@ -7,7 +7,11 @@ import java.awt.event.ActionListener;
 
 public class GameWindow extends JFrame implements ActionListener {
 
+
     JPanel scorePanel = new JPanel();
+    JButton scoreButton1 = new JButton();
+    JButton scoreButton2 = new JButton();
+    JButton scoreButton3 = new JButton();
 
     JPanel questionPanel = new JPanel();
     JLabel question = new JLabel("Fråga?");
@@ -17,10 +21,24 @@ public class GameWindow extends JFrame implements ActionListener {
 
     GameWindow() {
         //TODO: POÄNG
-        scorePanel.setLayout(new FlowLayout());
+        scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        scorePanel.add(scoreButton1);
+        scorePanel.add(scoreButton2);
+        scorePanel.add(scoreButton3);
+        scoreButton1.setPreferredSize(new Dimension(30, 30));
+        scoreButton2.setPreferredSize(new Dimension(30, 30));
+        scoreButton3.setPreferredSize(new Dimension(30, 30));
+
+        //Inte kunna klicka på knapparna
+        scoreButton1.setEnabled(false);
+        scoreButton2.setEnabled(false);
+        scoreButton3.setEnabled(false);
+
         scorePanel.setBackground(Color.lightGray);
         scorePanel.setPreferredSize(new Dimension(150, 50));
         add(scorePanel, BorderLayout.NORTH);
+
+
 
         //TODO:FRÅGAN
         questionPanel.setLayout(new FlowLayout());
