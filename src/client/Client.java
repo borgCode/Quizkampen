@@ -10,10 +10,10 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 
-
-    public class Client {
+public class Client {
         Client() {
             StartWindow startWindow = new StartWindow();
             int port = 55566;
@@ -26,20 +26,22 @@ import java.net.UnknownHostException;
                  ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                  ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-
+                //Skickar spelaren till servern
                 out.writeObject(startWindow.getPlayer());
 
-                // Läs det första meddelandet från servern
+                // Läser in kategorier
                 System.out.println(in.readObject());
 
-                // Skicka användarens namn
                 out.writeObject(userInput.readLine());
                 out.flush();
 
-                // Läs nästa meddelande
-                System.out.println(in.readObject());
-                // Läs ytterligare information (om det behövs)
-                System.out.println(in.readObject());
+                //Läs in tre frågor
+                ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+                for (Question question : questions) {
+                    System.out.println(question.getQuestion());
+                }
+                out.writeObject(3);
+                
 
             } catch (UnknownHostException e) {
                 System.err.println("Okänd värd: " + e.getMessage());

@@ -3,6 +3,7 @@ package server.network;
 import server.entity.Game;
 import server.entity.Player;
 import server.entity.Question;
+import server.logic.GameLogic;
 import server.logic.QuestionBank;
 
 import java.io.ObjectInputStream;
@@ -37,7 +38,7 @@ public class GameSession extends Thread {
             //testkategorier
 
             //TODO ändra keyvalues i hashmap till svenska
-            ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
+
 
             System.out.println("Nu läser vi in spelare");
             Player player1 = (Player) inPlayer1.readObject();
@@ -45,18 +46,15 @@ public class GameSession extends Thread {
             System.out.println(player1.getName());
 
             
-            outPlayer1.writeObject("test");
-            outPlayer2.writeObject("test");
 
 
             while (true) {
                 Game game = new Game(player1, player2);
+                ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
 
-                //TODO Logik för vem som börjar
+                //Hämta random lista med 3 kategorier
+                ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
 
-                //TODO Logik för 3 random kategorier + veta vilken som redan spelats
-
-                ArrayList<String> randomCategories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap"));
 
                 //Skickar tre kategorier till client
                 outPlayer1.writeObject(randomCategories);
@@ -65,8 +63,11 @@ public class GameSession extends Thread {
                 //Tar emot client svar på kategori
                 String categoryInput = (String) inPlayer1.readObject();
 
+                //Ta bort kategorin som redan är spelad
+                GameLogic.removeCategoryFromList(categories, categoryInput);
+
                 //Hämta random frågor från questionBank
-                ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput);
+                ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
 
                 outPlayer1.writeObject(questions);
                 outPlayer1.flush();
@@ -74,7 +75,8 @@ public class GameSession extends Thread {
 
                 //Tar emot hur många rätt använadaren hade
                 int scorePlayer1 = (int) (inPlayer1.readObject());
-                //game.setPlayer1Score(scorePlayer1);
+                System.out.println(scorePlayer1);
+                game.setPlayer1Score(scorePlayer1);
 
 
                 //Skicka till spelare 2
