@@ -15,55 +15,61 @@ import java.util.ArrayList;
 
 
 public class Client {
-        Client() {
-            StartWindow startWindow = new StartWindow();
-            int port = 55566;
-            String ip = "127.0.0.1";
-            String name;
-            ImageIcon avatar;
+    Client() {
+        StartWindow startWindow = new StartWindow();
+        int port = 55566;
+        String ip = "127.0.0.1";
+        String name;
+        ImageIcon avatar;
 
-            try (Socket socket = new Socket(ip, port);
-                 BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+        try (Socket socket = new Socket(ip, port);
+             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-                //Skickar spelaren till servern
-                out.writeObject(startWindow.getPlayer());
+            //Skickar spelaren till servern
+            out.writeObject(startWindow.getPlayer());
 
-                while (true) {
-                    Protocol state = (Protocol) in.readObject();
-                    if (state.equals(Protocol.WAITING)) {
-                        System.out.println("Vänta på andra spelaren");
-                    } else if (state.equals(Protocol.SENT_CATEGORY)) {
-                        // Läser in kategorier
-                        System.out.println(in.readObject());
-                        out.writeObject(userInput.readLine());
-                        out.flush();
 
-                    } else if (state.equals(Protocol.SENT_QUESTIONS)) {
-                        //Läs in tre frågor
-                        ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
-                        for (Question question : questions) {
-                            System.out.println(question.getQuestion());
-                        }
+            while (true) {
+                Protocol state = (Protocol) in.readObject();
+                if (state.equals(Protocol.WAITING)) {
+                    System.out.println("Vänta på andra spelaren");
 
-                        //Skickar antal rätt till server
-                        out.writeObject(3);
+
+                } else if (state.equals(Protocol.SENT_CATEGORY)) {
+                    // Läser in kategorier
+                    System.out.println(in.readObject());
+                    out.writeObject(userInput.readLine());
+                    out.flush();
+
+
+                } else if (state.equals(Protocol.SENT_QUESTIONS)) {
+                    //Läs in tre frågor
+                    ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+                    for (Question question : questions) {
+                        System.out.println(question.getQuestion());
                     }
+
+                    //Skickar antal rätt till server
+                    out.writeObject(3);
+                    out.flush();
+
                 }
-
-            } catch (UnknownHostException e) {
-                System.err.println("Okänd värd: " + e.getMessage());
-                e.printStackTrace();
-            } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Fel vid anslutning eller dataläsning: " + e.getMessage());
-                e.printStackTrace();
             }
-        }
 
-        public static void main(String[] args) {
-            Client client = new Client();
+        } catch (UnknownHostException e) {
+            System.err.println("Okänd värd: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Fel vid anslutning eller dataläsning: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
+    public static void main(String[] args) {
+        Client client = new Client();
+    }
+}
 
 
