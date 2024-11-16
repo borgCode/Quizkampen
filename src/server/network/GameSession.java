@@ -79,8 +79,8 @@ public class GameSession extends Thread {
 
                 //Tar emot hur många rätt använadaren hade
                 int scoreFirstRound = (int) inPlayer1.readObject();
-                System.out.println(scoreFirstRound);
                 game.incrementScore(player1, scoreFirstRound);
+
 
                 outPlayer1.writeObject(Protocol.WAITING);
                 
@@ -133,7 +133,6 @@ public class GameSession extends Thread {
 
                 //Tar emot hur många rätt använadaren hade
                 int scoreLastRound = (int) inPlayer1.readObject();
-                System.out.println(scoreLastRound);
                 game.incrementScore(player1, scoreLastRound);
 
                 outPlayer1.writeObject(Protocol.WAITING);
