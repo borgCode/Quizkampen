@@ -14,12 +14,12 @@ public class Game {
         this.player2Score = 0;
     }
 
-    public void setPlayer1Score(int player1Score) {
-        this.player1Score = player1Score;
-    }
-
-    public void setPlayer2Score(int player2Score) {
-        this.player2Score = player2Score;
+    public void incrementScore(Player player, int score) {
+        if (player.equals(player1)) {
+            player1Score += score;
+        } else {
+            player2Score += score;
+        }
     }
 
     public void setWinner(String winner) {
