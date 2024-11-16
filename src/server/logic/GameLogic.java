@@ -13,4 +13,8 @@ public class GameLogic {
     public static void removeCategoryFromList(ArrayList<String> categories, String categoryInput) {
         categories.remove(categoryInput);
     }
+    public static int getTurn(int index, int counter){
+
+        return index % counter;
+    }
 }

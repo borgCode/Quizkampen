@@ -32,12 +32,9 @@ public class GameSession extends Thread {
                 ObjectInputStream inPlayer1 = new ObjectInputStream(player1.getInputStream());
                 ObjectOutputStream outPlayer2 = new ObjectOutputStream(player2.getOutputStream());
                 ObjectInputStream inPlayer2 = new ObjectInputStream(player2.getInputStream())
-        )
-        {
+        ) {
 
             //testkategorier
-
-            //TODO ändra keyvalues i hashmap till svenska
 
 
             System.out.println("Nu läser vi in spelare");
@@ -45,47 +42,72 @@ public class GameSession extends Thread {
             Player player2 = (Player) inPlayer2.readObject();
             System.out.println(player1.getName());
 
-            
-
+            ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
+            ObjectInputStream[] inputStreams = {inPlayer1, inPlayer2};
 
             while (true) {
+
+
                 Game game = new Game(player1, player2);
-                ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
-
-                //Hämta random lista med 3 kategorier
-                ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
 
 
-                //Skickar tre kategorier till client
-                outPlayer1.writeObject(randomCategories);
-                outPlayer1.flush();
 
-                //Tar emot client svar på kategori
-                String categoryInput = (String) inPlayer1.readObject();
-
-                //Ta bort kategorin som redan är spelad
-                GameLogic.removeCategoryFromList(categories, categoryInput);
-
-                //Hämta random frågor från questionBank
-                ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
-
-                outPlayer1.writeObject(questions);
-                outPlayer1.flush();
+                //Berätta för klienten vilken state den är i
+                outPlayer2.writeObject(Protocol.WAITING);
+                outPlayer1.writeObject(Protocol.SENT_CATEGORY);
 
 
-                //Tar emot hur många rätt använadaren hade
-                int scorePlayer1 = (int) (inPlayer1.readObject());
-                System.out.println(scorePlayer1);
-                game.setPlayer1Score(scorePlayer1);
+                int index = 0;
+                int counter = 2;
 
 
-                //Skicka till spelare 2
-                outPlayer2.writeObject(questions);
-                outPlayer2.flush();
+
+                for (int i = 0; i < 6; i++) {
+                    int getTurn = GameLogic.getTurn(index, counter);
 
 
-                int scorePlayer2 = (int) (inPlayer2.readObject());
-                //game.setPlayer2Score(scorePlayer2);
+                    ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
+
+                    //Hämta random lista med 3 kategorier
+                    ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
+
+
+                    //Skickar tre kategorier till client
+                    outputStreams[getTurn].writeObject(randomCategories);
+                    outputStreams[getTurn].flush();
+
+                    //Tar emot client svar på kategori
+                    String categoryInput = (String) inputStreams[getTurn].readObject();
+
+                    //Ta bort kategorin som redan är spelad
+                    GameLogic.removeCategoryFromList(categories, categoryInput);
+
+                    //Hämta random frågor från questionBank
+                    ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
+
+                    outputStreams[getTurn].writeObject(Protocol.SENT_QUESTIONS);
+                    outputStreams[getTurn].writeObject(questions);
+                    outputStreams[getTurn].flush();
+
+
+                    //Tar emot hur många rätt använadaren hade
+                    int scorePlayer1 = (int) (inputStreams[getTurn].readObject());
+                    System.out.println(scorePlayer1);
+                    game.setPlayer1Score(scorePlayer1);
+
+
+                    outputStreams[getTurn].writeObject(Protocol.WAITING);
+                    outPlayer2.writeObject(Protocol.SENT_CATEGORY);
+                    //Skicka till spelare 2
+                    outPlayer2.writeObject(questions);
+                    outPlayer2.flush();
+
+
+                    int scorePlayer2 = (int) (inPlayer2.readObject());
+                    //game.setPlayer2Score(scorePlayer2);
+
+                    i++;
+                }
 
 
             }

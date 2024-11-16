@@ -1,17 +1,21 @@
 package server.network;
 
-public class Protocol {
-    private static final int WAITING = 0;
-    private static final int SENT_CATEGORY = 1;
-    private static final int SENT_QUESTIONS = 2;
-    private static final int EVALUATED_RESULTS = 3;
+public enum Protocol {
+    WAITING,
+    SENT_CATEGORY,
+    SENT_QUESTIONS,
 
-    private int state = WAITING;
-
-    public Object processInput(Object o) {
-       
-        return null;
-    }
+//    private static final int WAITING = 0;
+//    private static final int SENT_CATEGORY = 1;
+//    private static final int SENT_QUESTIONS = 2;
+//    private static final int EVALUATED_RESULTS = 3;
+//
+//    private int state = WAITING;
+//
+//    public Object processInput(Object o) {
+//
+//        return null;
+//    }
 }
 
 

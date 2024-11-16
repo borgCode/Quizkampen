@@ -3,6 +3,7 @@ package client;
 import org.w3c.dom.ls.LSOutput;
 import server.entity.Player;
 import server.entity.Question;
+import server.network.Protocol;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -29,19 +30,27 @@ public class Client {
                 //Skickar spelaren till servern
                 out.writeObject(startWindow.getPlayer());
 
-                // Läser in kategorier
-                System.out.println(in.readObject());
+                while (true) {
+                    Protocol state = (Protocol) in.readObject();
+                    if (state.equals(Protocol.WAITING)) {
+                        System.out.println("Vänta på andra spelaren");
+                    } else if (state.equals(Protocol.SENT_CATEGORY)) {
+                        // Läser in kategorier
+                        System.out.println(in.readObject());
+                        out.writeObject(userInput.readLine());
+                        out.flush();
 
-                out.writeObject(userInput.readLine());
-                out.flush();
+                    } else if (state.equals(Protocol.SENT_QUESTIONS)) {
+                        //Läs in tre frågor
+                        ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+                        for (Question question : questions) {
+                            System.out.println(question.getQuestion());
+                        }
 
-                //Läs in tre frågor
-                ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
-                for (Question question : questions) {
-                    System.out.println(question.getQuestion());
+                        //Skickar antal rätt till server
+                        out.writeObject(3);
+                    }
                 }
-                out.writeObject(3);
-                
 
             } catch (UnknownHostException e) {
                 System.err.println("Okänd värd: " + e.getMessage());
