@@ -6,24 +6,96 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Handler extends Thread {
+public class GameSession extends Thread {
 
-    Socket clientSocket;
+    private final Socket player1;
+    private final Socket player2;
+    private final QuestionBank questionBank;
 
-    public Handler(Socket socketToClient) {
-        this.clientSocket = socketToClient;
+
+    public GameSession(Socket player1, Socket player2) {
+        System.out.println("Två spelare anslutna");
+        this.player1 = player1;
+        this.player2 = player2;
+        this.questionBank = new QuestionBank();
     }
 
     public void run() {
         try (
-                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());) {
+                ObjectOutputStream outPlayer1 = new ObjectOutputStream(player1.getOutputStream());
+                ObjectInputStream inPlayer1 = new ObjectInputStream(player1.getInputStream());
+                ObjectOutputStream outPlayer2 = new ObjectOutputStream(player2.getOutputStream());
+                ObjectInputStream inPlayer2 = new ObjectInputStream(player2.getInputStream())
+        )
+        {
 
             //testkategorier
+
+            //TODO ändra keyvalues i hashmap till svenska
+            ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
+
+            System.out.println("Nu läser vi in spelare");
+            Player player1 = (Player) inPlayer1.readObject();
+            Player player2 = (Player) inPlayer2.readObject();
+            System.out.println(player1.getName());
+
+            
+            outPlayer1.writeObject("test");
+            outPlayer2.writeObject("test");
+
+
+            while (true) {
+                Game game = new Game(player1, player2);
+
+                //TODO Logik för vem som börjar
+
+                //TODO Logik för 3 random kategorier + veta vilken som redan spelats
+
+                ArrayList<String> randomCategories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap"));
+
+                //Skickar tre kategorier till client
+                outPlayer1.writeObject(randomCategories);
+                outPlayer1.flush();
+
+                //Tar emot client svar på kategori
+                String categoryInput = (String) inPlayer1.readObject();
+
+                //Hämta random frågor från questionBank
+                ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput);
+
+                outPlayer1.writeObject(questions);
+                outPlayer1.flush();
+
+
+                //Tar emot hur många rätt använadaren hade
+                int scorePlayer1 = (int) (inPlayer1.readObject());
+                //game.setPlayer1Score(scorePlayer1);
+
+
+                //Skicka till spelare 2
+                outPlayer2.writeObject(questions);
+                outPlayer2.flush();
+
+
+                int scorePlayer2 = (int) (inPlayer2.readObject());
+                //game.setPlayer2Score(scorePlayer2);
+
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+/*
+        //testkategorier
             String[] categories = {"Geografi", "Historia", "Vetenskap"};
 
             while (true) {
-                
+
                 //Skickar tre kategorier till client
                 out.writeObject(categories);
                 out.flush();
@@ -93,6 +165,5 @@ public class Handler extends Thread {
         }
     }
 }
+*/
 
-
- 

@@ -12,7 +12,11 @@ public class StartWindow extends JFrame {
     private JTextField nameField;
     private JComboBox<ImageIcon> avatarComboBox;
 
-    
+
+    public Player getPlayer() {
+        return player;
+    }
+
     public StartWindow() {
 
         // Grundinställningar för startfönstret
@@ -94,12 +98,12 @@ public class StartWindow extends JFrame {
         // Kollar om avatar eller namnfältet är tomt, ger felmeddelande vid tomt
         if (playerName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter your name.", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (selectedAvatar == null) {
-            JOptionPane.showMessageDialog(this, "Please select an avatar.", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
+        } //else if (selectedAvatar == null) {
+            //JOptionPane.showMessageDialog(this, "Please select an avatar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }// else {
             // Startar GameWindow med spelarens namn och valda avatar och stänger start fönstret
             //new GameWindow(playerName, selectedAvatar);
-            dispose();
+           // dispose();
         }
     }
 
