@@ -47,7 +47,6 @@ public class Client {
                     System.out.println("Vänta på andra spelaren");
                 } else if (state.equals(Protocol.SENT_CATEGORY)) {
                     // Läser in kategorier
-                    System.out.println(in.readObject());
                     out.writeObject(userInput.readLine());
                     out.flush();
                     
