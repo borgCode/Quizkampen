@@ -39,7 +39,7 @@ public class QuestionBank {
         Question geoQ6 = new Question("Vilken öken är den största i världen?", geoOptions6, "Sahara");
 
         ArrayList<Question> geographyList = new ArrayList<>(List.of(geoQ1, geoQ2, geoQ3, geoQ4, geoQ5, geoQ6));
-        questionMap.put("geography", geographyList);
+        questionMap.put("geografi", geographyList);
 
 
         //Historia
@@ -63,7 +63,7 @@ public class QuestionBank {
         Question histQ6 = new Question("Vilket datum firas Bastilledagen, en viktig fransk nationaldag?", histOptions6, "14 juli");
 
         ArrayList<Question> historyList = new ArrayList<>(List.of(histQ1, histQ2, histQ3, histQ4, histQ5, histQ6));
-        questionMap.put("history", historyList);
+        questionMap.put("historia", historyList);
 
 
         //Vetenskap
@@ -87,7 +87,7 @@ public class QuestionBank {
         Question sciQ6 = new Question("Vilket ämne ger växter deras gröna färg och är viktigt för fotosyntesen?", sciOptions6, "Klorofyll");
 
         ArrayList<Question> scienceList = new ArrayList<>(List.of(sciQ1, sciQ2, sciQ3, sciQ4, sciQ5, sciQ6));
-        questionMap.put("science", scienceList);
+        questionMap.put("vetenskap", scienceList);
 
         //Sport
 
@@ -133,7 +133,7 @@ public class QuestionBank {
         Question entQ6 = new Question("Vilket brittiskt band är känt för låtar som 'Hey Jude' och 'Let It Be'?", entOptions6, "The Beatles");
 
         ArrayList<Question> entertainmentList = new ArrayList<>(List.of(entQ1, entQ2, entQ3, entQ4, entQ5, entQ6));
-        questionMap.put("entertainment", entertainmentList);
+        questionMap.put("nöje", entertainmentList);
 
         //Literatur
 
@@ -156,7 +156,7 @@ public class QuestionBank {
         Question litQ6 = new Question("Vilken klassisk roman skrevs av Mary Shelley?", litOptions6, "Frankenstein");
 
         ArrayList<Question> literatureList = new ArrayList<>(List.of(litQ1, litQ2, litQ3, litQ4, litQ5, litQ6));
-        questionMap.put("literature", literatureList);
+        questionMap.put("literatur", literatureList);
 
         //TV spel
         
@@ -179,7 +179,7 @@ public class QuestionBank {
         Question gameQ6 = new Question("Vilken populär japansk RPG-serie handlar om att fånga och träna varelser i en fiktiv värld?", gameOptions6, "Pokémon");
 
         ArrayList<Question> gamesList = new ArrayList<>(List.of(gameQ1, gameQ2, gameQ3, gameQ4, gameQ5, gameQ6));
-        questionMap.put("games", gamesList);
+        questionMap.put("spel", gamesList);
         
         //Mat
 
@@ -202,7 +202,7 @@ public class QuestionBank {
         Question foodQ6 = new Question("Vilken italiensk efterrätt är gjord på mascarpone, kaffe och kakao?", foodOptions6, "Tiramisu");
 
         ArrayList<Question> foodList = new ArrayList<>(List.of(foodQ1, foodQ2, foodQ3, foodQ4, foodQ5, foodQ6));
-        questionMap.put("food", foodList);
+        questionMap.put("mat", foodList);
         
         //TV serier
 
