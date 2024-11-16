@@ -29,18 +29,28 @@ public class Client {
 
                 //Skickar spelaren till servern
                 out.writeObject(startWindow.getPlayer());
+                
+                boolean isWaiting = false;
 
                 while (true) {
                     Protocol state = (Protocol) in.readObject();
                     if (state.equals(Protocol.WAITING)) {
-                        System.out.println("Vänta på andra spelaren");
+                        if (!isWaiting) {
+                            System.out.println("Vänta på andra spelaren");
+                            isWaiting = true;
+                        }
+                        
                     } else if (state.equals(Protocol.SENT_CATEGORY)) {
+                        isWaiting = false;
+                        
                         // Läser in kategorier
                         System.out.println(in.readObject());
                         out.writeObject(userInput.readLine());
                         out.flush();
+                        
 
                     } else if (state.equals(Protocol.SENT_QUESTIONS)) {
+                        isWaiting = false;
                         //Läs in tre frågor
                         ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
                         for (Question question : questions) {
@@ -49,6 +59,8 @@ public class Client {
 
                         //Skickar antal rätt till server
                         out.writeObject(3);
+                        out.flush();
+                        
                     }
                 }
 
