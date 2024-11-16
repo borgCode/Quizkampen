@@ -22,6 +22,16 @@ public class Client {
         String name;
         ImageIcon avatar;
 
+        
+        //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
+        while (startWindow.getPlayer() == null) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         try (Socket socket = new Socket(ip, port);
              BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -35,11 +45,8 @@ public class Client {
                 Protocol state = (Protocol) in.readObject();
                 if (state.equals(Protocol.WAITING)) {
                     System.out.println("Vänta på andra spelaren");
-
-
                 } else if (state.equals(Protocol.SENT_CATEGORY)) {
                     // Läser in kategorier
-                    System.out.println(in.readObject());
                     out.writeObject(userInput.readLine());
                     out.flush();
 
@@ -47,6 +54,7 @@ public class Client {
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
                     //Läs in tre frågor
                     ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+               
                     for (Question question : questions) {
                         System.out.println(question.getQuestion());
                     }
