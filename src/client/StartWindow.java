@@ -1,5 +1,7 @@
 package client;
 
+import server.entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,6 +13,7 @@ public class StartWindow extends JFrame {
     
     private JTextField nameField;
     private JComboBox<ImageIcon> avatarComboBox;
+    Player player;
 
 
     public Player getPlayer() {
@@ -95,6 +98,8 @@ public class StartWindow extends JFrame {
         String playerName = nameField.getText().trim();
         ImageIcon selectedAvatar = (ImageIcon) avatarComboBox.getSelectedItem();
 
+        player = new Player(playerName);
+
         // Kollar om avatar eller namnfältet är tomt, ger felmeddelande vid tomt
         if (playerName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter your name.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -105,7 +110,4 @@ public class StartWindow extends JFrame {
             //new GameWindow(playerName, selectedAvatar);
            // dispose();
         }
-    }
-
-}
 
