@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 public class GameWindow extends JFrame implements ActionListener {
 
+    private String correctAnswer;
 
     JPanel scorePanel = new JPanel();
     JButton scoreButton1 = new JButton();
@@ -71,7 +72,25 @@ public class GameWindow extends JFrame implements ActionListener {
     //TODO: KNAPP LYSSNARE
     @Override
     public void actionPerformed(ActionEvent e) {
+        JButton clickedButton = (JButton) e.getSource();
+        String selectedAnswer = clickedButton.getText();
 
+        // Byter färg baserat på svar
+        if (selectedAnswer.equals(correctAnswer)){
+            clickedButton.setBackground(Color.GREEN);
+        } else {
+            clickedButton.setBackground(Color.RED);
+            // Markerar rätt svar efter man valt knapp
+            for (JButton button : answerButtons) {
+                if (button.getText().equals(correctAnswer)) {
+                    button.setBackground(Color.GREEN);
+                }
+            }
+        }
+        // Inaktiverar knappar efter val
+        for (JButton button : answerButtons) {
+            button.setEnabled(false);
+        }
     }
 
     public static void main(String[] args) {
