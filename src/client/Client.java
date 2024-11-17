@@ -71,16 +71,17 @@ public class Client {
                         }
                     }
                     
+                    //TODO skapa metod för att updatea GUI med rondresultat
+                    
 
                     //Skickar antal rätt till server
                     out.writeObject(scoreList);
                     out.flush();
 
                 } else if (state.equals(Protocol.SENT_ROUND_SCORE)) {
-                    HashMap<String, Integer> roundResults = (HashMap<String, Integer>) in.readObject();
-                    for (String string : roundResults.keySet()) {
-                        System.out.println("Spelare: " + string);
-                        System.out.println("Resultat: " + roundResults.get(string));
+                    List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
+                    for (Integer score : opponentScore) {
+                        System.out.println(score);
                     }
                 }
             }

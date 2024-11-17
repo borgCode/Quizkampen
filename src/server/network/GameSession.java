@@ -112,6 +112,8 @@ public class GameSession extends Thread {
                     //Hämta random lista med 3 kategorier
                     randomCategories = GameLogic.getRandomCategories(categories);
 
+                    System.out.println("List size efter remove: " + categories.size());
+
                     //Skickar tre kategorier till client
                     outputStreams[currentPlayer].writeObject(randomCategories);
                     outputStreams[currentPlayer].flush();
@@ -149,6 +151,9 @@ public class GameSession extends Thread {
                 outPlayer1.writeObject(Protocol.WAITING);
                 
                 //TODO end game logic
+
+                System.out.println("Spelet slut");
+                break;
                 
             }
 
