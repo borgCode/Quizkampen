@@ -1,5 +1,8 @@
 package server.entity;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class Game {
@@ -27,11 +30,41 @@ public class Game {
             }
         }
     }
+    public static void findWinner (ObjectOutputStream p1, ObjectOutputStream p2, int p1Score, int p2Score) throws IOException {
+        String tie = "Spelet blev lika!";
+        String loser = "Du Förlora!";
+        String winner = "Du vann!";
+        if (p1Score == p2Score) {
+            p1.writeObject(tie);
+            p2.writeObject(tie);
+        } else if (p1Score > p2Score) {
+            p1.writeObject(winner);
+            p2.writeObject(loser);
+        } else if (p2Score > p1Score) {
+            p1.writeObject(loser);
+            p2.writeObject(winner);
+        }
 
+    }
     public void setWinner(String winner) {
         this.winner = winner;
     }
+
+    public int getPlayer1Score() {
+        return player1Score;
+    }
+
+    public void setPlayer1Score(int player1Score) {
+        this.player1Score = player1Score;
+    }
+
+    public int getPlayer2Score() {
+        return player2Score;
+    }
+
+    public void setPlayer2Score(int player2Score) {
+        this.player2Score = player2Score;
+    }
 }
 
-// https://youtrack.jetbrains.com/issue/CWM-9503 check this URL ! 
-
+// https://youtrack.jetbrains.com/issue/CWM-9503 check this URL !

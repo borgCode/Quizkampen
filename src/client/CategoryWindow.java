@@ -43,7 +43,7 @@ public class CategoryWindow extends JFrame implements ActionListener {
         setSize(400, 400);
 
 
-        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -55,7 +55,7 @@ public class CategoryWindow extends JFrame implements ActionListener {
             new GameWindow();
         }
         this.dispose();
-}
+    }
 
     public static void main(String[] args) {
         CategoryWindow window = new CategoryWindow();

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class Player implements Serializable {
     private String name;
-    private int numOfWins;
+    private int playerScore;
     private int numOfLosses;
     private ImageIcon avatar;
     private Player opponent;
@@ -25,8 +25,15 @@ public class Player implements Serializable {
         return name;
     }
 
+    public int getPlayerScore() {
+        return playerScore;
+    }
+
+    public void setPlayerScore(int playerScore) {
+        this.playerScore = playerScore;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 }
-

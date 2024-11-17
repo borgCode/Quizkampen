@@ -1,11 +1,11 @@
 package client;
 
 
+import server.entity.Player;
 import server.entity.Question;
 import server.network.Protocol;
 
 import javax.swing.*;
-
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -24,7 +24,7 @@ public class Client {
         String name;
         ImageIcon avatar;
 
-        
+
         //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
         while (startWindow.getPlayer() == null) {
             try {
@@ -52,7 +52,7 @@ public class Client {
                     System.out.println(in.readObject());
                     out.writeObject(userInput.readLine());
                     out.flush();
-                    
+
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
                     //Läs in tre frågor
                     ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
@@ -70,9 +70,9 @@ public class Client {
                             scoreList.add(0);
                         }
                     }
-                    
+
                     //TODO skapa metod för att updatea GUI med rondresultat
-                    
+
 
                     //Skickar antal rätt till server
                     out.writeObject(scoreList);
@@ -85,6 +85,9 @@ public class Client {
                     }
                 } else if (state.equals(Protocol.GAME_OVER)) {
                     System.out.println("Game over");
+                    out.flush();
+                    String resultat = (String) in.readObject();
+                    System.out.println(resultat);
                     break;
                 }
             }
@@ -102,5 +105,4 @@ public class Client {
         Client client = new Client();
     }
 }
-
 

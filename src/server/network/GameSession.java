@@ -35,23 +35,23 @@ public class GameSession extends Thread {
                 ObjectInputStream inPlayer2 = new ObjectInputStream(player2Socket.getInputStream())
         ) {
 
-            
+
 
             //Hämta spelar objekt från båda klienterna
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
-            
+
             //Lägg streamsen och players i arrays som används i loop för att växla mellan dem
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
             ObjectInputStream[] inputStreams = {inPlayer1, inPlayer2};
             Player[] players = {player1, player2};
-            
+
             while (true) {
 
 
                 Game game = new Game(player1, player2);
 
-                
+
                 //Berätta för klienten vilken state den är i
                 outPlayer2.writeObject(Protocol.WAITING);
                 outPlayer1.writeObject(Protocol.SENT_CATEGORY);
@@ -62,7 +62,7 @@ public class GameSession extends Thread {
 
                 //Hämta random lista med 3 kategorier
                 ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
-                
+
                 //Skickar tre kategorier till client
                 outPlayer1.writeObject(randomCategories);
                 outPlayer1.flush();
@@ -74,7 +74,7 @@ public class GameSession extends Thread {
                 GameLogic.removeCategoryFromList(categories, categoryInput);
 
                 System.out.println("List size efter remove: " + categories.size());
-                
+
                 //Hämta random frågor från questionBank
                 ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
 
@@ -89,7 +89,7 @@ public class GameSession extends Thread {
 
                 outPlayer1.writeObject(Protocol.WAITING);
                 outPlayer1.flush();
-                
+
                 int currentPlayer = 1;
 
                 for (int i = 0; i < 5; i++) {
@@ -106,9 +106,9 @@ public class GameSession extends Thread {
                     outputStreams[(currentPlayer + 1) % 2].writeObject(Protocol.SENT_ROUND_SCORE);
                     outputStreams[(currentPlayer + 1) % 2].writeObject(scoreList);
                     outputStreams[(currentPlayer + 1) % 2].flush();
-                    
+
                     outputStreams[currentPlayer].writeObject(Protocol.SENT_CATEGORY);
-                    
+
                     //Hämta random lista med 3 kategorier
                     randomCategories = GameLogic.getRandomCategories(categories);
 
@@ -133,12 +133,12 @@ public class GameSession extends Thread {
 
                     scoreList = (ArrayList<Integer>) inputStreams[currentPlayer].readObject();
                     game.incrementScore(players[currentPlayer], scoreList);
-                    
+
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
-                    
+
                     currentPlayer = (currentPlayer + 1) % 2;
                 }
-                
+
 
                 outPlayer1.writeObject(Protocol.SENT_QUESTIONS);
                 outPlayer1.writeObject(questions);
@@ -148,22 +148,21 @@ public class GameSession extends Thread {
                 scoreList = (ArrayList<Integer>) inPlayer1.readObject();
                 game.incrementScore(player1, scoreList);
 
-                outPlayer1.writeObject(Protocol.WAITING);
-                
+                //outPlayer1.writeObject(Protocol.WAITING);
+
                 //TODO end game logic
 
                 outPlayer1.writeObject(Protocol.GAME_OVER);
                 outPlayer2.writeObject(Protocol.GAME_OVER);
-                break;
-                
-            }
 
+
+                game.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 }
-
 
 
