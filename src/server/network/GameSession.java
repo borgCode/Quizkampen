@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameSession extends Thread {
@@ -50,6 +51,7 @@ public class GameSession extends Thread {
 
 
                 Game game = new Game(player1, player2);
+                HashMap<String, Integer> roundResults = new HashMap<>();
                 
                 //Berätta för klienten vilken state den är i
                 outPlayer2.writeObject(Protocol.WAITING);
@@ -85,6 +87,7 @@ public class GameSession extends Thread {
                 //Tar emot hur många rätt använadaren hade
                 roundScores[0] = (int) inPlayer1.readObject();
                 game.incrementScore(player1, roundScores[0]);
+                
 
                 System.out.println("Spelaren hade " + roundScores[0] + " rätt");
 
@@ -102,14 +105,18 @@ public class GameSession extends Thread {
                     //Tar emot hur många rätt använadaren hade
                     roundScores[currentPlayer] = (int) (inputStreams[currentPlayer].readObject());
                     game.incrementScore(players[currentPlayer], roundScores[currentPlayer]);
+                    
+                    //Lägga in båda spelarnas scores i hashmap för att skicka båda tillsammans
+                    roundResults.put(players[(currentPlayer + 1) % 2].getName(), roundScores[(currentPlayer + 1) % 2]);
+                    roundResults.put(players[currentPlayer].getName(), roundScores[currentPlayer]);
 
                     //Skicka rondresultat till båda spelarna
                     outputStreams[currentPlayer].writeObject(Protocol.SENT_ROUND_SCORE);
-                    outputStreams[currentPlayer].writeObject(roundScores[currentPlayer]);
+                    outputStreams[currentPlayer].writeObject(roundResults);
                     outputStreams[currentPlayer].flush();
                     
                     outputStreams[(currentPlayer + 1) % 2].writeObject(Protocol.SENT_ROUND_SCORE);
-                    outputStreams[(currentPlayer + 1) % 2].writeObject(roundScores[(currentPlayer + 1) % 2]);
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(roundResults);
                     outputStreams[(currentPlayer + 1) % 2].flush();
                     
                     outputStreams[currentPlayer].writeObject(Protocol.SENT_CATEGORY);

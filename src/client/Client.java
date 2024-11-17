@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Client {
@@ -43,27 +44,32 @@ public class Client {
 
             while (true) {
                 Protocol state = (Protocol) in.readObject();
-                switch (state) {
-                    case WAITING:
-                        System.out.println("Vänta på andra spelaren");
-                    case SENT_CATEGORY:
-                        // Läser in kategorier
-                        System.out.println(in.readObject());
-                        out.writeObject(userInput.readLine());
-                        out.flush();
-                    case SENT_QUESTIONS:
-                        //Läs in tre frågor
-                        ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+                if (state.equals(Protocol.WAITING)) {
+                    System.out.println("Vänta på andra spelaren");
+                } else if (state.equals(Protocol.SENT_CATEGORY)) {
+                    // Läser in kategorier
+                    System.out.println(in.readObject());
+                    out.writeObject(userInput.readLine());
+                    out.flush();
+                    
+                } else if (state.equals(Protocol.SENT_QUESTIONS)) {
+                    //Läs in tre frågor
+                    ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+               
+                    for (Question question : questions) {
+                        System.out.println(question.getQuestion());
+                    }
 
-                        for (Question question : questions) {
-                            System.out.println(question.getQuestion());
-                        }
+                    //Skickar antal rätt till server
+                    out.writeObject(3);
+                    out.flush();
 
-                        //Skickar antal rätt till server
-                        out.writeObject(3);
-                        out.flush();
-                    case SENT_ROUND_SCORE:
-                    case GAME_OVER:
+                } else if (state.equals(Protocol.SENT_ROUND_SCORE)) {
+                    HashMap<String, Integer> roundResults = (HashMap<String, Integer>) in.readObject();
+                    for (String string : roundResults.keySet()) {
+                        System.out.println("Spelare: " + string);
+                        System.out.println("Resultat: " + roundResults.get(string));
+                    }
                 }
             }
 
