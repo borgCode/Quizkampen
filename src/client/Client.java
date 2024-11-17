@@ -83,6 +83,9 @@ public class Client {
                     for (Integer score : opponentScore) {
                         System.out.println(score);
                     }
+                } else if (state.equals(Protocol.GAME_OVER)) {
+                    System.out.println("Game over");
+                    break;
                 }
             }
 

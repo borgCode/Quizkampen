@@ -152,7 +152,8 @@ public class GameSession extends Thread {
                 
                 //TODO end game logic
 
-                System.out.println("Spelet slut");
+                outPlayer1.writeObject(Protocol.GAME_OVER);
+                outPlayer2.writeObject(Protocol.GAME_OVER);
                 break;
                 
             }
