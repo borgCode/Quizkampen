@@ -156,7 +156,9 @@ public class GameSession extends Thread {
                 outPlayer2.writeObject(Protocol.GAME_OVER);
 
 
-                game.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
+                GameLogic.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
+                
+                break;
             }
 
         } catch (Exception e) {

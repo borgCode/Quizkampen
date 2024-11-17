@@ -19,9 +19,21 @@ public class GameLogic {
     public static void removeCategoryFromList(ArrayList<String> categories, String categoryInput) {
         categories.remove(categoryInput);
     }
-    public static int getTurn(int index, int counter){
+    public static void findWinner (ObjectOutputStream p1, ObjectOutputStream p2, int p1Score, int p2Score) throws IOException {
+        String tie = "Spelet blev lika!";
+        String loser = "Du Förlora!";
+        String winner = "Du vann!";
+        if (p1Score == p2Score) {
+            p1.writeObject(tie);
+            p2.writeObject(tie);
+        } else if (p1Score > p2Score) {
+            p1.writeObject(winner);
+            p2.writeObject(loser);
+        } else if (p2Score > p1Score) {
+            p1.writeObject(loser);
+            p2.writeObject(winner);
+        }
 
-        return index % counter;
     }
 
 }
