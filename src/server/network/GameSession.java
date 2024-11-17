@@ -56,6 +56,8 @@ public class GameSession extends Thread {
 
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
 
+                System.out.println("List size innan remove: " + categories.size());
+
                 //Hämta random lista med 3 kategorier
                 ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
                 
@@ -69,6 +71,8 @@ public class GameSession extends Thread {
                 //Ta bort kategorin som redan är spelad
                 GameLogic.removeCategoryFromList(categories, categoryInput);
 
+                System.out.println("List size efter remove: " + categories.size());
+                
                 //Hämta random frågor från questionBank
                 ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
 
@@ -80,6 +84,8 @@ public class GameSession extends Thread {
                 //Tar emot hur många rätt använadaren hade
                 int scoreFirstRound = (int) inPlayer1.readObject();
                 game.incrementScore(player1, scoreFirstRound);
+
+                System.out.println("Spelaren hade " + scoreFirstRound + " rätt");
 
 
                 outPlayer1.writeObject(Protocol.WAITING);
