@@ -43,26 +43,27 @@ public class Client {
 
             while (true) {
                 Protocol state = (Protocol) in.readObject();
-                if (state.equals(Protocol.WAITING)) {
-                    System.out.println("Vänta på andra spelaren");
-                } else if (state.equals(Protocol.SENT_CATEGORY)) {
-                    // Läser in kategorier
-                    System.out.println(in.readObject());
-                    out.writeObject(userInput.readLine());
-                    out.flush();
-                    
-                } else if (state.equals(Protocol.SENT_QUESTIONS)) {
-                    //Läs in tre frågor
-                    ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
-               
-                    for (Question question : questions) {
-                        System.out.println(question.getQuestion());
-                    }
+                switch (state) {
+                    case WAITING:
+                        System.out.println("Vänta på andra spelaren");
+                    case SENT_CATEGORY:
+                        // Läser in kategorier
+                        System.out.println(in.readObject());
+                        out.writeObject(userInput.readLine());
+                        out.flush();
+                    case SENT_QUESTIONS:
+                        //Läs in tre frågor
+                        ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
 
-                    //Skickar antal rätt till server
-                    out.writeObject(3);
-                    out.flush();
+                        for (Question question : questions) {
+                            System.out.println(question.getQuestion());
+                        }
 
+                        //Skickar antal rätt till server
+                        out.writeObject(3);
+                        out.flush();
+                    case SENT_ROUND_SCORE:
+                    case GAME_OVER:
                 }
             }
 

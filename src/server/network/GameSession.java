@@ -40,10 +40,11 @@ public class GameSession extends Thread {
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
             
-            //Lägg streamsen och players i arrays som används i loop
+            //Lägg streamsen och players i arrays som används i loop för att växla mellan dem
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
             ObjectInputStream[] inputStreams = {inPlayer1, inPlayer2};
             Player[] players = {player1, player2};
+            int[] roundScores = new int[2];
             
             while (true) {
 
@@ -82,10 +83,10 @@ public class GameSession extends Thread {
 
 
                 //Tar emot hur många rätt använadaren hade
-                int scoreFirstRound = (int) inPlayer1.readObject();
-                game.incrementScore(player1, scoreFirstRound);
+                roundScores[0] = (int) inPlayer1.readObject();
+                game.incrementScore(player1, roundScores[0]);
 
-                System.out.println("Spelaren hade " + scoreFirstRound + " rätt");
+                System.out.println("Spelaren hade " + roundScores[0] + " rätt");
 
 
                 outPlayer1.writeObject(Protocol.WAITING);
@@ -99,9 +100,18 @@ public class GameSession extends Thread {
                     outputStreams[currentPlayer].flush();
 
                     //Tar emot hur många rätt använadaren hade
-                    int score = (int) (inputStreams[currentPlayer].readObject());
-                    game.incrementScore(players[currentPlayer], score);
+                    roundScores[currentPlayer] = (int) (inputStreams[currentPlayer].readObject());
+                    game.incrementScore(players[currentPlayer], roundScores[currentPlayer]);
 
+                    //Skicka rondresultat till båda spelarna
+                    outputStreams[currentPlayer].writeObject(Protocol.SENT_ROUND_SCORE);
+                    outputStreams[currentPlayer].writeObject(roundScores[currentPlayer]);
+                    outputStreams[currentPlayer].flush();
+                    
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(Protocol.SENT_ROUND_SCORE);
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(roundScores[(currentPlayer + 1) % 2]);
+                    outputStreams[(currentPlayer + 1) % 2].flush();
+                    
                     outputStreams[currentPlayer].writeObject(Protocol.SENT_CATEGORY);
                     
                     //Hämta random lista med 3 kategorier
