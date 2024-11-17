@@ -45,13 +45,12 @@ public class GameSession extends Thread {
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
             ObjectInputStream[] inputStreams = {inPlayer1, inPlayer2};
             Player[] players = {player1, player2};
-            int[] roundScores = new int[2];
             
             while (true) {
 
 
                 Game game = new Game(player1, player2);
-                HashMap<String, Integer> roundResults = new HashMap<>();
+
                 
                 //Berätta för klienten vilken state den är i
                 outPlayer2.writeObject(Protocol.WAITING);
@@ -85,14 +84,11 @@ public class GameSession extends Thread {
 
 
                 //Tar emot hur många rätt använadaren hade
-                roundScores[0] = (int) inPlayer1.readObject();
-                game.incrementScore(player1, roundScores[0]);
-                
-
-                System.out.println("Spelaren hade " + roundScores[0] + " rätt");
-
+                ArrayList<Integer> scoreList = (ArrayList<Integer>) inPlayer1.readObject();
+                game.incrementScore(player1, scoreList);
 
                 outPlayer1.writeObject(Protocol.WAITING);
+                outPlayer1.flush();
                 
                 int currentPlayer = 1;
 
@@ -103,20 +99,12 @@ public class GameSession extends Thread {
                     outputStreams[currentPlayer].flush();
 
                     //Tar emot hur många rätt använadaren hade
-                    roundScores[currentPlayer] = (int) (inputStreams[currentPlayer].readObject());
-                    game.incrementScore(players[currentPlayer], roundScores[currentPlayer]);
-                    
-                    //Lägga in båda spelarnas scores i hashmap för att skicka båda tillsammans
-                    roundResults.put(players[(currentPlayer + 1) % 2].getName(), roundScores[(currentPlayer + 1) % 2]);
-                    roundResults.put(players[currentPlayer].getName(), roundScores[currentPlayer]);
+                    scoreList = (ArrayList<Integer>) inputStreams[currentPlayer].readObject();
+                    game.incrementScore(players[currentPlayer], scoreList);
 
-                    //Skicka rondresultat till båda spelarna
-                    outputStreams[currentPlayer].writeObject(Protocol.SENT_ROUND_SCORE);
-                    outputStreams[currentPlayer].writeObject(roundResults);
-                    outputStreams[currentPlayer].flush();
-                    
+                    //Skicka resultat till andra spelaren
                     outputStreams[(currentPlayer + 1) % 2].writeObject(Protocol.SENT_ROUND_SCORE);
-                    outputStreams[(currentPlayer + 1) % 2].writeObject(roundResults);
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(scoreList);
                     outputStreams[(currentPlayer + 1) % 2].flush();
                     
                     outputStreams[currentPlayer].writeObject(Protocol.SENT_CATEGORY);
@@ -141,8 +129,8 @@ public class GameSession extends Thread {
                     outputStreams[currentPlayer].writeObject(questions);
                     outputStreams[currentPlayer].flush();
 
-                    int score2 = (int) (inputStreams[currentPlayer].readObject());
-                    game.incrementScore(players[currentPlayer], score2);
+                    scoreList = (ArrayList<Integer>) inputStreams[currentPlayer].readObject();
+                    game.incrementScore(players[currentPlayer], scoreList);
                     
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
                     
@@ -155,8 +143,8 @@ public class GameSession extends Thread {
                 outPlayer1.flush();
 
                 //Tar emot hur många rätt använadaren hade
-                int scoreLastRound = (int) inPlayer1.readObject();
-                game.incrementScore(player1, scoreLastRound);
+                scoreList = (ArrayList<Integer>) inPlayer1.readObject();
+                game.incrementScore(player1, scoreList);
 
                 outPlayer1.writeObject(Protocol.WAITING);
                 

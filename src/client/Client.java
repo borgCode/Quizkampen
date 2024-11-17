@@ -1,18 +1,19 @@
 package client;
 
-import org.w3c.dom.ls.LSOutput;
-import server.entity.Player;
+
 import server.entity.Question;
 import server.network.Protocol;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 
 public class Client {
@@ -55,13 +56,24 @@ public class Client {
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
                     //Läs in tre frågor
                     ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
-               
+
+                    Scanner scanner = new Scanner(System.in);
+                    List<Integer> scoreList = new ArrayList<>();
+
                     for (Question question : questions) {
                         System.out.println(question.getQuestion());
+                        System.out.println(Arrays.toString(question.getOptions()));
+                        String userAnswer = scanner.next();
+                        if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
+                            scoreList.add(1);
+                        } else {
+                            scoreList.add(0);
+                        }
                     }
+                    
 
                     //Skickar antal rätt till server
-                    out.writeObject(3);
+                    out.writeObject(scoreList);
                     out.flush();
 
                 } else if (state.equals(Protocol.SENT_ROUND_SCORE)) {

@@ -1,5 +1,7 @@
 package server.entity;
 
+import java.util.ArrayList;
+
 public class Game {
     private Player player1;
     private Player player2;
@@ -14,11 +16,15 @@ public class Game {
         this.player2Score = 0;
     }
 
-    public void incrementScore(Player player, int score) {
+    public void incrementScore(Player player, ArrayList<Integer> scoreList) {
         if (player.equals(player1)) {
-            player1Score += score;
+            for (Integer score : scoreList) {
+                player1Score += score;
+            }
         } else {
-            player2Score += score;
+            for (Integer score : scoreList) {
+                player2Score+= score;
+            }
         }
     }
 
