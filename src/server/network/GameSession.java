@@ -62,6 +62,7 @@ public class GameSession extends Thread {
                 Round round = new Round(questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase()), selectedCategory);
 
                 processQuestions(outPlayer1, inPlayer1, game, player1, round);
+                sendResultsToOpponent(outPlayer2, round);
                 
                 outPlayer1.writeObject(Protocol.WAITING);
                 outPlayer1.flush();
@@ -78,13 +79,14 @@ public class GameSession extends Thread {
                     
 
                     processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round);
-                    
+                    sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], round);
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
 
                     currentPlayer = (currentPlayer + 1) % 2;
                 }
 
                 processQuestions(outPlayer1, inPlayer1, game, player1, round);
+                sendResultsToOpponent(outPlayer2, round);
                 
 
                 //TODO end game logic
