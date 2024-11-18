@@ -159,7 +159,7 @@ public class QuestionBank {
         questionMap.put("literatur", literatureList);
 
         //TV spel
-        
+
         String[] gameOptions1 = {"Super Mario", "The Legend of Zelda", "Donkey Kong", "Metroid"};
         Question gameQ1 = new Question("Vilken är den mest kända plattformsspelserien skapad av Nintendo?", gameOptions1, "Super Mario");
 
@@ -180,7 +180,7 @@ public class QuestionBank {
 
         ArrayList<Question> gamesList = new ArrayList<>(List.of(gameQ1, gameQ2, gameQ3, gameQ4, gameQ5, gameQ6));
         questionMap.put("spel", gamesList);
-        
+
         //Mat
 
         String[] foodOptions1 = {"Sushi", "Tacos", "Pizza", "Pasta"};
@@ -203,7 +203,7 @@ public class QuestionBank {
 
         ArrayList<Question> foodList = new ArrayList<>(List.of(foodQ1, foodQ2, foodQ3, foodQ4, foodQ5, foodQ6));
         questionMap.put("mat", foodList);
-        
+
         //TV serier
 
         String[] tvOptions1 = {"Breaking Bad", "The Sopranos", "Game of Thrones", "Friends"};
@@ -235,13 +235,13 @@ public class QuestionBank {
 
         if (questions.isEmpty()) {
             System.out.println("No such category exists or there are no questions in the category");
-            return new ArrayList<>(); 
+            return new ArrayList<>();
         }
 
         //blanda frågorna och returnera en lista med 3 frågor
         Collections.shuffle(questions);
         return new ArrayList<>(questions.subList(0, 3));
-        
+
     }
 
 }
