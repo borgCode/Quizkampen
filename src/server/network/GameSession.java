@@ -74,7 +74,7 @@ public class GameSession extends Thread {
 
                     String newCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
                     round.setSelectedCategory(newCategory);
-                    round.setCurrentQuestions(questionBank.getRandomQuestionsByCategory(round.getSelectedCategory()));
+                    round.setCurrentQuestions(questionBank.getRandomQuestionsByCategory(round.getSelectedCategory().toLowerCase()));
                     
 
                     processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round);
