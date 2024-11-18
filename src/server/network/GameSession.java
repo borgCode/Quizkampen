@@ -50,18 +50,13 @@ public class GameSession extends Thread {
             Player[] players = {player1, player2};
 
             while (true) {
-
-
                 Game game = new Game(player1, player2);
 
-
-                //Berätta för klienten vilken state den är i
+                //Berätta för klient 2 att den ska vänta på andra spelarens tur
                 outPlayer2.writeObject(Protocol.WAITING);
-                outPlayer1.writeObject(Protocol.SENT_CATEGORY);
-
+                
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
 
-                
                 handleCategorySelection(outPlayer1, inPlayer1, categories);
 
                 //Hämta random frågor från questionBank
@@ -75,41 +70,22 @@ public class GameSession extends Thread {
                 int currentPlayer = 1;
 
                 for (int i = 0; i < 5; i++) {
-
-                    
                     processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer]);
-
-                    //Skicka resultat till andra spelaren
-                    outputStreams[(currentPlayer + 1) % 2].writeObject(Protocol.SENT_ROUND_SCORE);
-                    outputStreams[(currentPlayer + 1) % 2].writeObject(opponentRoundScore);
-                    outputStreams[(currentPlayer + 1) % 2].flush();
-
-                    outputStreams[currentPlayer].writeObject(Protocol.SENT_CATEGORY);
-                    
+                    sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2]);
                     handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
                     
-
                     //Hämta random frågor från questionBank
                     currentQuestions = questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase());
 
                     processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer]);
                     
-
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
 
                     currentPlayer = (currentPlayer + 1) % 2;
                 }
 
-
-                outPlayer1.writeObject(Protocol.SENT_QUESTIONS);
-                outPlayer1.writeObject(currentQuestions);
-                outPlayer1.flush();
-
-                //Tar emot hur många rätt använadaren hade
-                opponentRoundScore = (ArrayList<Integer>) inPlayer1.readObject();
-                game.incrementScore(player1, opponentRoundScore);
-
-                //outPlayer1.writeObject(Protocol.WAITING);
+                processQuestions(outPlayer1, inPlayer1, game, player1);
+                
 
                 //TODO end game logic
 
@@ -129,8 +105,10 @@ public class GameSession extends Thread {
 
     
 
+
     private void handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream, ArrayList<String> categories) throws IOException, ClassNotFoundException {
         //Hämta random lista med 3 kategorier
+        outputStream.writeObject(Protocol.SENT_CATEGORY);
         ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
 
         //Skickar tre kategorier till client
@@ -156,6 +134,13 @@ public class GameSession extends Thread {
         //Tar emot hur många rätt använadaren hade
         opponentRoundScore = (ArrayList<Integer>) inputStream.readObject();
         game.incrementScore(player1, opponentRoundScore);
+    }
+
+    private void sendResultsToOpponent(ObjectOutputStream outputStream) throws IOException {
+        //Skicka resultat till andra spelaren
+        outputStream.writeObject(Protocol.SENT_ROUND_SCORE);
+        outputStream.writeObject(opponentRoundScore);
+        outputStream.flush();
     }
 }
 
