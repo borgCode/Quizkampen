@@ -24,19 +24,29 @@ public class CategoryWindow extends JFrame {
         Collections.shuffle(categories);
         selectedCategories = new ArrayList<>(categories.subList(0, 3));
 
-        setTitle("Kategori");
+        setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 500);
-        setLayout(new BorderLayout());
+        setResizable(false);
+        setLayout(null);
 
+        // Lägger till bakgrundsbilden
+        JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
+        backgroundLabel.setBounds(0, 0, 400, 500);
+        add(backgroundLabel);
+
+        // Lägger till de andra komponenterna ovanpå bakgrundsbilden
         topLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        topLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        add(topLabel, BorderLayout.NORTH);
+        topLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        topLabel.setBounds(50, 20, 300, 40);
+        backgroundLabel.add(topLabel);
 
-        categoryPanel.setLayout(new GridLayout(3, 1, 10, 10));
-        add(categoryPanel, BorderLayout.CENTER);
+        categoryPanel.setLayout(new GridLayout(3, 1, 20, 20));
+        categoryPanel.setOpaque(false); // Gör panelen genomskinlig
+        categoryPanel.setBounds(50, 80, 300, 360);
+        backgroundLabel.add(categoryPanel);
 
-        // Lägger till valda kategorier i panel
+        // Lägger till valda kategorier i panelen
         for (String category : selectedCategories) {
             addCategoryToPanel(category);
         }
@@ -60,7 +70,6 @@ public class CategoryWindow extends JFrame {
         categoryImages.put("Litteratur", "src/resources/categoryImages/Litteratur.jpg");
         categoryImages.put("Sport", "src/resources/categoryImages/Sport.jpg");
 
-
         categories.addAll(categoryImages.keySet());
     }
 
@@ -68,11 +77,14 @@ public class CategoryWindow extends JFrame {
     private void addCategoryToPanel(String category) {
         JPanel categoryContainer = new JPanel();
         categoryContainer.setLayout(new BorderLayout());
+        categoryContainer.setOpaque(false); // Gör panelen genomskinlig
 
         // Hämtar sökvägen för kategorin
         String imagePath = categoryImages.get(category);
         ImageIcon icon = new ImageIcon(imagePath);
-        Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+
+        // Ändrar bildens storlek för att passa i fönstret
+        Image scaledImage = icon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH);
         JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
 
         // MouseListener för att hantera klick på bilden
@@ -87,7 +99,7 @@ public class CategoryWindow extends JFrame {
         // Label för kategorinamnet
         JLabel nameLabel = new JLabel(category);
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        nameLabel.setFont(new Font("Arial", Font.PLAIN, 18));
 
         categoryContainer.add(imageLabel, BorderLayout.CENTER);
         categoryContainer.add(nameLabel, BorderLayout.SOUTH);
