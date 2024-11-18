@@ -6,11 +6,11 @@ import server.entity.Question;
 import server.logic.GameLogic;
 import server.logic.QuestionBank;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class GameSession extends Thread {
@@ -18,6 +18,9 @@ public class GameSession extends Thread {
     private final Socket player1Socket;
     private final Socket player2Socket;
     private final QuestionBank questionBank;
+    private ArrayList<Question> currentQuestions;
+    private String selectedCategory;
+    private ArrayList<Integer> opponentRoundScore;
 
 
     public GameSession(Socket player1Socket, Socket player2Socket) {
@@ -58,35 +61,14 @@ public class GameSession extends Thread {
 
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
 
-                System.out.println("List size innan remove: " + categories.size());
-
-                //Hämta random lista med 3 kategorier
-                ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
-
-                //Skickar tre kategorier till client
-                outPlayer1.writeObject(randomCategories);
-                outPlayer1.flush();
-
-                //Tar emot client svar på kategori
-                String categoryInput = (String) inPlayer1.readObject();
-
-                //Ta bort kategorin som redan är spelad
-                GameLogic.removeCategoryFromList(categories, categoryInput);
-
-                System.out.println("List size efter remove: " + categories.size());
+                
+                handleCategorySelection(outPlayer1, inPlayer1, categories);
 
                 //Hämta random frågor från questionBank
-                ArrayList<Question> questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
+                currentQuestions = questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase());
 
-                outPlayer1.writeObject(Protocol.SENT_QUESTIONS);
-                outPlayer1.writeObject(questions);
-                outPlayer1.flush();
-
-
-                //Tar emot hur många rätt använadaren hade
-                ArrayList<Integer> scoreList = (ArrayList<Integer>) inPlayer1.readObject();
-                game.incrementScore(player1, scoreList);
-
+                processQuestions(outPlayer1, inPlayer1, game, player1);
+                
                 outPlayer1.writeObject(Protocol.WAITING);
                 outPlayer1.flush();
 
@@ -94,45 +76,24 @@ public class GameSession extends Thread {
 
                 for (int i = 0; i < 5; i++) {
 
-                    outputStreams[currentPlayer].writeObject(Protocol.SENT_QUESTIONS);
-                    outputStreams[currentPlayer].writeObject(questions);
-                    outputStreams[currentPlayer].flush();
-
-                    //Tar emot hur många rätt använadaren hade
-                    scoreList = (ArrayList<Integer>) inputStreams[currentPlayer].readObject();
-                    game.incrementScore(players[currentPlayer], scoreList);
+                    
+                    processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer]);
 
                     //Skicka resultat till andra spelaren
                     outputStreams[(currentPlayer + 1) % 2].writeObject(Protocol.SENT_ROUND_SCORE);
-                    outputStreams[(currentPlayer + 1) % 2].writeObject(scoreList);
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(opponentRoundScore);
                     outputStreams[(currentPlayer + 1) % 2].flush();
 
                     outputStreams[currentPlayer].writeObject(Protocol.SENT_CATEGORY);
-
-                    //Hämta random lista med 3 kategorier
-                    randomCategories = GameLogic.getRandomCategories(categories);
-
-                    System.out.println("List size efter remove: " + categories.size());
-
-                    //Skickar tre kategorier till client
-                    outputStreams[currentPlayer].writeObject(randomCategories);
-                    outputStreams[currentPlayer].flush();
-
-                    //Tar emot client svar på kategori
-                    categoryInput = (String) inputStreams[currentPlayer].readObject();
-
-                    //Ta bort kategorin som redan är spelad
-                    GameLogic.removeCategoryFromList(categories, categoryInput);
+                    
+                    handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
+                    
 
                     //Hämta random frågor från questionBank
-                    questions = questionBank.getRandomQuestionsByCategory(categoryInput.toLowerCase());
+                    currentQuestions = questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase());
 
-                    outputStreams[currentPlayer].writeObject(Protocol.SENT_QUESTIONS);
-                    outputStreams[currentPlayer].writeObject(questions);
-                    outputStreams[currentPlayer].flush();
-
-                    scoreList = (ArrayList<Integer>) inputStreams[currentPlayer].readObject();
-                    game.incrementScore(players[currentPlayer], scoreList);
+                    processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer]);
+                    
 
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
 
@@ -141,12 +102,12 @@ public class GameSession extends Thread {
 
 
                 outPlayer1.writeObject(Protocol.SENT_QUESTIONS);
-                outPlayer1.writeObject(questions);
+                outPlayer1.writeObject(currentQuestions);
                 outPlayer1.flush();
 
                 //Tar emot hur många rätt använadaren hade
-                scoreList = (ArrayList<Integer>) inPlayer1.readObject();
-                game.incrementScore(player1, scoreList);
+                opponentRoundScore = (ArrayList<Integer>) inPlayer1.readObject();
+                game.incrementScore(player1, opponentRoundScore);
 
                 //outPlayer1.writeObject(Protocol.WAITING);
 
@@ -164,6 +125,37 @@ public class GameSession extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    
+
+    private void handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream, ArrayList<String> categories) throws IOException, ClassNotFoundException {
+        //Hämta random lista med 3 kategorier
+        ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
+
+        //Skickar tre kategorier till client
+        outputStream.writeObject(randomCategories);
+        outputStream.flush();
+
+        //Tar emot client svar på kategori
+        String categoryInput = (String) inputStream.readObject();
+
+        //Ta bort kategorin som redan är spelad
+        GameLogic.removeCategoryFromList(categories, categoryInput);
+
+        selectedCategory = categoryInput;
+    }
+
+    private void processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player1) throws IOException, ClassNotFoundException {
+        
+        outputStream.writeObject(Protocol.SENT_QUESTIONS);
+        outputStream.writeObject(currentQuestions);
+        outputStream.flush();
+
+
+        //Tar emot hur många rätt använadaren hade
+        opponentRoundScore = (ArrayList<Integer>) inputStream.readObject();
+        game.incrementScore(player1, opponentRoundScore);
     }
 }
 
