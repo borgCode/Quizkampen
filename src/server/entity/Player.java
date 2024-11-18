@@ -10,7 +10,8 @@ public class Player implements Serializable {
     private ImageIcon avatar;
     private Player opponent;
 
-    public Player(String name) {
+
+    public Player(String name, ImageIcon avatar) {
         this.name = name;
         this.avatar = avatar;
     }
@@ -35,5 +36,13 @@ public class Player implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ImageIcon getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(ImageIcon avatar) {
+        this.avatar = avatar;
     }
 }

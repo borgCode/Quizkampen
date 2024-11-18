@@ -56,7 +56,7 @@ public class GameSession extends Thread {
                 outPlayer2.writeObject(Protocol.WAITING);
                 outPlayer1.writeObject(Protocol.SENT_CATEGORY);
 
-                ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
+                ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV-serier", "TV-spel", "Mat", "Litteratur", "Sport"));
 
                 System.out.println("List size innan remove: " + categories.size());
 

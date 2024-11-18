@@ -15,14 +15,15 @@ public class CategoryWindow extends JFrame {
     private HashMap<String, String> categoryImages;
     private ArrayList<String> categories;
     private ArrayList<String> selectedCategories;
+    private String selectedCategory;
 
-    public CategoryWindow() {
-
+    public CategoryWindow(ArrayList<String> categories) {
+        this.selectedCategories = categories; // Tar emot kategorier från klienten
         initializeCategoryData();
 
         // Slumpar kategorierna och väljer de tre första efter slumpandet
-        Collections.shuffle(categories);
-        selectedCategories = new ArrayList<>(categories.subList(0, 3));
+        //Collections.shuffle(this.categories);
+        //selectedCategories = new ArrayList<>(this.categories.subList(0, Math.min(3, this.categories.size())));
 
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,7 +38,7 @@ public class CategoryWindow extends JFrame {
 
         // Lägger till de andra komponenterna ovanpå bakgrundsbilden
         topLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        topLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        topLabel.setFont(new Font("Arial", Font.BOLD, 20));
         topLabel.setBounds(50, 20, 300, 40);
         backgroundLabel.add(topLabel);
 
@@ -91,8 +92,8 @@ public class CategoryWindow extends JFrame {
         imageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new GameWindow();
-                dispose();
+                selectedCategory = category; // Sparar vald kategori
+                dispose(); // Stäng fönstret
             }
         });
 
@@ -107,7 +108,8 @@ public class CategoryWindow extends JFrame {
         categoryPanel.add(categoryContainer);
     }
 
-    public static void main(String[] args) {
-        new CategoryWindow();
+    public String getSelectedCategory() {
+        return selectedCategory;
     }
+
 }
