@@ -9,6 +9,7 @@ public class WindowManager {
     private StartWindow startWindow;
     private GameWindow gameWindow;
     private CategoryWindow categoryWindow;
+    //TODO lägg till scorewindow
 
     public WindowManager() {
         startWindow = new StartWindow();
@@ -18,7 +19,7 @@ public class WindowManager {
             System.out.println("Selected answer: " + selectedAnswer);
         });
         
-        categoryWindow = new CategoryWindow();
+       // categoryWindow = new CategoryWindow();
     }
     
     public void setGameWindowVisibility(Boolean isVisible) {

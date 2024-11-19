@@ -12,6 +12,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
     private String correctAnswer;
     private AnswerListener answerListener;
+    private boolean hasAnswered;
 
     JPanel scorePanel = new JPanel();
     JButton scoreButton1 = new JButton();
@@ -55,17 +56,26 @@ public class GameWindow extends JFrame implements ActionListener {
         backgroundLabel.add(scorePanel, BorderLayout.NORTH);
 
 
+        
         //Frågan
         questionPanel.setLayout(new FlowLayout());
+        questionPanel.setPreferredSize(new Dimension(150,100));
         questionPanel.add(question);
         questionPanel.setBackground(Color.WHITE);
         questionPanel.setOpaque(false);
-        backgroundLabel.add(questionPanel, BorderLayout.CENTER);
+
 
         //Svar
         answerPanel.setLayout(new GridLayout(2,2));
         answerPanel.setOpaque(false);
-        backgroundLabel.add(answerPanel, BorderLayout.SOUTH);
+
+
+        JPanel questionAndAnswerPanel = new JPanel(new BorderLayout());
+        questionAndAnswerPanel.setOpaque(false);
+        questionAndAnswerPanel.add(questionPanel, BorderLayout.NORTH);
+        questionAndAnswerPanel.add(answerPanel, BorderLayout.CENTER);
+        backgroundLabel.add(questionAndAnswerPanel, BorderLayout.CENTER);
+
 
 
        // TODO: getSelectedCategory för att få fram rätt frågor + Lägg in frågorna i rätt button + Kontrollera svaret
@@ -76,6 +86,19 @@ public class GameWindow extends JFrame implements ActionListener {
             //Lägger till knapparna i panelen
             answerPanel.add(answerButtons[i]);
         }
+        JButton nextButton = new JButton("Next");
+        nextButton.addActionListener(e -> {
+            for (JButton button : answerButtons) {
+                button.setBackground(null);
+            }
+            setHasAnswered(true);
+        });
+
+        JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        nextButtonPanel.add(nextButton);
+        nextButtonPanel.setOpaque(false);
+        backgroundLabel.add(nextButtonPanel, BorderLayout.SOUTH);
+
 
         setTitle("Quiz Kampen");
         setSize(400, 400);
@@ -130,5 +153,13 @@ public class GameWindow extends JFrame implements ActionListener {
 
         this.correctAnswer = question.getCorrectAnswer();
         
+    }
+
+    public boolean isHasAnswered() {
+        return hasAnswered;
+    }
+
+    public void setHasAnswered(boolean hasAnswered) {
+        this.hasAnswered = hasAnswered;
     }
 }

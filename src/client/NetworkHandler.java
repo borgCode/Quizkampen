@@ -36,7 +36,6 @@ public class NetworkHandler {
         }
 
         try (Socket socket = new Socket(ip, port);
-             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
@@ -53,6 +52,7 @@ public class NetworkHandler {
                     ArrayList<String> categories = (ArrayList<String>) in.readObject();
 
                     // Visar kategorier i CategoryWindow
+                    //TODO Använda windowmanager istället för att skicka kategorier
                     CategoryWindow categoryWindow = new CategoryWindow(categories);
                     categoryWindow.setVisible(true);
 
@@ -69,8 +69,7 @@ public class NetworkHandler {
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
                     //Läs in tre frågor
                     ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
-
-                    Scanner scanner = new Scanner(System.in);
+                    
                     List<Integer> scoreList = new ArrayList<>();
                     
                     windowManager.setGameWindowVisibility(true);
@@ -97,7 +96,19 @@ public class NetworkHandler {
                                 Thread.currentThread().interrupt();
                                 e.printStackTrace();
                             }
+                            
+                            
                         }
+
+                        while (!windowManager.getGameWindow().isHasAnswered()) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        windowManager.getGameWindow().setHasAnswered(false);
+                        
                         
 //                        System.out.println(question.getQuestion());
 //                        System.out.println(Arrays.toString(question.getOptions()));
