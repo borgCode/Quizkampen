@@ -1,5 +1,7 @@
 package client;
 
+import client.listener.CategorySelectionListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -12,12 +14,10 @@ public class CategoryWindow extends JFrame {
     private JPanel categoryPanel = new JPanel();
     private JLabel topLabel = new JLabel("Välj en kategori:");
     private HashMap<String, String> categoryImages;
-    private ArrayList<String> selectedCategories;
-    private WindowManager windowManager;
+    private ArrayList<String> selectedCategories = new ArrayList<>();
+    private CategorySelectionListener listener;
 
-    public CategoryWindow(ArrayList<String> categories, WindowManager windowManager) {
-        this.windowManager = windowManager;
-        this.selectedCategories = categories;
+    public CategoryWindow() {
 
         initializeCategoryData();
 
@@ -47,7 +47,6 @@ public class CategoryWindow extends JFrame {
         for (String category : selectedCategories) {
             addCategoryToPanel(category);
         }
-        setVisible(true);
     }
 
     // Metod för att initialisera kategoridatan
@@ -64,6 +63,16 @@ public class CategoryWindow extends JFrame {
         categoryImages.put("Mat", "src/resources/categoryImages/Mat.jpg");
         categoryImages.put("Litteratur", "src/resources/categoryImages/Litteratur.jpg");
         categoryImages.put("Sport", "src/resources/categoryImages/Sport.jpg");
+    }
+    
+    public void updateCategories(ArrayList<String> newCategories) {
+        selectedCategories = newCategories;
+        categoryPanel.removeAll();
+        for (String category : selectedCategories) {
+            addCategoryToPanel(category);
+        }
+        categoryPanel.revalidate();
+        categoryPanel.repaint();
     }
 
     // Metod för att lägga till en kategori till panelen
@@ -84,8 +93,10 @@ public class CategoryWindow extends JFrame {
             imageLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    windowManager.setSelectedCategory(category);
-                    dispose();
+                    if (listener != null) {
+                        listener.onCategorySelected(category);
+                    }
+                    setVisible(false);
                 }
             });
 
@@ -98,6 +109,10 @@ public class CategoryWindow extends JFrame {
             categoryContainer.add(nameLabel, BorderLayout.SOUTH);
             categoryPanel.add(categoryContainer);
         }
+
+    public void setListener(CategorySelectionListener listener) {
+        this.listener = listener;
     }
+}
 
 

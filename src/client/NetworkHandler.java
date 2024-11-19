@@ -53,13 +53,7 @@ public class NetworkHandler {
 
                     // Använder WindowManager till att visa CategoryWindow
                     windowManager.showCategoryWindow(categories);
-
-
-
-//                    // Visar kategorier i CategoryWindow
-//                    //TODO Använda windowmanager istället för att skicka kategorier
-//                    CategoryWindow categoryWindow = new CategoryWindow(categories);
-//                    categoryWindow.setVisible(true);
+                    
 
                     // Vänta tills användaren väljer en kategori
                     while (windowManager.getSelectedCategory() == null) {
@@ -67,8 +61,7 @@ public class NetworkHandler {
                     }
 
                     // Skicka vald kategori till servern
-                    String selectedCategory = windowManager.getSelectedCategory();
-                    out.writeObject(selectedCategory);
+                    out.writeObject(windowManager.getSelectedCategory());
                     out.flush();
 
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {

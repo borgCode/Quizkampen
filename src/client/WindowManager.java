@@ -20,15 +20,13 @@ public class WindowManager {
             System.out.println("Selected answer: " + selectedAnswer);
         });
         
-       // categoryWindow = new CategoryWindow();
+        categoryWindow = new CategoryWindow();
     }
     
     public void setGameWindowVisibility(Boolean isVisible) {
         gameWindow.setVisible(isVisible);
     }
-    public void setCategoryWindowVisibility(Boolean isVisible) {
-        categoryWindow.setVisible(isVisible);
-    }
+    
     
     public Player getPlayer() {
         return startWindow.getPlayer();
@@ -49,8 +47,9 @@ public class WindowManager {
     }
 
     public void showCategoryWindow(ArrayList<String> categories) {
+        categoryWindow.updateCategories(categories);
+        categoryWindow.setListener(category -> setSelectedCategory(category));
         // Skapar CategoryWindow bara när det behövs
-        categoryWindow = new CategoryWindow(categories, this);
         categoryWindow.setVisible(true);
     }
     public void setSelectedCategory(String category) {
