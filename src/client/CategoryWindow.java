@@ -13,12 +13,13 @@ public class CategoryWindow extends JFrame {
     private JPanel categoryPanel = new JPanel();
     private JLabel topLabel = new JLabel("Välj en kategori:");
     private HashMap<String, String> categoryImages;
-    private ArrayList<String> categories;
+    //private ArrayList<String> categories;
     private ArrayList<String> selectedCategories;
-    private String selectedCategory;
+    private WindowManager windowManager;
 
-    public CategoryWindow(ArrayList<String> categories) {
-        this.selectedCategories = categories; // Tar emot kategorier från klienten
+    public CategoryWindow(ArrayList<String> categories, WindowManager windowManager) {
+        this.windowManager = windowManager;
+        this.selectedCategories = categories;
         initializeCategoryData();
 
         // Slumpar kategorierna och väljer de tre första efter slumpandet
@@ -58,7 +59,7 @@ public class CategoryWindow extends JFrame {
     // Metod för att initialisera kategoridatan
     private void initializeCategoryData() {
         categoryImages = new HashMap<>();
-        categories = new ArrayList<>();
+        //categories = new ArrayList<>();
 
         // Lägger till kategorier med rätt sökväg
         categoryImages.put("Geografi", "src/resources/categoryImages/Geografi.jpg");
@@ -71,7 +72,7 @@ public class CategoryWindow extends JFrame {
         categoryImages.put("Litteratur", "src/resources/categoryImages/Litteratur.jpg");
         categoryImages.put("Sport", "src/resources/categoryImages/Sport.jpg");
 
-        categories.addAll(categoryImages.keySet());
+        //categories.addAll(categoryImages.keySet());
     }
 
     // Metod för att lägga till en kategori till panelen
@@ -92,8 +93,8 @@ public class CategoryWindow extends JFrame {
         imageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                selectedCategory = category; // Sparar vald kategori
-                dispose(); // Stäng fönstret
+                windowManager.setSelectedCategory(category);
+                dispose();
             }
         });
 
@@ -104,11 +105,11 @@ public class CategoryWindow extends JFrame {
 
         categoryContainer.add(imageLabel, BorderLayout.CENTER);
         categoryContainer.add(nameLabel, BorderLayout.SOUTH);
-
         categoryPanel.add(categoryContainer);
     }
-
-    public String getSelectedCategory() {
-        return selectedCategory;
-    }
 }
+
+//    public String getSelectedCategory() {
+//        return selectedCategory;
+//    }
+//}

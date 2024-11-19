@@ -51,18 +51,23 @@ public class NetworkHandler {
                     // Läser in kategorier från servern
                     ArrayList<String> categories = (ArrayList<String>) in.readObject();
 
-                    // Visar kategorier i CategoryWindow
-                    //TODO Använda windowmanager istället för att skicka kategorier
-                    CategoryWindow categoryWindow = new CategoryWindow(categories);
-                    categoryWindow.setVisible(true);
+                    // Använder WindowManager till att visa CategoryWindow
+                    windowManager.showCategoryWindow(categories);
+
+
+
+//                    // Visar kategorier i CategoryWindow
+//                    //TODO Använda windowmanager istället för att skicka kategorier
+//                    CategoryWindow categoryWindow = new CategoryWindow(categories);
+//                    categoryWindow.setVisible(true);
 
                     // Vänta tills användaren väljer en kategori
-                    while (categoryWindow.getSelectedCategory() == null) {
+                    while (windowManager.getSelectedCategory() == null) {
                         Thread.sleep(100);
                     }
 
                     // Skicka vald kategori till servern
-                    String selectedCategory = categoryWindow.getSelectedCategory();
+                    String selectedCategory = windowManager.getSelectedCategory();
                     out.writeObject(selectedCategory);
                     out.flush();
 

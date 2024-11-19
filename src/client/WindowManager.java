@@ -9,6 +9,7 @@ public class WindowManager {
     private StartWindow startWindow;
     private GameWindow gameWindow;
     private CategoryWindow categoryWindow;
+    private String selectedCategory;
     //TODO lägg till scorewindow
 
     public WindowManager() {
@@ -45,5 +46,17 @@ public class WindowManager {
 
     public void resetRound() {
         gameWindow.resetRound();
+    }
+
+    public void showCategoryWindow(ArrayList<String> categories) {
+        // Skapar CategoryWindow bara när det behövs
+        categoryWindow = new CategoryWindow(categories, this);
+        categoryWindow.setVisible(true);
+    }
+    public void setSelectedCategory(String category) {
+        this.selectedCategory = category;
+    }
+    public String getSelectedCategory() {
+        return selectedCategory;
     }
 }
