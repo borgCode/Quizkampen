@@ -29,14 +29,6 @@ public class ScoreWindow extends JFrame {
         topPanel.setOpaque(false);
 
 
-
-        /*//Övre panel: Bilden högst upp
-        JLabel headerImage = new JLabel(new ImageIcon("src/resources/categoryImages/quizkampen.png")); // Sökväg till bilden
-        headerImage.setHorizontalAlignment(SwingConstants.CENTER); // Centrerar bilden
-        headerImage.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Lägger till padding runt bilden
-        panel.add(headerImage, BorderLayout.NORTH);/*
-         */
-
         //TODO: Avatar och spelare nr 1
         JButton avatar1 = new JButton(new ImageIcon("src/resources/avatars/Gengar.png"));
         avatar1.setContentAreaFilled(false); // Tar bort bakgrund
