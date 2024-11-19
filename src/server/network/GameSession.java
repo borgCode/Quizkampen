@@ -14,8 +14,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import static server.network.Properties.rounds;
-
 public class GameSession extends Thread {
 
     private final Socket player1Socket;
@@ -57,7 +55,7 @@ public class GameSession extends Thread {
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
                 outPlayer2.writeObject(Protocol.WAITING);
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
-                for (int i = 0; i < rounds; i++){
+                for (int i = 0; i < 6; i++){
                     // Låt currentplayer välja kategori
                     String selectedCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
 
