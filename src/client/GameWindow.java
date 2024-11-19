@@ -1,5 +1,7 @@
 package client;
 
+import server.entity.Question;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -97,4 +99,16 @@ public class GameWindow extends JFrame implements ActionListener {
         GameWindow gameWindow = new GameWindow();
     }
 
+    public void updateQuestion(Question question) {
+        this.question.setText(question.getQuestion());
+
+        String[] options = question.getOptions();
+        for (int i = 0; i < options.length; i++) {
+            answerButtons[i].setText(options[i]);
+            answerButtons[i].setEnabled(true);
+        }
+
+        this.correctAnswer = question.getCorrectAnswer();
+        
+    }
 }

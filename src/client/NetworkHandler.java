@@ -60,16 +60,20 @@ public class NetworkHandler {
 
                     Scanner scanner = new Scanner(System.in);
                     List<Integer> scoreList = new ArrayList<>();
-
+                    
+                    windowManager.setGameWindowVisibility(true);
+                    
                     for (Question question : questions) {
-                        System.out.println(question.getQuestion());
-                        System.out.println(Arrays.toString(question.getOptions()));
-                        String userAnswer = scanner.next();
-                        if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
-                            scoreList.add(1);
-                        } else {
-                            scoreList.add(0);
-                        }
+                        windowManager.displayQuestion(question);
+                        
+//                        System.out.println(question.getQuestion());
+//                        System.out.println(Arrays.toString(question.getOptions()));
+//                        String userAnswer = scanner.next();
+//                        if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
+//                            scoreList.add(1);
+//                        } else {
+//                            scoreList.add(0);
+//                        }
                     }
 
                     //TODO skapa metod för att updatea GUI med rondresultat
