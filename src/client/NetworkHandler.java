@@ -2,6 +2,7 @@ package client;
 
 
 import server.entity.Question;
+import server.network.PropertiesManager;
 import server.network.Protocol;
 
 import javax.swing.*;
@@ -43,9 +44,16 @@ public class NetworkHandler {
             out.writeObject(windowManager.getPlayer());
 
 
+
+
             while (true) {
                 Protocol state = (Protocol) in.readObject();
-                if (state.equals(Protocol.WAITING)) {
+                // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
+                if (state.equals(Protocol.SENT_TOTAL_ROUNDS)){
+                    int totalRounds = (Integer) in.readObject();
+                    System.out.println("Antal rundor: " + totalRounds);
+
+                } else if (state.equals(Protocol.WAITING)) {
                     System.out.println("Väntar på andra spelaren");
                 } else if (state.equals(Protocol.SENT_CATEGORY)) {
                     // Läser in kategorier från servern
