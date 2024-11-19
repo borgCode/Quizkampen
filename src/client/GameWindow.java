@@ -197,9 +197,9 @@ public class GameWindow extends JFrame implements ActionListener {
                     timerBar.setValue(remainingTime);
 
                     // Ändrar färg beroende på återstående tid
-                    if (remainingTime <= TIMER_DURATION * 10 * 0.15) { // Mindre än 15% kvar
+                    if (remainingTime <= TIMER_DURATION * 10 * 0.25) { // Mindre än 25% kvar
                         timerBar.setForeground(Color.RED);
-                    } else if (remainingTime <= TIMER_DURATION * 10 * 0.33) { // Mindre än 33% kvar
+                    } else if (remainingTime <= TIMER_DURATION * 10 * 0.5) { // Mindre än 50% kvar
                         timerBar.setForeground(Color.ORANGE);
                     }
                 });
