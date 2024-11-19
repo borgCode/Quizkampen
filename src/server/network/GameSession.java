@@ -54,7 +54,7 @@ public class GameSession extends Thread {
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
                 outPlayer2.writeObject(Protocol.WAITING);
                 
-                ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
+                ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV-serier", "TV-spel", "Mat", "Litteratur", "Sport"));
 
                 String selectedCategory = handleCategorySelection(outPlayer1, inPlayer1, categories);
 

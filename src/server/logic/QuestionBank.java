@@ -156,7 +156,7 @@ public class QuestionBank {
         Question litQ6 = new Question("Vilken klassisk roman skrevs av Mary Shelley?", litOptions6, "Frankenstein");
 
         ArrayList<Question> literatureList = new ArrayList<>(List.of(litQ1, litQ2, litQ3, litQ4, litQ5, litQ6));
-        questionMap.put("literatur", literatureList);
+        questionMap.put("litteratur", literatureList);
 
         //TV spel
 
@@ -179,7 +179,7 @@ public class QuestionBank {
         Question gameQ6 = new Question("Vilken populär japansk RPG-serie handlar om att fånga och träna varelser i en fiktiv värld?", gameOptions6, "Pokémon");
 
         ArrayList<Question> gamesList = new ArrayList<>(List.of(gameQ1, gameQ2, gameQ3, gameQ4, gameQ5, gameQ6));
-        questionMap.put("spel", gamesList);
+        questionMap.put("tv-spel", gamesList);
 
         //Mat
 
@@ -225,7 +225,7 @@ public class QuestionBank {
         Question tvQ6 = new Question("Vilken serie handlar om en colombiansk drogkartell och dess ledare, Pablo Escobar?", tvOptions6, "Narcos");
 
         ArrayList<Question> tvList = new ArrayList<>(List.of(tvQ1, tvQ2, tvQ3, tvQ4, tvQ5, tvQ6));
-        questionMap.put("tv", tvList);
+        questionMap.put("tv-serier", tvList);
 
 
     }
