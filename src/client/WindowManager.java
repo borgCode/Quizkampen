@@ -14,6 +14,10 @@ public class WindowManager {
         startWindow = new StartWindow();
         startWindow.setVisible(true);
         gameWindow = new GameWindow();
+        gameWindow.setAnswerListener(selectedAnswer -> {
+            System.out.println("Selected answer: " + selectedAnswer);
+        });
+        
         categoryWindow = new CategoryWindow();
     }
     
@@ -32,5 +36,9 @@ public class WindowManager {
 
     public void displayQuestion(Question question) {
         gameWindow.updateQuestion(question);
+    }
+
+    public GameWindow getGameWindow() {
+        return gameWindow;
     }
 }

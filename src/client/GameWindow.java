@@ -1,5 +1,6 @@
 package client;
 
+import client.listener.AnswerListener;
 import server.entity.Question;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 public class GameWindow extends JFrame implements ActionListener {
 
     private String correctAnswer;
+    private AnswerListener answerListener;
 
     JPanel scorePanel = new JPanel();
     JButton scoreButton1 = new JButton();
@@ -93,10 +95,18 @@ public class GameWindow extends JFrame implements ActionListener {
         for (JButton button : answerButtons) {
             button.setEnabled(false);
         }
+
+        if (answerListener != null) {
+            answerListener.onAnswerSelected(selectedAnswer);
+        }
     }
 
     public static void main(String[] args) {
         GameWindow gameWindow = new GameWindow();
+    }
+
+    public void setAnswerListener(AnswerListener answerListener) {
+        this.answerListener = answerListener;
     }
 
     public void updateQuestion(Question question) {

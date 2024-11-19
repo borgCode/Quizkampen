@@ -65,6 +65,25 @@ public class NetworkHandler {
                     
                     for (Question question : questions) {
                         windowManager.displayQuestion(question);
+
+                        String[] selectedAnswer = new String[1]; 
+                        
+                        
+                        synchronized (selectedAnswer) {
+                            windowManager.getGameWindow().setAnswerListener(answer -> {
+                                synchronized (selectedAnswer) {
+                                    selectedAnswer[0] = answer;
+                                    selectedAnswer.notify();
+                                }
+                            });
+
+                            try {
+                                selectedAnswer.wait();
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                e.printStackTrace();
+                            }
+                        }
                         
 //                        System.out.println(question.getQuestion());
 //                        System.out.println(Arrays.toString(question.getOptions()));
