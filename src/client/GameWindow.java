@@ -106,7 +106,7 @@ public class GameWindow extends JFrame implements ActionListener {
 
         // Nästa-knappen
         JButton nextButton = new JButton("Nästa");
-        nextButton.setFocusable(false);
+        nextButton.setFocusable(false); // Tar bort den fula kanten som kommer upp runt "nästa"
         nextButton.setFont(new Font("Arial", Font.BOLD, 12));
         nextButton.addActionListener(e -> {
             for (JButton button : answerButtons) {
@@ -164,7 +164,7 @@ public class GameWindow extends JFrame implements ActionListener {
             // Markerar rätt svar med grön färg
             for (JButton button : answerButtons) {
                 if (button.getText().equals(correctAnswer)) {
-                    button.setBackground(Color.GREEN);
+                    button.setBackground(new Color(144, 238, 144));
                 }
             }
         }
