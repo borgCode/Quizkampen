@@ -51,6 +51,7 @@ public class ScoreWindow extends JFrame {
         player1Panel.add(name1, BorderLayout.CENTER);
 
         // TODO: Poäng
+        //TODO :OBS! HÅRDKODAT POÄNGEN!!
         JLabel score = new JLabel("9 - 7", SwingConstants.CENTER);
         score.setFont(new Font("Arial", Font.BOLD, 32));
 
@@ -82,10 +83,13 @@ public class ScoreWindow extends JFrame {
             JPanel rowPanel = new JPanel(new GridLayout(1,7));
             rowPanel.setOpaque(false);
 
+
             //Knappar spelare 1:
             for (int j = 1; j <=3 ; j++) {
                 JButton buttonPlayer1 = new JButton();
+                buttonPlayer1.setEnabled(false);
                 rowPanel.add(buttonPlayer1);
+
             }
 
             //Rond
@@ -96,6 +100,7 @@ public class ScoreWindow extends JFrame {
             //Knappar spelare 2:
             for (int u = 1; u <=3; u++) {
                 JButton buttonPlayer2 = new JButton();
+                buttonPlayer2.setEnabled(false);
                 rowPanel.add(buttonPlayer2);
             }
 
@@ -108,6 +113,7 @@ public class ScoreWindow extends JFrame {
         bottomPanel.setOpaque(false);
         JButton giveUpButton = new JButton("Ge upp");
         JButton waitButton = new JButton("Vänta");
+        waitButton.setEnabled(false);
         bottomPanel.add(giveUpButton);
         bottomPanel.add(waitButton);
 
@@ -118,7 +124,7 @@ public class ScoreWindow extends JFrame {
         setVisible(true);
     }
 
-
+    //TODO:TILLFÄLLIGT FÖR TEST
     public static void main(String[] args) {
         ScoreWindow window = new ScoreWindow();
     }

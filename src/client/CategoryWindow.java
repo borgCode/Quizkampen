@@ -111,5 +111,4 @@ public class CategoryWindow extends JFrame {
     public String getSelectedCategory() {
         return selectedCategory;
     }
-
 }

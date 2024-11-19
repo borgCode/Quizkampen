@@ -64,8 +64,7 @@ public class GameWindow extends JFrame implements ActionListener {
         backgroundLabel.add(answerPanel, BorderLayout.SOUTH);
 
 
-
-
+       // TODO: getSelectedCategory för att få fram rätt frågor + Lägg in frågorna i rätt button + Kontrollera svaret
         for (int i = 0; i < answerButtons.length; i++) {
             answerButtons[i] = new JButton("" + (i + 1));
             answerButtons[i].addActionListener(this);
@@ -103,7 +102,7 @@ public class GameWindow extends JFrame implements ActionListener {
             button.setEnabled(false);
         }
     }
-
+    //TODO:TILLFÄLLIGT FÖR TEST
     public static void main(String[] args) {
         GameWindow gameWindow = new GameWindow();
     }
