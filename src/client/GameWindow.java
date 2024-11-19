@@ -13,12 +13,13 @@ public class GameWindow extends JFrame implements ActionListener {
     private String correctAnswer;
     private AnswerListener answerListener;
     private boolean hasAnswered;
+    private ImageIcon crossImageIcon;
+    private ImageIcon checkImageIcon;
 
     JPanel scorePanel = new JPanel();
-    JButton scoreButton1 = new JButton();
-    JButton scoreButton2 = new JButton();
-    JButton scoreButton3 = new JButton();
-
+    JButton[] scoreButtons = new JButton[3];
+    int round = 0;
+    
     JPanel questionPanel = new JPanel();
     JLabel question = new JLabel("Fråga?");
 
@@ -34,21 +35,34 @@ public class GameWindow extends JFrame implements ActionListener {
         setContentPane(backgroundLabel);
 
 
-        //Poängrutan
+//        Poängrutan
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        scorePanel.add(scoreButton1);
-        scorePanel.add(scoreButton2);
-        scorePanel.add(scoreButton2);
-        scorePanel.add(scoreButton3);
-        scoreButton1.setPreferredSize(new Dimension(30, 30));
-        scoreButton2.setPreferredSize(new Dimension(30, 30));
-        scoreButton3.setPreferredSize(new Dimension(30, 30));
+        for (int i = 0; i < 3; i++) {
+            JButton scoreButton = new JButton();
+            scoreButton.setPreferredSize(new Dimension(30, 30));
+            scoreButton.setEnabled(true);
+            scoreButton.setContentAreaFilled(false);
+            scoreButton.setBorder(BorderFactory.createEmptyBorder());
+            scoreButtons[i] = scoreButton;
+            scorePanel.add(scoreButton);
+            
+        }
 
-        //Inte kunna klicka på knapparna (Poängrutan)
-        scoreButton1.setEnabled(false);
-        scoreButton2.setEnabled(false);
-        scoreButton3.setEnabled(false);
+        crossImageIcon = new ImageIcon("src/resources/images/cross.png");
+        Image scaledCrossImage = crossImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        crossImageIcon = new ImageIcon(scaledCrossImage);
 
+        checkImageIcon = new ImageIcon("src/resources/images/check.png");
+        Image scaledCheckImage = checkImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        checkImageIcon = new ImageIcon(scaledCheckImage);
+
+        
+
+        
+        /*avatar2.setContentAreaFilled(false); // Tar bort bakgrund
+        avatar2.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
+        avatar2.setFocusable(false);
+        avatar2.setOpaque(false);*/
 
         scorePanel.setBackground(Color.lightGray);
         scorePanel.setPreferredSize(new Dimension(150, 50));
@@ -76,7 +90,7 @@ public class GameWindow extends JFrame implements ActionListener {
         questionAndAnswerPanel.add(answerPanel, BorderLayout.CENTER);
         backgroundLabel.add(questionAndAnswerPanel, BorderLayout.CENTER);
 
-
+        
 
        // TODO: getSelectedCategory för att få fram rätt frågor + Lägg in frågorna i rätt button + Kontrollera svaret
         for (int i = 0; i < answerButtons.length; i++) {
@@ -103,7 +117,7 @@ public class GameWindow extends JFrame implements ActionListener {
         setTitle("Quiz Kampen");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        setVisible(true);
+
 
     }
 
@@ -115,8 +129,12 @@ public class GameWindow extends JFrame implements ActionListener {
         // Byter färg baserat på svar
         if (selectedAnswer.equals(correctAnswer)){
             clickedButton.setBackground(Color.GREEN);
+            scoreButtons[round].setIcon(checkImageIcon);
+            round++;
         } else {
             clickedButton.setBackground(Color.RED);
+            scoreButtons[round].setIcon(crossImageIcon);
+            round++;
             // Markerar rätt svar efter man valt knapp
             for (JButton button : answerButtons) {
                 if (button.getText().equals(correctAnswer)) {
