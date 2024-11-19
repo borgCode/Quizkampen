@@ -179,5 +179,8 @@ public class GameWindow extends JFrame implements ActionListener {
 
     public void resetRound() {
         round = 0;
+        scoreButtons[0].setIcon(null);
+        scoreButtons[1].setIcon(null);
+        scoreButtons[2].setIcon(null);
     }
 }

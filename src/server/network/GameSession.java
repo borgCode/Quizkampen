@@ -14,6 +14,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static server.network.Properties.rounds;
+
 public class GameSession extends Thread {
 
     private final Socket player1Socket;
@@ -47,47 +49,35 @@ public class GameSession extends Thread {
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
             ObjectInputStream[] inputStreams = {inPlayer1, inPlayer2};
             Player[] players = {player1, player2};
+            int currentPlayer = 0;
 
             while (true) {
                 Game game = new Game(player1, player2);
 
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
                 outPlayer2.writeObject(Protocol.WAITING);
-                
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV", "Spel", "Mat", "Literatur", "Sport"));
+                for (int i = 0; i < rounds; i++){
+                    // Låt currentplayer välja kategori
+                    String selectedCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
 
-                String selectedCategory = handleCategorySelection(outPlayer1, inPlayer1, categories);
-
-                //Hämta random frågor från questionBank och skapa Round object
-                Round round = new Round(questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase()), selectedCategory);
-
-                processQuestions(outPlayer1, inPlayer1, game, player1, round);
-                sendResultsToOpponent(outPlayer2, round);
-                
-                outPlayer1.writeObject(Protocol.WAITING);
-                outPlayer1.flush();
-
-                int currentPlayer = 1;
-
-                for (int i = 0; i < 5; i++) {
+                    //Hämta random frågor från questionBank och skapa Round object
+                    Round round = new Round(questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase()), selectedCategory);
+                    // Spelaren som vlade kategori får svara
                     processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round);
                     sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], round);
 
-                    String newCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
-                    round.setSelectedCategory(newCategory);
-                    round.setCurrentQuestions(questionBank.getRandomQuestionsByCategory(round.getSelectedCategory().toLowerCase()));
-                    
+                    // Andra spelaren får svara
+                    processQuestions(outputStreams[(currentPlayer + 1) % 2], inputStreams[(currentPlayer +1) % 2], game, players[(currentPlayer + 1) % 2], round);
+                    sendResultsToOpponent(outputStreams[currentPlayer], round);
 
-                    processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round);
-                    sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], round);
+                    // Informera om att vänta
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
-
                     currentPlayer = (currentPlayer + 1) % 2;
+
                 }
 
-                processQuestions(outPlayer1, inPlayer1, game, player1, round);
-                sendResultsToOpponent(outPlayer2, round);
-                
+
 
                 //TODO end game logic
 
