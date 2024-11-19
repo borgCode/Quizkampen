@@ -63,6 +63,7 @@ public class NetworkHandler {
                     // Skicka vald kategori till servern
                     out.writeObject(windowManager.getSelectedCategory());
                     out.flush();
+                    windowManager.setSelectedCategory(null);
 
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
                     windowManager.resetRound();
