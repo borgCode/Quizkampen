@@ -59,10 +59,6 @@ public class GameWindow extends JFrame implements ActionListener {
         
 
         
-        /*avatar2.setContentAreaFilled(false); // Tar bort bakgrund
-        avatar2.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
-        avatar2.setFocusable(false);
-        avatar2.setOpaque(false);*/
 
         scorePanel.setBackground(Color.lightGray);
         scorePanel.setPreferredSize(new Dimension(150, 50));
@@ -179,5 +175,9 @@ public class GameWindow extends JFrame implements ActionListener {
 
     public void setHasAnswered(boolean hasAnswered) {
         this.hasAnswered = hasAnswered;
+    }
+
+    public void resetRound() {
+        round = 0;
     }
 }

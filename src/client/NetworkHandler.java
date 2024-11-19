@@ -67,6 +67,8 @@ public class NetworkHandler {
                     out.flush();
 
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
+                    windowManager.resetRound();
+                    
                     //Läs in tre frågor
                     ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
                     

@@ -42,4 +42,8 @@ public class WindowManager {
     public GameWindow getGameWindow() {
         return gameWindow;
     }
+
+    public void resetRound() {
+        gameWindow.resetRound();
+    }
 }
