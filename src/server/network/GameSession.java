@@ -19,6 +19,7 @@ public class GameSession extends Thread {
     private final Socket player1Socket;
     private final Socket player2Socket;
     private final QuestionBank questionBank;
+    private int totalRounds = 0;
     
 
 
@@ -27,6 +28,8 @@ public class GameSession extends Thread {
         this.player1Socket = player1Socket;
         this.player2Socket = player2Socket;
         this.questionBank = new QuestionBank();
+        // Sätter rundor på totalRounds från läsning av PropertiesManager
+        this.totalRounds = PropertiesManager.totalRoundsSet();
     }
 
     public void run() {
@@ -49,13 +52,20 @@ public class GameSession extends Thread {
             Player[] players = {player1, player2};
             int currentPlayer = 0;
 
+
+            // Skickar ENUM rounds och totalrounds till både klienter
+            outPlayer1.writeObject(Protocol.SENT_TOTAL_ROUNDS);
+            outPlayer1.writeObject(totalRounds);
+            outPlayer2.writeObject(Protocol.SENT_TOTAL_ROUNDS);
+            outPlayer2.writeObject(totalRounds);
+
             while (true) {
                 Game game = new Game(player1, player2);
 
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
                 outPlayer2.writeObject(Protocol.WAITING);
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV-serier", "TV-spel", "Mat", "Litteratur", "Sport"));
-                for (int i = 0; i < 6; i++){
+                for (int i = 0; i < totalRounds; i++){
                     // Låt currentplayer välja kategori
                     String selectedCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
 
