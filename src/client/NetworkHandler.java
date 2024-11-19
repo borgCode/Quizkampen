@@ -68,11 +68,13 @@ public class NetworkHandler {
 
                         String[] selectedAnswer = new String[1]; 
                         
-                        
+                        //Sync block så att bara en tråd kan modifiera selectedAnswer
                         synchronized (selectedAnswer) {
+                            //Settar answerListener så vi får tillbaka användarens svar som sedan settas till selectedAnswer
                             windowManager.getGameWindow().setAnswerListener(answer -> {
                                 synchronized (selectedAnswer) {
                                     selectedAnswer[0] = answer;
+                                    //När användaren har svarat och svaret har blivit uppdaterat här kan main tråden fortsätta
                                     selectedAnswer.notify();
                                 }
                             });
