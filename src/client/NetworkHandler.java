@@ -47,11 +47,23 @@ public class NetworkHandler {
             while (true) {
                 Protocol state = (Protocol) in.readObject();
                 if (state.equals(Protocol.WAITING)) {
-                    System.out.println("Vänta på andra spelaren");
+                    System.out.println("Väntar på andra spelaren");
                 } else if (state.equals(Protocol.SENT_CATEGORY)) {
-                    // Läser in kategorier
-                    System.out.println(in.readObject());
-                    out.writeObject(userInput.readLine());
+                    // Läser in kategorier från servern
+                    ArrayList<String> categories = (ArrayList<String>) in.readObject();
+
+                    // Visar kategorier i CategoryWindow
+                    CategoryWindow categoryWindow = new CategoryWindow(categories);
+                    categoryWindow.setVisible(true);
+
+                    // Vänta tills användaren väljer en kategori
+                    while (categoryWindow.getSelectedCategory() == null) {
+                        Thread.sleep(100);
+                    }
+
+                    // Skicka vald kategori till servern
+                    String selectedCategory = categoryWindow.getSelectedCategory();
+                    out.writeObject(selectedCategory);
                     out.flush();
 
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
@@ -124,6 +136,8 @@ public class NetworkHandler {
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Fel vid anslutning eller dataläsning: " + e.getMessage());
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

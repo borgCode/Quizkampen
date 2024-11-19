@@ -25,7 +25,15 @@ public class GameWindow extends JFrame implements ActionListener {
     JButton[] answerButtons = new JButton [4];
 
     GameWindow() {
-        //TODO: POÄNG
+
+        //backgroundLabel
+        JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
+        backgroundLabel.setBounds(0, 0, 400, 500);
+        backgroundLabel.setLayout(new BorderLayout());
+        setContentPane(backgroundLabel);
+
+
+        //Poängrutan
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         scorePanel.add(scoreButton1);
         scorePanel.add(scoreButton2);
@@ -35,27 +43,32 @@ public class GameWindow extends JFrame implements ActionListener {
         scoreButton2.setPreferredSize(new Dimension(30, 30));
         scoreButton3.setPreferredSize(new Dimension(30, 30));
 
-        //Inte kunna klicka på knapparna
+        //Inte kunna klicka på knapparna (Poängrutan)
         scoreButton1.setEnabled(false);
         scoreButton2.setEnabled(false);
         scoreButton3.setEnabled(false);
 
+
         scorePanel.setBackground(Color.lightGray);
         scorePanel.setPreferredSize(new Dimension(150, 50));
-        add(scorePanel, BorderLayout.NORTH);
+        scorePanel.setOpaque(false);
+        backgroundLabel.add(scorePanel, BorderLayout.NORTH);
 
 
-
-        //TODO:FRÅGAN
+        //Frågan
         questionPanel.setLayout(new FlowLayout());
         questionPanel.add(question);
         questionPanel.setBackground(Color.WHITE);
-        add(questionPanel, BorderLayout.CENTER);
+        questionPanel.setOpaque(false);
+        backgroundLabel.add(questionPanel, BorderLayout.CENTER);
 
-        //TODO: SVAR
+        //Svar
         answerPanel.setLayout(new GridLayout(2,2));
-        add(answerPanel, BorderLayout.SOUTH);
+        answerPanel.setOpaque(false);
+        backgroundLabel.add(answerPanel, BorderLayout.SOUTH);
 
+
+       // TODO: getSelectedCategory för att få fram rätt frågor + Lägg in frågorna i rätt button + Kontrollera svaret
         for (int i = 0; i < answerButtons.length; i++) {
             answerButtons[i] = new JButton("" + (i + 1));
             answerButtons[i].addActionListener(this);
@@ -70,10 +83,7 @@ public class GameWindow extends JFrame implements ActionListener {
 //        setVisible(true);
 
     }
-    //TODO: Panel TIMER?
-    //TODO: ScoreWINDOW
 
-    //TODO: KNAPP LYSSNARE
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clickedButton = (JButton) e.getSource();
@@ -100,7 +110,7 @@ public class GameWindow extends JFrame implements ActionListener {
             answerListener.onAnswerSelected(selectedAnswer);
         }
     }
-
+    //TODO:TILLFÄLLIGT FÖR TEST
     public static void main(String[] args) {
         GameWindow gameWindow = new GameWindow();
     }
