@@ -81,7 +81,7 @@ public class StartWindow extends JFrame {
 
         // Laddar in avatarerna i comboboxen
         loadAvatars();
-        setVisible(true);
+//        setVisible(true);
 
     }
 

@@ -39,7 +39,7 @@ public class CategoryWindow extends JFrame implements ActionListener {
         category3.addActionListener(this);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+//        setVisible(true);
         setSize(400, 400);
 
 

@@ -63,7 +63,7 @@ public class GameWindow extends JFrame implements ActionListener {
         setTitle("Quiz Kampen");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+//        setVisible(true);
 
     }
     //TODO: Panel TIMER?

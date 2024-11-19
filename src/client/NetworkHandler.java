@@ -1,7 +1,6 @@
 package client;
 
 
-import server.entity.Player;
 import server.entity.Question;
 import server.network.Protocol;
 
@@ -11,22 +10,24 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class Client {
-    Client() {
-        StartWindow startWindow = new StartWindow();
+public class NetworkHandler {
+    private WindowManager windowManager;
+    NetworkHandler(WindowManager windowManager) {
+        this.windowManager = windowManager;
+        
         int port = 55566;
         String ip = "127.0.0.1";
+        
         String name;
         ImageIcon avatar;
 
 
         //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
-        while (startWindow.getPlayer() == null) {
+        while (windowManager.getPlayer() == null) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -40,7 +41,7 @@ public class Client {
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
             //Skickar spelaren till servern
-            out.writeObject(startWindow.getPlayer());
+            out.writeObject(windowManager.getPlayer());
 
 
             while (true) {
@@ -101,8 +102,6 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) {
-        Client client = new Client();
-    }
+    
 }
 
