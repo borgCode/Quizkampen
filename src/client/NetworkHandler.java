@@ -108,6 +108,10 @@ public class NetworkHandler {
                             
                             
                         }
+                        if (selectedAnswer[0] != null && selectedAnswer[0].equalsIgnoreCase(question.getCorrectAnswer())) {
+                            scoreList.add(1);
+                        } else
+                            scoreList.add(0);
 
                         while (!windowManager.getGameWindow().isHasAnswered()) {
                             try {
@@ -117,16 +121,7 @@ public class NetworkHandler {
                             }
                         }
                         windowManager.getGameWindow().setHasAnswered(false);
-                        
-                        
-//                        System.out.println(question.getQuestion());
-//                        System.out.println(Arrays.toString(question.getOptions()));
-//                        String userAnswer = scanner.next();
-//                        if (userAnswer.equalsIgnoreCase(question.getCorrectAnswer())) {
-//                            scoreList.add(1);
-//                        } else {
-//                            scoreList.add(0);
-//                        }
+
                     }
 
                     //TODO skapa metod för att updatea GUI med rondresultat
