@@ -7,8 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Timer;
 
 public class GameWindow extends JFrame implements ActionListener {
 
@@ -18,42 +18,42 @@ public class GameWindow extends JFrame implements ActionListener {
     private ImageIcon crossImageIcon;
     private ImageIcon checkImageIcon;
 
-    // Panel och knappar för att visa poäng
-    private JPanel scorePanel = new JPanel();
-    private JButton[] scoreButtons = new JButton[3];
-    private int round = 0; // Håller reda på vilken runda det är
+    JPanel scorePanel = new JPanel();
+    JButton[] scoreButtons = new JButton[3];
+    int round = 0;
 
-    private JPanel questionPanel = new JPanel();
-    private JTextArea questionArea = new JTextArea();
+    JPanel questionPanel = new JPanel();
+    JLabel question = new JLabel();
 
-    // Panel och knappar för att visa svarsalternativ
-    private JPanel answerPanel = new JPanel();
-    private JButton[] answerButtons = new JButton[4];
+    JPanel answerPanel = new JPanel();
+    JButton[] answerButtons = new JButton [4];
 
-    private JProgressBar timerBar;
-    private Timer questionTimer;
+    JProgressBar timerBar;
+    Timer questionTimer;
     private static final int TIMER_DURATION = 15;
 
     GameWindow() {
-        // Sätter bakgrundsbilden och ställer in layouten
+
+        //backgroundLabel
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
         backgroundLabel.setBounds(0, 0, 400, 500);
         backgroundLabel.setLayout(new BorderLayout());
         setContentPane(backgroundLabel);
 
-        // Skapar panel för att visa poäng och lägger till tre knappar som representerar varje runda
+
+//        Poängrutan
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         for (int i = 0; i < 3; i++) {
             JButton scoreButton = new JButton();
             scoreButton.setPreferredSize(new Dimension(30, 30));
             scoreButton.setEnabled(true);
-            scoreButton.setContentAreaFilled(false); // Tar bort bakgrunden
-            scoreButton.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinjen
+            scoreButton.setContentAreaFilled(false);
+            scoreButton.setBorder(BorderFactory.createEmptyBorder());
             scoreButtons[i] = scoreButton;
             scorePanel.add(scoreButton);
+
         }
 
-        // Sätter in och skalar ikonerna för korrekt och inkorrekt svar
         crossImageIcon = new ImageIcon("src/resources/images/cross.png");
         Image scaledCrossImage = crossImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         crossImageIcon = new ImageIcon(scaledCrossImage);
@@ -62,29 +62,19 @@ public class GameWindow extends JFrame implements ActionListener {
         Image scaledCheckImage = checkImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         checkImageIcon = new ImageIcon(scaledCheckImage);
 
-        // Ställer in bakgrundsfärgen och gör panelen genomskinlig
         scorePanel.setBackground(Color.lightGray);
         scorePanel.setPreferredSize(new Dimension(150, 50));
         scorePanel.setOpaque(false);
         backgroundLabel.add(scorePanel, BorderLayout.NORTH);
 
-        // Skapar panel för frågan och ställer in layout och storlek
-        questionPanel.setLayout(new BorderLayout());
-        questionPanel.setPreferredSize(new Dimension(400, 150));
+
+
+        //Frågan
+        questionPanel.setLayout(new FlowLayout());
+        questionPanel.setPreferredSize(new Dimension(150,100));
+        questionPanel.add(question);
+        questionPanel.setBackground(Color.WHITE);
         questionPanel.setOpaque(false);
-
-        // Ställer in egenskaper för texten som visar frågan
-        questionArea.setLineWrap(true); // Aktiverar radbrytning
-        questionArea.setWrapStyleWord(true); // Bryter vid ord
-        questionArea.setEditable(false); // Gör texten skrivskyddat
-        questionArea.setFont(new Font("Arial", Font.BOLD, 16));
-        questionArea.setOpaque(false); // Gör bakgrunden genomskinlig
-        questionArea.setFocusable(false);
-        questionArea.setMargin(new Insets(10, 10, 10, 10));
-        questionArea.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrerar
-        questionArea.setAlignmentY(Component.CENTER_ALIGNMENT); // Centrerar
-
-        questionPanel.add(questionArea, BorderLayout.CENTER);
 
         // Skapar och ställer in JProgressBar
         timerBar = new JProgressBar(0, TIMER_DURATION * 10); // JProgressBar med 10 steg per sekund
@@ -96,51 +86,48 @@ public class GameWindow extends JFrame implements ActionListener {
 
         backgroundLabel.add(questionPanel, BorderLayout.CENTER);
 
-        // Panel för svarsknappar och ställer in layouten
-        answerPanel.setLayout(new GridLayout(2, 2));
+        //Svar
+        answerPanel.setLayout(new GridLayout(2,2));
         answerPanel.setOpaque(false);
 
-        JPanel answerContainer = new JPanel(new BorderLayout());
-        answerContainer.setOpaque(false);
-        answerContainer.add(answerPanel, BorderLayout.CENTER);
 
-        // Nästa-knappen
-        JButton nextButton = new JButton("Nästa");
-        nextButton.setFocusable(false); // Tar bort den fula kanten som kommer upp runt "nästa"
-        nextButton.setFont(new Font("Arial", Font.BOLD, 12));
+        JPanel questionAndAnswerPanel = new JPanel(new BorderLayout());
+        questionAndAnswerPanel.setOpaque(false);
+        questionAndAnswerPanel.add(questionPanel, BorderLayout.NORTH);
+        questionAndAnswerPanel.add(answerPanel, BorderLayout.CENTER);
+        backgroundLabel.add(questionAndAnswerPanel, BorderLayout.CENTER);
+
+
+
+        // TODO: getSelectedCategory för att få fram rätt frågor + Lägg in frågorna i rätt button + Kontrollera svaret
+        for (int i = 0; i < answerButtons.length; i++) {
+            answerButtons[i] = new JButton("" + (i + 1));
+            answerButtons[i].addActionListener(this);
+            answerButtons[i].setPreferredSize(new Dimension(150, 100));
+            //Lägger till knapparna i panelen
+            answerPanel.add(answerButtons[i]);
+        }
+        JButton nextButton = new JButton("Next");
         nextButton.addActionListener(e -> {
             for (JButton button : answerButtons) {
-                button.setBackground(null); // Återställer knappens färg
-                button.setEnabled(true); // Aktiverar knapparna igen
+                button.setBackground(null);
             }
-            setHasAnswered(true); // Visar att användaren är redo för nästa fråga
+            setHasAnswered(true);
         });
+
         JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         nextButtonPanel.add(nextButton);
         nextButtonPanel.setOpaque(false);
+        backgroundLabel.add(nextButtonPanel, BorderLayout.SOUTH);
 
-        answerContainer.add(nextButtonPanel, BorderLayout.SOUTH);
-        backgroundLabel.add(answerContainer, BorderLayout.SOUTH);
 
-        // Svarsknapparna
-        for (int i = 0; i < answerButtons.length; i++) {
-            answerButtons[i] = new JButton("" + (i + 1)); // Sätter knappens text
-            answerButtons[i].addActionListener(this); // Lägger till ActionListener
-            answerButtons[i].setPreferredSize(new Dimension(150, 100));
-            answerPanel.add(answerButtons[i]);
-        }
-
-        // Ser till att layouten uppdateras korrekt
-        backgroundLabel.revalidate();
-        backgroundLabel.repaint();
-
-        setTitle("QuizKampen");
-        setSize(400, 500);
+        setTitle("Quiz Kampen");
+        setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false); // Gör så att fönstret inte ändrar storlek
+
+
     }
 
-    // ActionListener som hanterar knapptryckningar från användaren
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton clickedButton = (JButton) e.getSource();
@@ -153,29 +140,30 @@ public class GameWindow extends JFrame implements ActionListener {
     private void handleAnswer(String selectedAnswer, JButton clickedButton) {
         stopTimer();
 
-        // Ändrar knappens färg beroende på om svaret är rätt eller fel
-        if (selectedAnswer.equals(correctAnswer)) {
-            if (clickedButton != null) clickedButton.setBackground(Color.GREEN);
-            scoreButtons[round].setIcon(checkImageIcon); // Sätter ikon för rätt svar
-        } else {
-            if (clickedButton != null) clickedButton.setBackground(Color.RED);
-            scoreButtons[round].setIcon(crossImageIcon); // Sätter ikon för fel svar
 
-            // Markerar rätt svar med grön färg
+        // Byter färg baserat på svar
+        if (selectedAnswer.equals(correctAnswer)){
+            if (clickedButton != null)
+                clickedButton.setBackground(Color.GREEN);
+            scoreButtons[round].setIcon(checkImageIcon);
+            round++;
+        } else {
+            if (clickedButton != null)
+                clickedButton.setBackground(Color.RED);
+            scoreButtons[round].setIcon(crossImageIcon);
+            round++;
+            // Markerar rätt svar efter man valt knapp
             for (JButton button : answerButtons) {
                 if (button.getText().equals(correctAnswer)) {
-                    button.setBackground(new Color(144, 238, 144));
+                    button.setBackground(Color.GREEN);
                 }
             }
         }
-
-        round++; // Går vidare till nästa runda
-
-        // Inaktiverar svarsknapparna efter att användaren har svarat
+        // Inaktiverar knappar efter val
         for (JButton button : answerButtons) {
             button.setEnabled(false);
         }
-        // Anropar lyssnaren om det finns en
+
         if (answerListener != null) {
             answerListener.onAnswerSelected(selectedAnswer);
         }
@@ -220,18 +208,24 @@ public class GameWindow extends JFrame implements ActionListener {
         }
     }
 
+
+    public void setAnswerListener(AnswerListener answerListener) {
+        this.answerListener = answerListener;
+    }
+
     public void updateQuestion(Question question) {
         stopTimer();
-        this.questionArea.setText(question.getQuestion());
+        this.question.setText(question.getQuestion());
 
         String[] options = question.getOptions();
         for (int i = 0; i < options.length; i++) {
-            answerButtons[i].setText(options[i]); // Ställer in texten för varje svarsknapp
-            answerButtons[i].setEnabled(true); // Aktiverar svarsknapparna
+            answerButtons[i].setText(options[i]);
+            answerButtons[i].setEnabled(true);
         }
 
-        this.correctAnswer = question.getCorrectAnswer(); // Sparar det korrekta svaret
+        this.correctAnswer = question.getCorrectAnswer();
         startTimer();
+
     }
 
     public boolean isHasAnswered() {
@@ -247,9 +241,5 @@ public class GameWindow extends JFrame implements ActionListener {
         scoreButtons[0].setIcon(null);
         scoreButtons[1].setIcon(null);
         scoreButtons[2].setIcon(null);
-    }
-
-    public void setAnswerListener(AnswerListener answerListener) {
-        this.answerListener = answerListener;
     }
 }
