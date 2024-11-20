@@ -1,12 +1,18 @@
 package client;
 
+import server.entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ScoreWindow extends JFrame {
 
+    private Player player1, player2;
+    private int numberOfRows;
 
-    ScoreWindow(){
+    ScoreWindow(Player player1, Player player2, int numberOfRows) {
+        this.player1 = player1;
+        this.player2 = player2;
 
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -30,13 +36,13 @@ public class ScoreWindow extends JFrame {
 
 
         //TODO: Avatar och spelare nr 1
-        JButton avatar1 = new JButton(new ImageIcon("src/resources/avatars/Gengar.png"));
+        JButton avatar1 = new JButton(player1.getAvatar());
         avatar1.setContentAreaFilled(false); // Tar bort bakgrund
         avatar1.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
         avatar1.setFocusable(false);
         avatar1.setOpaque(false);
 
-        JLabel name1 = new JLabel ("Name 1", SwingConstants.CENTER);
+        JLabel name1 = new JLabel (player1.getName(), SwingConstants.CENTER);
         JPanel player1Panel = new JPanel(new BorderLayout());
         player1Panel.setOpaque(false);
         player1Panel.add(avatar1, BorderLayout.NORTH);
@@ -44,17 +50,17 @@ public class ScoreWindow extends JFrame {
 
         // TODO: Poäng
         //TODO :OBS! HÅRDKODAT POÄNGEN!!
-        JLabel score = new JLabel("9 - 7", SwingConstants.CENTER);
+        JLabel score = new JLabel("0 - 0", SwingConstants.CENTER);
         score.setFont(new Font("Arial", Font.BOLD, 32));
 
         // TODO: Avatar och spelare nr 2
-        JButton avatar2 = new JButton(new ImageIcon("src/resources/avatars/Poliwag.png"));
+        JButton avatar2 = new JButton(player2.getAvatar());
         avatar2.setContentAreaFilled(false); // Tar bort bakgrund
         avatar2.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
         avatar2.setFocusable(false);
         avatar2.setOpaque(false);
 
-        JLabel name2 = new JLabel("Namn 2", SwingConstants.CENTER);
+        JLabel name2 = new JLabel(player2.getName(), SwingConstants.CENTER);
         JPanel player2Panel = new JPanel(new BorderLayout());
         player2Panel.setOpaque(false);
         player2Panel.add(avatar2, BorderLayout.NORTH);
@@ -67,10 +73,11 @@ public class ScoreWindow extends JFrame {
         topPanel.setOpaque(false);
         panel.add(topPanel, BorderLayout.NORTH);
 
-        //TODO: Mitt panelen med ronderna
-        JPanel rondPanel = new JPanel(new GridLayout(6,1));
+
+        //Mitt panelen med ronderna
+        JPanel rondPanel = new JPanel(new GridLayout(numberOfRows,1)); //TODO: Ändrat till numberOfRows
         rondPanel.setOpaque(false);
-        for (int i = 1; i <= 6 ; i++) {
+        for (int i = 1; i <= numberOfRows ; i++) {
             // 7 kolumner motsvarar: 3 knappar + RondNr + 3 Knappar
             JPanel rowPanel = new JPanel(new GridLayout(1,7));
             rowPanel.setOpaque(false);
@@ -116,9 +123,13 @@ public class ScoreWindow extends JFrame {
         setVisible(true);
     }
 
-    //TODO:TILLFÄLLIGT FÖR TEST
     public static void main(String[] args) {
-        ScoreWindow window = new ScoreWindow();
+        //TODO: OBS HÅRDKODAT. Dessa ska man få från StartWindow
+        Player player1 = new Player("Spelare 1",new ImageIcon("src/resources/avatars/Gengar.png"));
+        Player player2 = new Player("Spelare 2",new ImageIcon("src/resources/avatars/Poliwag.png"));
+        int numberOfRows = 6;
+        ScoreWindow scoreWindow = new ScoreWindow( player1,  player2,  numberOfRows);
     }
+
 
 }

@@ -2,6 +2,8 @@ package server.entity;
 
 import javax.swing.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player implements Serializable {
     private String name;
@@ -11,10 +13,22 @@ public class Player implements Serializable {
     private Player opponent;
 
 
+    private List<Boolean> answers  = new ArrayList<>();;
+
+    // Getter och Setter för svar
+    public List<Boolean> getAnswers() {
+        return answers;
+    }
+
+    public void addAnswer(boolean isCorrect) {
+    }
+
+
     public Player(String name, ImageIcon avatar) {
         this.name = name;
         this.avatar = avatar;
     }
+
     public void setOpponent(Player opponent) {
         this.opponent = opponent;
     }
