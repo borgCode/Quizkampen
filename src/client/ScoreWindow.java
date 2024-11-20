@@ -1,7 +1,7 @@
 package client;
 
 import server.entity.Player;
-import server.network.Properties;
+import server.network.PropertiesManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +14,7 @@ public class ScoreWindow extends JFrame {
     ScoreWindow(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
-        this.rounds = rounds;
-        // this.rounds = PropertiesManager.totalRoundsSet();
+        this.rounds = PropertiesManager.totalRoundsSet();
         System.out.println(player1.getName() + " " + player2.getName());
 
         setTitle("QuizKampen");
