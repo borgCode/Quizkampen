@@ -1,12 +1,16 @@
 package client;
 
+import server.network.PropertiesManager;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class ScoreWindow extends JFrame {
+    private int rounds;
 
 
     ScoreWindow(){
+        this.rounds = PropertiesManager.totalRoundsSet();
 
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,7 +74,7 @@ public class ScoreWindow extends JFrame {
         //TODO: Mitt panelen med ronderna
         JPanel rondPanel = new JPanel(new GridLayout(6,1));
         rondPanel.setOpaque(false);
-        for (int i = 1; i <= 6 ; i++) {
+        for (int i = 1; i <= rounds ; i++) {
             // 7 kolumner motsvarar: 3 knappar + RondNr + 3 Knappar
             JPanel rowPanel = new JPanel(new GridLayout(1,7));
             rowPanel.setOpaque(false);
