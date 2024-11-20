@@ -18,42 +18,43 @@ public class GameWindow extends JFrame implements ActionListener {
     private ImageIcon crossImageIcon;
     private ImageIcon checkImageIcon;
 
-    JPanel scorePanel = new JPanel();
-    JButton[] scoreButtons = new JButton[3];
-    int round = 0;
+    private JPanel scorePanel = new JPanel();
+    private JButton[] scoreButtons = new JButton[3];
+    private int round = 0; // Håller reda på vilken runda det är
 
-    JPanel questionPanel = new JPanel();
-    JLabel question = new JLabel();
+    private JPanel questionPanel = new JPanel();
+    private JTextArea question = new JTextArea();
 
-    JPanel answerPanel = new JPanel();
-    JButton[] answerButtons = new JButton [4];
+    private JPanel answerPanel = new JPanel();
+    private JButton[] answerButtons = new JButton [4];
 
-    JProgressBar timerBar;
-    Timer questionTimer;
+    private JProgressBar timerBar;
+    private Timer questionTimer;
     private static final int TIMER_DURATION = 15;
 
     GameWindow() {
 
-        //backgroundLabel
+        // Sätter bakgrundsbilden och ställer in layouten
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
         backgroundLabel.setBounds(0, 0, 400, 500);
         backgroundLabel.setLayout(new BorderLayout());
         setContentPane(backgroundLabel);
 
 
-//        Poängrutan
+        // Skapar panel för att visa poäng och lägger till tre knappar som representerar varje runda
         scorePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         for (int i = 0; i < 3; i++) {
             JButton scoreButton = new JButton();
             scoreButton.setPreferredSize(new Dimension(30, 30));
             scoreButton.setEnabled(true);
-            scoreButton.setContentAreaFilled(false);
-            scoreButton.setBorder(BorderFactory.createEmptyBorder());
+            scoreButton.setContentAreaFilled(false); // Tar bort bakgrunden
+            scoreButton.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinjen
             scoreButtons[i] = scoreButton;
             scorePanel.add(scoreButton);
 
         }
 
+        // Sätter in och skalar ikonerna för korrekt och inkorrekt svar
         crossImageIcon = new ImageIcon("src/resources/images/cross.png");
         Image scaledCrossImage = crossImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
         crossImageIcon = new ImageIcon(scaledCrossImage);
@@ -64,17 +65,28 @@ public class GameWindow extends JFrame implements ActionListener {
 
         scorePanel.setBackground(Color.lightGray);
         scorePanel.setPreferredSize(new Dimension(150, 50));
-        scorePanel.setOpaque(false);
+        scorePanel.setOpaque(false); // Gör panelen genomskinlig
         backgroundLabel.add(scorePanel, BorderLayout.NORTH);
 
 
 
-        //Frågan
-        questionPanel.setLayout(new FlowLayout());
-        questionPanel.setPreferredSize(new Dimension(150,100));
-        questionPanel.add(question);
-        questionPanel.setBackground(Color.WHITE);
+        // Panel för frågan
+        questionPanel.setLayout(new BorderLayout());
+        questionPanel.setPreferredSize(new Dimension(400, 150));
         questionPanel.setOpaque(false);
+
+        // Ställer in egenskaper för texten som visar frågan
+        question.setLineWrap(true); // Aktiverar radbrytning
+        question.setWrapStyleWord(true); // Bryter vid ord
+        question.setEditable(false); // Gör texten skrivskyddat
+        question.setFont(new Font("Arial", Font.BOLD, 16));
+        question.setOpaque(false); // Gör bakgrunden genomskinlig
+        question.setFocusable(false);
+        question.setMargin(new Insets(10, 10, 10, 10));
+        question.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrerar
+        question.setAlignmentY(Component.CENTER_ALIGNMENT); // Centrerar
+
+        questionPanel.add(question, BorderLayout.CENTER);
 
         // Skapar och ställer in JProgressBar
         timerBar = new JProgressBar(0, TIMER_DURATION * 10); // JProgressBar med 10 steg per sekund
@@ -87,7 +99,7 @@ public class GameWindow extends JFrame implements ActionListener {
         backgroundLabel.add(questionPanel, BorderLayout.CENTER);
 
         //Svar
-        answerPanel.setLayout(new GridLayout(2,2));
+        answerPanel.setLayout(new GridLayout(2,2,3,3));
         answerPanel.setOpaque(false);
 
 
@@ -104,10 +116,13 @@ public class GameWindow extends JFrame implements ActionListener {
             answerButtons[i] = new JButton("" + (i + 1));
             answerButtons[i].addActionListener(this);
             answerButtons[i].setPreferredSize(new Dimension(150, 100));
+            answerButtons[i].setFont(new Font("Arial", Font.BOLD, 14));
             //Lägger till knapparna i panelen
             answerPanel.add(answerButtons[i]);
         }
-        JButton nextButton = new JButton("Next");
+        JButton nextButton = new JButton("Fortsätt");
+        nextButton.setFocusable(false); // Tar bort den fula kanten som kommer upp runt "fortsätt"
+        nextButton.setFont(new Font("Arial", Font.BOLD, 16));
         nextButton.addActionListener(e -> {
             for (JButton button : answerButtons) {
                 button.setBackground(null);
@@ -115,14 +130,14 @@ public class GameWindow extends JFrame implements ActionListener {
             setHasAnswered(true);
         });
 
-        JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel nextButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         nextButtonPanel.add(nextButton);
         nextButtonPanel.setOpaque(false);
         backgroundLabel.add(nextButtonPanel, BorderLayout.SOUTH);
 
 
-        setTitle("Quiz Kampen");
-        setSize(400, 400);
+        setTitle("Quizkampen");
+        setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
