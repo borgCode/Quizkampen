@@ -1,6 +1,7 @@
 package client;
 
 import server.entity.Player;
+import server.network.Properties;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,11 +9,13 @@ import java.awt.*;
 public class ScoreWindow extends JFrame {
 
     private Player player1, player2;
-    private int numberOfRows;
+    //private int rounds = 0;
 
-    ScoreWindow(Player player1, Player player2, int numberOfRows) {
+    ScoreWindow(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
+        // this.rounds = PropertiesManager.totalRoundsSet();
+        System.out.println(player1.getName() + " " + player2.getName());
 
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -22,7 +25,7 @@ public class ScoreWindow extends JFrame {
         // Lägger till bakgrundsbilden
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
         backgroundLabel.setLayout(new BorderLayout());
-        add(backgroundLabel,BorderLayout.CENTER);
+        add(backgroundLabel, BorderLayout.CENTER);
 
         //För att lägga alla komponenter ovanför
         JPanel panel = new JPanel();
@@ -31,7 +34,7 @@ public class ScoreWindow extends JFrame {
         backgroundLabel.add(panel, BorderLayout.CENTER);
 
         //TODO: TOP PANEL
-        JPanel topPanel = new JPanel(new GridLayout(1,4));
+        JPanel topPanel = new JPanel(new GridLayout(1, 4));
         topPanel.setOpaque(false);
 
 
@@ -42,7 +45,7 @@ public class ScoreWindow extends JFrame {
         avatar1.setFocusable(false);
         avatar1.setOpaque(false);
 
-        JLabel name1 = new JLabel (player1.getName(), SwingConstants.CENTER);
+        JLabel name1 = new JLabel(player1.getName(), SwingConstants.CENTER);
         JPanel player1Panel = new JPanel(new BorderLayout());
         player1Panel.setOpaque(false);
         player1Panel.add(avatar1, BorderLayout.NORTH);
@@ -75,16 +78,16 @@ public class ScoreWindow extends JFrame {
 
 
         //Mitt panelen med ronderna
-        JPanel rondPanel = new JPanel(new GridLayout(numberOfRows,1)); //TODO: Ändrat till numberOfRows
+        JPanel rondPanel = new JPanel(new GridLayout(6, 1)); //TODO: 6 ändra till rounds
         rondPanel.setOpaque(false);
-        for (int i = 1; i <= numberOfRows ; i++) {
+        for (int i = 1; i <= 6; i++) { //TODO: 6 ändra till rounds
             // 7 kolumner motsvarar: 3 knappar + RondNr + 3 Knappar
-            JPanel rowPanel = new JPanel(new GridLayout(1,7));
+            JPanel rowPanel = new JPanel(new GridLayout(1, 7));
             rowPanel.setOpaque(false);
 
 
             //Knappar spelare 1:
-            for (int j = 1; j <=3 ; j++) {
+            for (int j = 1; j <= 3; j++) {
                 JButton buttonPlayer1 = new JButton();
                 buttonPlayer1.setEnabled(false);
                 rowPanel.add(buttonPlayer1);
@@ -92,12 +95,12 @@ public class ScoreWindow extends JFrame {
             }
 
             //Rond
-            JLabel rondLabel = new JLabel("Rond" + i , SwingConstants.CENTER);
+            JLabel rondLabel = new JLabel("Rond" + i, SwingConstants.CENTER);
             rondLabel.setFont(new Font("Arial", Font.BOLD, 14));
             rowPanel.add(rondLabel);
 
             //Knappar spelare 2:
-            for (int u = 1; u <=3; u++) {
+            for (int u = 1; u <= 3; u++) {
                 JButton buttonPlayer2 = new JButton();
                 buttonPlayer2.setEnabled(false);
                 rowPanel.add(buttonPlayer2);
@@ -122,14 +125,12 @@ public class ScoreWindow extends JFrame {
         panel.add(bottomPanel, BorderLayout.SOUTH);
         setVisible(true);
     }
-
-    public static void main(String[] args) {
+}
+    /*public static void main(String[] args) {
         //TODO: OBS HÅRDKODAT. Dessa ska man få från StartWindow
         Player player1 = new Player("Spelare 1",new ImageIcon("src/resources/avatars/Gengar.png"));
         Player player2 = new Player("Spelare 2",new ImageIcon("src/resources/avatars/Poliwag.png"));
-        int numberOfRows = 6;
-        ScoreWindow scoreWindow = new ScoreWindow( player1,  player2,  numberOfRows);
+        ScoreWindow scoreWindow = new ScoreWindow( player1,  player2);/*
     }
-
-
 }
+     */

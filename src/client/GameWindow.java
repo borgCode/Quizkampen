@@ -151,20 +151,12 @@ public class GameWindow extends JFrame implements ActionListener {
 
         handleAnswer(selectedAnswer, clickedButton);
     }
-
-    public void setCurrentPlayer(Player player) {
-        this.currentPlayer = player;
-    }
-
     // Metod för att hantera användarens svar
     private void handleAnswer(String selectedAnswer, JButton clickedButton) {
         stopTimer();
 
-        boolean isCorrect = selectedAnswer.equals(correctAnswer);
-        currentPlayer.addAnswer(isCorrect); // Spara resultatet i spelarens lista
-
-        if (isCorrect) {
         // Ändrar knappens färg beroende på om svaret är rätt eller fel
+        if (selectedAnswer.equals(correctAnswer)) {
             if (clickedButton != null) clickedButton.setBackground(Color.GREEN);
             scoreButtons[round].setIcon(checkImageIcon); // Sätter ikon för rätt svar
         } else {
@@ -179,7 +171,6 @@ public class GameWindow extends JFrame implements ActionListener {
             }
         }
 
-
         round++; // Går vidare till nästa runda
 
         // Inaktiverar svarsknapparna efter att användaren har svarat
@@ -190,18 +181,7 @@ public class GameWindow extends JFrame implements ActionListener {
         if (answerListener != null) {
             answerListener.onAnswerSelected(selectedAnswer);
         }
-        // Öppna ScoreWindow efter tre frågor
-        if (round == 3) {
-            openScoreWindow();
-        }
     }
-
-    private void openScoreWindow() {
-        ScoreWindow scoreWindow = new ScoreWindow(currentPlayer, currentPlayer.getOpponent(), 3);
-        scoreWindow.setVisible(true);
-        this.dispose(); // Stänger GameWindow
-    }
-
     // Metod för att starta timern för frågan
     public void startTimer() {
         timerBar.setValue(TIMER_DURATION * 10); // Återställer JProgressBar
@@ -275,3 +255,4 @@ public class GameWindow extends JFrame implements ActionListener {
         this.answerListener = answerListener;
     }
 }
+
