@@ -64,9 +64,23 @@ public class NetworkHandler {
                         windowManager.showScoreWindow();
                         break;
                     case Protocol.SENT_CATEGORY:
+                        while (!windowManager.hasClickedPlay()) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         handleCategorySelection(out, in);
                         break;
                     case Protocol.SENT_QUESTIONS:
+                        while (!windowManager.hasClickedPlay()) {
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         handleQuestionRound(out, in);
                         break;
                     case Protocol.SENT_ROUND_SCORE:

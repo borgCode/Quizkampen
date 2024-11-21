@@ -22,6 +22,7 @@ public class ScoreWindow extends JFrame {
     private List<List<JButton>> player1buttons = new ArrayList<>();
     private List<List<JButton>> player2buttons = new ArrayList<>();
     private int currentRound = 1;
+    private boolean hasClickedPlay;
     
 
    
@@ -151,7 +152,8 @@ public class ScoreWindow extends JFrame {
         JButton giveUpButton = new JButton("Ge upp");
         giveUpButton.addActionListener(e -> this.hasUserGivenUp = true);
         JButton playButton = new JButton("Spela");
-        playButton.setEnabled(false);
+        playButton.addActionListener(e -> this.hasClickedPlay = true);
+        playButton.setEnabled(true);
         bottomPanel.add(giveUpButton);
         bottomPanel.add(playButton);
 
@@ -173,6 +175,10 @@ public class ScoreWindow extends JFrame {
 
     public boolean hasUserGivenUp() {
         return hasUserGivenUp;
+    }
+    
+    public boolean hasClickedPlay() {
+        return hasClickedPlay;
     }
 
 

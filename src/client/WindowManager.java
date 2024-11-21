@@ -99,8 +99,8 @@ public class WindowManager {
         scoreWindow.nextRound();
     }
 
-    public void showOpponentScore(boolean value) {
-        scoreWindow.showOpponentScore(value);
+    public boolean hasClickedPlay() {
+        return scoreWindow.hasClickedPlay();
     }
 }
 
