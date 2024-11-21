@@ -98,6 +98,10 @@ public class WindowManager {
     public void nextRound() {
         scoreWindow.nextRound();
     }
+
+    public boolean hasClickedPlay() {
+        return scoreWindow.hasClickedPlay();
+    }
 }
 
 
