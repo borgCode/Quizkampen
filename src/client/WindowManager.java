@@ -51,6 +51,7 @@ public class WindowManager {
     }
 
     public void showCategoryWindow(ArrayList<String> categories) {
+        scoreWindow.setVisible(false);
         categoryWindow.updateCategories(categories);
         categoryWindow.setListener(category -> setSelectedCategory(category));
         // Skapar CategoryWindow bara när det behövs
@@ -78,5 +79,9 @@ public class WindowManager {
 
     public ScoreWindow getScoreWindow() {
         return this.scoreWindow;
+    }
+
+    public void setScoreWindowVisibility(boolean b) {
+        scoreWindow.setVisible(true);
     }
 }

@@ -60,7 +60,7 @@ public class NetworkHandler {
                 // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
                 switch (state) {
                     case Protocol.WAITING:
-                        System.out.println("Väntar på andra spelaren");
+                        windowManager.setScoreWindowVisibility(true);
                         break;
                     case Protocol.SENT_CATEGORY:
                         handleCategorySelection(out, in);
