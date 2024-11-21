@@ -1,6 +1,6 @@
-package client;
+package client.windows;
 
-import client.listener.CategorySelectionListener;
+import client.listeners.CategorySelectionListener;
 
 import javax.swing.*;
 import java.awt.*;

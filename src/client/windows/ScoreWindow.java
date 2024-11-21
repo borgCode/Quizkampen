@@ -1,4 +1,4 @@
-package client;
+package client.windows;
 
 import server.entity.Player;
 import server.network.PropertiesManager;
@@ -11,7 +11,7 @@ public class ScoreWindow extends JFrame {
     private Player player1, player2;
     private int rounds = 6;
 
-    ScoreWindow(Player player1, Player player2) {
+    public ScoreWindow(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
         this.rounds = PropertiesManager.totalRoundsSet();

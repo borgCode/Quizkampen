@@ -2,7 +2,6 @@ package client;
 
 
 import server.entity.Question;
-import server.network.PropertiesManager;
 import server.network.Protocol;
 
 import javax.swing.*;
@@ -10,9 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class NetworkHandler {

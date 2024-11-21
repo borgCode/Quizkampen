@@ -1,4 +1,4 @@
-package client;
+package client.windows;
 
 import server.entity.Player;
 

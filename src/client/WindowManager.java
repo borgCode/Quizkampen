@@ -1,5 +1,8 @@
 package client;
 
+import client.windows.CategoryWindow;
+import client.windows.GameWindow;
+import client.windows.StartWindow;
 import server.entity.Player;
 import server.entity.Question;
 

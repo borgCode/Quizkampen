@@ -1,6 +1,6 @@
-package client;
+package client.windows;
 
-import client.listener.AnswerListener;
+import client.listeners.AnswerListener;
 import server.entity.Question;
 
 import javax.swing.*;
@@ -32,7 +32,7 @@ public class GameWindow extends JFrame implements ActionListener {
     private Timer questionTimer;
     private static final int TIMER_DURATION = 15;
 
-    GameWindow() {
+    public GameWindow() {
 
         // Sätter bakgrundsbilden och ställer in layouten
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
