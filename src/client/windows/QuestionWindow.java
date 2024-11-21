@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.TimerTask;
 import java.util.Timer;
 
-public class GameWindow extends JFrame implements ActionListener {
+public class QuestionWindow extends JFrame implements ActionListener {
 
     private String correctAnswer;
     private AnswerListener answerListener;
@@ -32,7 +32,7 @@ public class GameWindow extends JFrame implements ActionListener {
     private Timer questionTimer;
     private static final int TIMER_DURATION = 15;
 
-    public GameWindow() {
+    public QuestionWindow() {
 
         // Sätter bakgrundsbilden och ställer in layouten
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
@@ -240,7 +240,6 @@ public class GameWindow extends JFrame implements ActionListener {
 
         this.correctAnswer = question.getCorrectAnswer();
         startTimer();
-
     }
 
     public boolean isHasAnswered() {

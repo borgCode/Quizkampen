@@ -60,7 +60,7 @@ public class NetworkHandler {
                 // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
                 switch (state) {
                     case Protocol.WAITING:
-                        windowManager.setScoreWindowVisibility(true);
+                        windowManager.showScoreWindow();
                         break;
                     case Protocol.SENT_CATEGORY:
                         handleCategorySelection(out, in);
@@ -70,9 +70,7 @@ public class NetworkHandler {
                         break;
                     case Protocol.SENT_ROUND_SCORE:
                         List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
-                        for (Integer score : opponentScore) {
-                            System.out.println(score);
-                        }
+                        windowManager.updateOpponentScore(opponentScore);
                         break;
                     case Protocol.GAME_OVER:
                         System.out.println("Game over");
@@ -134,7 +132,7 @@ public class NetworkHandler {
 
         List<Integer> scoreList = new ArrayList<>();
 
-        windowManager.setGameWindowVisibility(true);
+        windowManager.showQuestionWindow();
 
         for (Question question : questions) {
             windowManager.displayQuestion(question);
@@ -166,6 +164,8 @@ public class NetworkHandler {
             } else
                 scoreList.add(0);
 
+
+
             while (!windowManager.getGameWindow().isHasAnswered()) {
                 try {
                     Thread.sleep(100);
@@ -177,9 +177,11 @@ public class NetworkHandler {
 
         }
 
+        windowManager.updatePlayerScore(scoreList);
+
         //TODO skapa metod för att updatea GUI med rondresultat
 
-
+        windowManager.showScoreWindow();
         //Skickar antal rätt till server
         out.writeObject(scoreList);
         out.flush();
