@@ -120,7 +120,7 @@ public class ScoreWindow extends JFrame {
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(rondPanel, BorderLayout.CENTER);
         panel.add(bottomPanel, BorderLayout.SOUTH);
-//        setVisible(true);
+        setVisible(true);
     }
     
     public void setPlayers(Player player1, Player player2) {
