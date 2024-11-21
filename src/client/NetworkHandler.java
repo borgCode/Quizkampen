@@ -1,6 +1,7 @@
 package client;
 
 
+import server.entity.Player;
 import server.entity.Question;
 import server.network.Protocol;
 
@@ -14,12 +15,13 @@ import java.util.List;
 
 public class NetworkHandler {
     private WindowManager windowManager;
+
     NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
-        
+
         int port = 55566;
         String ip = "127.0.0.1";
-        
+
         String name;
         ImageIcon avatar;
 
@@ -40,17 +42,23 @@ public class NetworkHandler {
             //Skickar spelaren till servern
             out.writeObject(windowManager.getPlayer());
 
-
+            Object serverResponse = in.readObject();
+            if (serverResponse.equals(Protocol.SEND_SCORE_WINDOW_DATA)) {
+                int rounds = (Integer) in.readObject();
+                Player opponent = (Player) in.readObject();
+                windowManager.initScoreWindowData(rounds, windowManager.getPlayer(), opponent);
+                windowManager.initScoreWindow();
+            }
 
 
             while (true) {
+                if (windowManager.hasUserGivenUp()) {
+                    sendGiveUpSignal(out);
+                    return;
+                }
                 Protocol state = (Protocol) in.readObject();
                 // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
-                if (state.equals(Protocol.SENT_TOTAL_ROUNDS)){
-                    int totalRounds = (Integer) in.readObject();
-                    System.out.println("Antal rundor: " + totalRounds);
-
-                } else if (state.equals(Protocol.WAITING)) {
+                if (state.equals(Protocol.WAITING)) {
                     System.out.println("Väntar på andra spelaren");
                 } else if (state.equals(Protocol.SENT_CATEGORY)) {
                     // Läser in kategorier från servern
@@ -58,10 +66,14 @@ public class NetworkHandler {
 
                     // Använder WindowManager till att visa CategoryWindow
                     windowManager.showCategoryWindow(categories);
-                    
+
 
                     // Vänta tills användaren väljer en kategori
                     while (windowManager.getSelectedCategory() == null) {
+                        if (windowManager.hasUserGivenUp()) {
+                            sendGiveUpSignal(out);
+                            return;
+                        }
                         Thread.sleep(100);
                     }
 
@@ -72,19 +84,19 @@ public class NetworkHandler {
 
                 } else if (state.equals(Protocol.SENT_QUESTIONS)) {
                     windowManager.resetRound();
-                    
+
                     //Läs in tre frågor
                     ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
-                    
+
                     List<Integer> scoreList = new ArrayList<>();
-                    
+
                     windowManager.setGameWindowVisibility(true);
-                    
+
                     for (Question question : questions) {
                         windowManager.displayQuestion(question);
 
-                        String[] selectedAnswer = new String[1]; 
-                        
+                        String[] selectedAnswer = new String[1];
+
                         //Sync block så att bara en tråd kan modifiera selectedAnswer
                         synchronized (selectedAnswer) {
                             //Settar answerListener så vi får tillbaka användarens svar som sedan settas till selectedAnswer
@@ -102,8 +114,8 @@ public class NetworkHandler {
                                 Thread.currentThread().interrupt();
                                 e.printStackTrace();
                             }
-                            
-                            
+
+
                         }
                         if (selectedAnswer[0] != null && selectedAnswer[0].equalsIgnoreCase(question.getCorrectAnswer())) {
                             scoreList.add(1);
@@ -153,6 +165,10 @@ public class NetworkHandler {
         }
     }
 
-    
+    private void sendGiveUpSignal(ObjectOutputStream out) throws IOException {
+        out.writeObject(Protocol.CLIENT_GAVE_UP);
+    }
+
+
 }
 

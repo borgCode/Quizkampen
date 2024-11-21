@@ -6,7 +6,8 @@ public enum Protocol {
     SENT_QUESTIONS,
     SENT_ROUND_SCORE,
     GAME_OVER,
-    SENT_TOTAL_ROUNDS
+    SEND_SCORE_WINDOW_DATA,
+    CLIENT_GAVE_UP
 
 
 }

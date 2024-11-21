@@ -1,7 +1,6 @@
 package client.windows;
 
 import server.entity.Player;
-import server.network.PropertiesManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,14 +8,11 @@ import java.awt.*;
 public class ScoreWindow extends JFrame {
 
     private Player player1, player2;
-    private int rounds = 6;
+    private int rounds;
+    private boolean hasUserGivenUp;
 
-    public ScoreWindow(Player player1, Player player2) {
-        this.player1 = player1;
-        this.player2 = player2;
-        this.rounds = PropertiesManager.totalRoundsSet();
-        System.out.println(player1.getName() + " " + player2.getName());
-
+   
+    public void initScoreWindow() {
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 500);
@@ -78,9 +74,9 @@ public class ScoreWindow extends JFrame {
 
 
         //Mitt panelen med ronderna
-        JPanel rondPanel = new JPanel(new GridLayout(rounds, 1)); //TODO: 6 ändra till rounds
+        JPanel rondPanel = new JPanel(new GridLayout(this.rounds, 1)); //TODO: 6 ändra till rounds
         rondPanel.setOpaque(false);
-        for (int i = 1; i <= rounds; i++) { //TODO: 6 ändra till rounds
+        for (int i = 1; i <= this.rounds; i++) { //TODO: 6 ändra till rounds
             // 7 kolumner motsvarar: 3 knappar + RondNr + 3 Knappar
             JPanel rowPanel = new JPanel(new GridLayout(1, 7));
             rowPanel.setOpaque(false);
@@ -114,6 +110,7 @@ public class ScoreWindow extends JFrame {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
         bottomPanel.setOpaque(false);
         JButton giveUpButton = new JButton("Ge upp");
+        giveUpButton.addActionListener(e -> this.hasUserGivenUp = true);
         JButton nextRoundButton = new JButton("Nästa rond");
         nextRoundButton.setEnabled(false);
         bottomPanel.add(giveUpButton);
@@ -123,13 +120,29 @@ public class ScoreWindow extends JFrame {
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(rondPanel, BorderLayout.CENTER);
         panel.add(bottomPanel, BorderLayout.SOUTH);
-        setVisible(true);
+//        setVisible(true);
+    }
+    
+    public void setPlayers(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+    }
+
+    public void setRounds(int rounds) {
+        this.rounds = rounds;
+    }
+
+    public boolean hasUserGivenUp() {
+        return hasUserGivenUp;
     }
 
     public static void main(String[] args) {
         //TODO: OBS HÅRDKODAT. Dessa ska man få från StartWindow
         Player player1 = new Player("Spelare 1",new ImageIcon("src/resources/avatars/Gengar.png"));
         Player player2 = new Player("Spelare 2",new ImageIcon("src/resources/avatars/Poliwag.png"));
-        ScoreWindow scoreWindow = new ScoreWindow( player1,  player2);
+        int rounds = 6;
+        ScoreWindow scoreWindow = new ScoreWindow();
     }
+
+    
 }

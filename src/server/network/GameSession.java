@@ -2,7 +2,6 @@ package server.network;
 
 import server.entity.Game;
 import server.entity.Player;
-import server.entity.Question;
 import server.entity.Round;
 import server.logic.GameLogic;
 import server.logic.QuestionBank;
@@ -52,13 +51,10 @@ public class GameSession extends Thread {
             Player[] players = {player1, player2};
             int currentPlayer = 0;
 
-
-            // Skickar ENUM rounds och totalrounds till både klienter
-            outPlayer1.writeObject(Protocol.SENT_TOTAL_ROUNDS);
-            outPlayer1.writeObject(totalRounds);
-            outPlayer2.writeObject(Protocol.SENT_TOTAL_ROUNDS);
-            outPlayer2.writeObject(totalRounds);
-
+            
+            sendScoreWindowData(player1, player2, outPlayer1, outPlayer2, totalRounds);
+            
+            
             while (true) {
                 Game game = new Game(player1, player2);
 
@@ -68,15 +64,25 @@ public class GameSession extends Thread {
                 for (int i = 0; i < totalRounds; i++){
                     // Låt currentplayer välja kategori
                     String selectedCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
+                    if (selectedCategory == null) {
+                        handlePlayerGaveUp(currentPlayer, (currentPlayer + 1) % 2, outPlayer1, outPlayer2);
+                        return;
+                    }
 
                     //Hämta random frågor från questionBank och skapa Round object
                     Round round = new Round(questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase()), selectedCategory);
                     // Spelaren som vlade kategori får svara
-                    processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round);
+                    if (!processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round)) {
+                        handlePlayerGaveUp(currentPlayer, (currentPlayer + 1) % 2, outPlayer1, outPlayer2);
+                        return;
+                    }
                     sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], round);
 
                     // Andra spelaren får svara
-                    processQuestions(outputStreams[(currentPlayer + 1) % 2], inputStreams[(currentPlayer +1) % 2], game, players[(currentPlayer + 1) % 2], round);
+                    if (!processQuestions(outputStreams[(currentPlayer + 1) % 2], inputStreams[(currentPlayer +1) % 2], game, players[(currentPlayer + 1) % 2], round)) {
+                        handlePlayerGaveUp((currentPlayer + 1) % 2, currentPlayer, outPlayer1, outPlayer2);
+                        return;
+                    }
                     sendResultsToOpponent(outputStreams[currentPlayer], round);
 
                     // Informera om att vänta
@@ -103,7 +109,14 @@ public class GameSession extends Thread {
         }
     }
 
-    
+    private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
+        outPlayer1.writeObject(Protocol.SEND_SCORE_WINDOW_DATA);
+        outPlayer1.writeObject(totalRounds);
+        outPlayer1.writeObject(player2);
+        outPlayer2.writeObject(Protocol.SEND_SCORE_WINDOW_DATA);
+        outPlayer2.writeObject(totalRounds);
+        outPlayer2.writeObject(player1);
+    }
 
 
     private String handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream, ArrayList<String> categories) throws IOException, ClassNotFoundException {
@@ -114,9 +127,16 @@ public class GameSession extends Thread {
         //Skickar tre kategorier till client
         outputStream.writeObject(randomCategories);
         outputStream.flush();
+        
+        Object clientResponse = inputStream.readObject();
+        
+        //Kollar om spelaren gav upp
+        if (clientResponse.equals(Protocol.CLIENT_GAVE_UP)) {
+            return null;
+        }
 
         //Tar emot client svar på kategori
-        String categoryInput = (String) inputStream.readObject();
+        String categoryInput = (String) clientResponse;
 
         //Ta bort kategorin som redan är spelad
         GameLogic.removeCategoryFromList(categories, categoryInput);
@@ -124,17 +144,24 @@ public class GameSession extends Thread {
         return categoryInput;
     }
 
-    private void processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player1, Round round) throws IOException, ClassNotFoundException {
+    private boolean processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player1, Round round) throws IOException, ClassNotFoundException {
         
         outputStream.writeObject(Protocol.SENT_QUESTIONS);
         outputStream.writeObject(round.getCurrentQuestions());
         outputStream.flush();
 
+        //Kollar om spelaren har gett up
+        Object clientResponse = inputStream.readObject();
+        if (clientResponse.equals(Protocol.CLIENT_GAVE_UP)) {
+            return false;
+        }
 
         //Tar emot hur många rätt använadaren hade
-        ArrayList<Integer> opponentRoundScore = (ArrayList<Integer>) inputStream.readObject();
+        ArrayList<Integer> opponentRoundScore = (ArrayList<Integer>) clientResponse;
         game.incrementScore(player1, opponentRoundScore);
         round.setOpponentRoundScore(opponentRoundScore);
+        
+        return true;
     }
 
     private void sendResultsToOpponent(ObjectOutputStream outputStream, Round round) throws IOException {
@@ -142,6 +169,23 @@ public class GameSession extends Thread {
         outputStream.writeObject(Protocol.SENT_ROUND_SCORE);
         outputStream.writeObject(round.getOpponentRoundScore());
         outputStream.flush();
+    }
+
+    private void handlePlayerGaveUp(int currentPlayer, int i, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2) throws IOException {
+        System.out.println("Player " + (currentPlayer + 1) + " gav upp!");
+
+        
+        if (currentPlayer == 0) {
+            outPlayer1.writeObject(Protocol.GAME_OVER);
+            outPlayer1.writeObject("Du gav upp! Din motståndare vann");
+            outPlayer2.writeObject(Protocol.GAME_OVER);
+            outPlayer2.writeObject("Den andra spelaren gav upp! Du vann");
+        } else {
+            outPlayer2.writeObject(Protocol.GAME_OVER);
+            outPlayer2.writeObject("Du gav upp! Din motståndare vann");
+            outPlayer1.writeObject(Protocol.GAME_OVER);
+            outPlayer1.writeObject("Den andra spelaren gav upp! Du vann");
+        }
     }
 }
 

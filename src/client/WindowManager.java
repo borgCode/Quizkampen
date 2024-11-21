@@ -2,6 +2,7 @@ package client;
 
 import client.windows.CategoryWindow;
 import client.windows.GameWindow;
+import client.windows.ScoreWindow;
 import client.windows.StartWindow;
 import server.entity.Player;
 import server.entity.Question;
@@ -13,7 +14,7 @@ public class WindowManager {
     private GameWindow gameWindow;
     private CategoryWindow categoryWindow;
     private String selectedCategory;
-    //TODO lägg till scorewindow
+    private ScoreWindow scoreWindow;
 
     public WindowManager() {
         startWindow = new StartWindow();
@@ -22,7 +23,7 @@ public class WindowManager {
         gameWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
         });
-        
+        scoreWindow = new ScoreWindow();
         categoryWindow = new CategoryWindow();
     }
     
@@ -60,5 +61,22 @@ public class WindowManager {
     }
     public String getSelectedCategory() {
         return selectedCategory;
+    }
+
+    public boolean hasUserGivenUp() {
+        return scoreWindow.hasUserGivenUp();
+    }
+
+    public void initScoreWindowData(int rounds, Player player, Player opponent) {
+        scoreWindow.setRounds(rounds);
+        scoreWindow.setPlayers(player, opponent);
+        
+    }
+    public void initScoreWindow() {
+        scoreWindow.initScoreWindow();
+    }
+
+    public ScoreWindow getScoreWindow() {
+        return this.scoreWindow;
     }
 }
