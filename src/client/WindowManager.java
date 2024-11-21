@@ -102,6 +102,19 @@ public class WindowManager {
     public boolean hasClickedPlay() {
         return scoreWindow.hasClickedPlay();
     }
+
+    public void setHasPlayedRound(boolean hasPlayed) {
+        scoreWindow.setHasPlayedRound(hasPlayed);
+    }
+
+    public List<Integer> getCachedScores() {
+        return scoreWindow.getCachedScores();
+    }
+
+
+    public void setCachedScoresToNull() {
+        scoreWindow.setCachedScores(null);
+    }
 }
 
 

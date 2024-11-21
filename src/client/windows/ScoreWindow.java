@@ -23,9 +23,11 @@ public class ScoreWindow extends JFrame {
     private List<List<JButton>> player2buttons = new ArrayList<>();
     private int currentRound = 1;
     private boolean hasClickedPlay;
-    
+    private List<Integer> cachedScores = new ArrayList<>();
+    private boolean hasPlayedRound;
 
-   
+
+
     public void initScoreWindow() {
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,7 +127,7 @@ public class ScoreWindow extends JFrame {
                 rowPlayer1.add(buttonPlayer1);
 
             }
-            
+
             player1buttons.add(rowPlayer1);
 
             //Rond
@@ -176,14 +178,14 @@ public class ScoreWindow extends JFrame {
     public boolean hasUserGivenUp() {
         return hasUserGivenUp;
     }
-    
+
     public boolean hasClickedPlay() {
         return hasClickedPlay;
     }
 
 
     public void updatePlayerScore(List<Integer> scoreList) {
-            List<JButton> player1Row = player1buttons.get(currentRound -1);
+        List<JButton> player1Row = player1buttons.get(currentRound -1);
         for (int i = 0; i < 3; i++) {
             JButton button = player1Row.get(i);
             button.setIcon(scoreList.get(i) == 1 ?  checkImageIcon : crossImageIcon);
@@ -192,23 +194,35 @@ public class ScoreWindow extends JFrame {
         hasUpdatedPlayerScore = true;
     }
 
-    private boolean showOpponentScore = false;
-
-    public void showOpponentScore(boolean value) {
-        this.showOpponentScore = value;
-    }
     public void updateOpponentScore(List<Integer> opponentScore) {
-        if (showOpponentScore) {
+        if (hasPlayedRound) {
             List<JButton> player2Row = player2buttons.get(currentRound - 1);
 
             for (int i = 0; i < 3; i++) {
                 JButton button = player2Row.get(i);
                 button.setIcon(opponentScore.get(i) == 1 ? checkImageIcon : crossImageIcon);
                 button.setEnabled(true);
+
+
             }
             hasUpdatedOpponentScore = true;
+            hasPlayedRound = false;
+        }
+            else{
+                cachedScores = opponentScore;
+            }
         }
 
+    public void setHasPlayedRound(boolean hasPlayedRound) {
+        this.hasPlayedRound = hasPlayedRound;
+    }
+
+    public List<Integer> getCachedScores() {
+        return cachedScores;
+    }
+
+    public void setCachedScores(List<Integer> cachedScores) {
+        this.cachedScores = cachedScores;
     }
 
     public void nextRound() {
@@ -216,6 +230,9 @@ public class ScoreWindow extends JFrame {
             currentRound++;
             hasUpdatedPlayerScore = false;
             hasUpdatedOpponentScore = false;
+            hasPlayedRound = false;
         }
     }
+    
+
 }

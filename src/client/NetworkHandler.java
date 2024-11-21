@@ -15,15 +15,14 @@ import java.util.List;
 
 public class NetworkHandler {
     private WindowManager windowManager;
-
+    
     NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
 
         int port = 55566;
         String ip = "127.0.0.1";
-
-        String name;
-        ImageIcon avatar;
+        
+        
 
 
         //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
@@ -85,12 +84,7 @@ public class NetworkHandler {
                         break;
                     case Protocol.SENT_ROUND_SCORE:
                         List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
-                        if(opponentScore != null){
-                            windowManager.showOpponentScore(true); // Tillåt visning
-                            windowManager.updateOpponentScore(opponentScore);
-                        } else {
-                            windowManager.showOpponentScore(false); // Dölj om det inte är klart
-                        }
+                        windowManager.updateOpponentScore(opponentScore);
                         break;
                     case Protocol.GAME_OVER:
                         System.out.println("Game over");
@@ -115,7 +109,7 @@ public class NetworkHandler {
         }
     }
 
-    
+
 
     private void handleCategorySelection(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, InterruptedException {
         // Läser in kategorier från servern
@@ -196,18 +190,27 @@ public class NetworkHandler {
             windowManager.getGameWindow().setHasAnswered(false);
 
         }
-        System.out.println(scoreList.size());
+        
         windowManager.updatePlayerScore(scoreList);
 
-        //TODO skapa metod för att updatea GUI med rondresultat
 
-        windowManager.showScoreWindow();
         //Skickar antal rätt till server
         out.writeObject(scoreList);
         out.flush();
+
+        windowManager.setHasPlayedRound(true);
+        
+        if (windowManager.getCachedScores() != null) {
+            windowManager.updateOpponentScore(windowManager.getCachedScores());
+            windowManager.setCachedScoresToNull();
+        }
+
+        windowManager.showScoreWindow();
+        
+
+
     }
-    
+
 
 
 }
-
