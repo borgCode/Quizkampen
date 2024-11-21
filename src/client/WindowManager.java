@@ -98,6 +98,10 @@ public class WindowManager {
     public void nextRound() {
         scoreWindow.nextRound();
     }
+
+    public void showOpponentScore(boolean value) {
+        scoreWindow.showOpponentScore(value);
+    }
 }
 
 

@@ -71,7 +71,12 @@ public class NetworkHandler {
                         break;
                     case Protocol.SENT_ROUND_SCORE:
                         List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
-                        windowManager.updateOpponentScore(opponentScore);
+                        if(opponentScore != null){
+                            windowManager.showOpponentScore(true); // Tillåt visning
+                            windowManager.updateOpponentScore(opponentScore);
+                        } else {
+                            windowManager.showOpponentScore(false); // Dölj om det inte är klart
+                        }
                         break;
                     case Protocol.GAME_OVER:
                         System.out.println("Game over");

@@ -186,17 +186,24 @@ public class ScoreWindow extends JFrame {
         hasUpdatedPlayerScore = true;
     }
 
-    public void updateOpponentScore(List<Integer> opponentScore) {
-        List<JButton> player2Row = player2buttons.get(currentRound -1);
+    private boolean showOpponentScore = false;
 
-        for (int i = 0; i < 3; i++) {
-            JButton button = player2Row.get(i);
-            button.setIcon(opponentScore.get(i) == 1 ?  checkImageIcon : crossImageIcon);
-            button.setEnabled(true);
-        }
-        hasUpdatedOpponentScore = true;
+    public void showOpponentScore(boolean value) {
+        this.showOpponentScore = value;
     }
-    
+    public void updateOpponentScore(List<Integer> opponentScore) {
+        if (showOpponentScore) {
+            List<JButton> player2Row = player2buttons.get(currentRound - 1);
+
+            for (int i = 0; i < 3; i++) {
+                JButton button = player2Row.get(i);
+                button.setIcon(opponentScore.get(i) == 1 ? checkImageIcon : crossImageIcon);
+                button.setEnabled(true);
+            }
+            hasUpdatedOpponentScore = true;
+        }
+
+    }
 
     public void nextRound() {
         if (hasUpdatedPlayerScore && hasUpdatedOpponentScore) {
