@@ -56,6 +56,7 @@ public class NetworkHandler {
                     sendGiveUpSignal(out);
                     continue;
                 }
+                windowManager.nextRound();
                 Protocol state = (Protocol) in.readObject();
                 // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
                 switch (state) {
@@ -176,7 +177,7 @@ public class NetworkHandler {
             windowManager.getGameWindow().setHasAnswered(false);
 
         }
-
+        System.out.println(scoreList.size());
         windowManager.updatePlayerScore(scoreList);
 
         //TODO skapa metod för att updatea GUI med rondresultat

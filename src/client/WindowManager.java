@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindowManager {
-    private StartWindow startWindow;
-    private QuestionWindow questionWindow;
-    private CategoryWindow categoryWindow;
+    private final StartWindow startWindow;
+    private final QuestionWindow questionWindow;
+    private final CategoryWindow categoryWindow;
     private String selectedCategory;
-    private ScoreWindow scoreWindow;
+    private final ScoreWindow scoreWindow;
 
     public WindowManager() {
         startWindow = new StartWindow();
@@ -93,6 +93,10 @@ public class WindowManager {
 
     public void updateOpponentScore(List<Integer> opponentScore) {
         scoreWindow.updateOpponentScore(opponentScore);
+    }
+
+    public void nextRound() {
+        scoreWindow.nextRound();
     }
 }
 

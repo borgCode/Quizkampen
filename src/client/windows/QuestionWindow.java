@@ -170,7 +170,7 @@ public class QuestionWindow extends JFrame implements ActionListener {
             // Markerar rätt svar efter man valt knapp
             for (JButton button : answerButtons) {
                 if (button.getText().equals(correctAnswer)) {
-                    button.setBackground(Color.GREEN);
+                    button.setBackground(new Color(144,238,144));
                 }
             }
         }
