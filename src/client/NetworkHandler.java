@@ -82,6 +82,7 @@ public class NetworkHandler {
                             }
                         }
                         handleQuestionRound(out, in);
+                        windowManager.setHasClickedPlay(false);
                         break;
                     case Protocol.SENT_ROUND_SCORE:
                         List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();

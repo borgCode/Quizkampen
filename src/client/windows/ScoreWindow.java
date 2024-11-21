@@ -211,4 +211,8 @@ public class ScoreWindow extends JFrame {
             hasUpdatedOpponentScore = false;
         }
     }
+
+    public void setHasClickedPlay(boolean hasClickedPlay) {
+        this.hasClickedPlay = hasClickedPlay;
+    }
 }

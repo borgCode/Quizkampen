@@ -102,6 +102,11 @@ public class WindowManager {
     public boolean hasClickedPlay() {
         return scoreWindow.hasClickedPlay();
     }
+
+
+    public void setHasClickedPlay(boolean hasClicked) {
+        scoreWindow.setHasClickedPlay(hasClicked);
+    }
 }
 
 

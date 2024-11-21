@@ -76,14 +76,20 @@ public class GameSession extends Thread {
                         handlePlayerGaveUp(currentPlayer, (currentPlayer + 1) % 2, outPlayer1, outPlayer2);
                         return;
                     }
-                    sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], round);
+                    
+                    ArrayList<Integer> player1Score = round.getOpponentRoundScore();
 
                     // Andra spelaren får svara
                     if (!processQuestions(outputStreams[(currentPlayer + 1) % 2], inputStreams[(currentPlayer +1) % 2], game, players[(currentPlayer + 1) % 2], round)) {
                         handlePlayerGaveUp((currentPlayer + 1) % 2, currentPlayer, outPlayer1, outPlayer2);
                         return;
                     }
-                    sendResultsToOpponent(outputStreams[currentPlayer], round);
+                    
+                    ArrayList<Integer> player2Score = round.getOpponentRoundScore();
+                    
+                    sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], player1Score);
+                    
+                    sendResultsToOpponent(outputStreams[currentPlayer], player2Score);
 
                     // Informera om att vänta
                     outputStreams[currentPlayer].writeObject(Protocol.WAITING);
@@ -164,10 +170,10 @@ public class GameSession extends Thread {
         return true;
     }
 
-    private void sendResultsToOpponent(ObjectOutputStream outputStream, Round round) throws IOException {
+    private void sendResultsToOpponent(ObjectOutputStream outputStream, ArrayList<Integer> score) throws IOException {
         //Skicka resultat till andra spelaren
         outputStream.writeObject(Protocol.SENT_ROUND_SCORE);
-        outputStream.writeObject(round.getOpponentRoundScore());
+        outputStream.writeObject(score);
         outputStream.flush();
     }
 
