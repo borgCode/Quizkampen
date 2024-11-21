@@ -7,7 +7,7 @@ public enum Protocol {
     SENT_ROUND_SCORE,
     GAME_OVER,
     SEND_SCORE_WINDOW_DATA,
-    CLIENT_GAVE_UP
+    PLAYER_GAVE_UP, CLIENT_GAVE_UP
 
 
 }

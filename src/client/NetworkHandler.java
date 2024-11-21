@@ -80,6 +80,9 @@ public class NetworkHandler {
                         String resultat = (String) in.readObject();
                         System.out.println(resultat);
                         break;
+                    case Protocol.PLAYER_GAVE_UP:
+                        String message = (String) in.readObject();
+                        System.out.println(message);
                 }
             }
 

@@ -176,14 +176,14 @@ public class GameSession extends Thread {
 
         
         if (currentPlayer == 0) {
-            outPlayer1.writeObject(Protocol.GAME_OVER);
+            outPlayer1.writeObject(Protocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Du gav upp! Din motståndare vann");
-            outPlayer2.writeObject(Protocol.GAME_OVER);
+            outPlayer2.writeObject(Protocol.PLAYER_GAVE_UP);
             outPlayer2.writeObject("Den andra spelaren gav upp! Du vann");
         } else {
-            outPlayer2.writeObject(Protocol.GAME_OVER);
+            outPlayer2.writeObject(Protocol.PLAYER_GAVE_UP);
             outPlayer2.writeObject("Du gav upp! Din motståndare vann");
-            outPlayer1.writeObject(Protocol.GAME_OVER);
+            outPlayer1.writeObject(Protocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Den andra spelaren gav upp! Du vann");
         }
     }
