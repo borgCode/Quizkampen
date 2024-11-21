@@ -1,5 +1,6 @@
 package server.network;
 
+
 import server.entity.Game;
 import server.entity.Player;
 import server.entity.Question;
@@ -45,6 +46,8 @@ public class GameSession extends Thread {
             //Hämta spelar objekt från båda klienterna
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
+            //TODO: ScoreWindow s = new ScoreWindow(player1,player2);
+
 
             //Lägg streamsen och players i arrays som används i loop för att växla mellan dem
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
@@ -131,7 +134,7 @@ public class GameSession extends Thread {
         outputStream.flush();
 
 
-        //Tar emot hur många rätt använadaren hade
+        //Tar emot hur många rätt användaren hade
         ArrayList<Integer> opponentRoundScore = (ArrayList<Integer>) inputStream.readObject();
         game.incrementScore(player1, opponentRoundScore);
         round.setOpponentRoundScore(opponentRoundScore);

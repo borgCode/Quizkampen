@@ -12,6 +12,7 @@ public class Game {
     private int player2Score;
     private String winner;
 
+
     public Game(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
@@ -44,5 +45,3 @@ public class Game {
     }
     
 }
-
-// https://youtrack.jetbrains.com/issue/CWM-9503 check this URL !

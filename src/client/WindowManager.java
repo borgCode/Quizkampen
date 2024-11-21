@@ -1,16 +1,21 @@
 package client;
 
+import server.entity.Game;
 import server.entity.Player;
 import server.entity.Question;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WindowManager {
     private StartWindow startWindow;
     private GameWindow gameWindow;
     private CategoryWindow categoryWindow;
     private String selectedCategory;
-    //TODO lägg till scorewindow
+    private ScoreWindow scoreWindow;
+    private Player player1, player2;
+    private Game game;
+
 
     public WindowManager() {
         startWindow = new StartWindow();
@@ -19,20 +24,19 @@ public class WindowManager {
         gameWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
         });
-        
+
         categoryWindow = new CategoryWindow();
+
     }
-    
+
     public void setGameWindowVisibility(Boolean isVisible) {
         gameWindow.setVisible(isVisible);
     }
-    
-    
+
+
     public Player getPlayer() {
         return startWindow.getPlayer();
     }
-
-    
 
     public void displayQuestion(Question question) {
         gameWindow.updateQuestion(question);
@@ -58,4 +62,30 @@ public class WindowManager {
     public String getSelectedCategory() {
         return selectedCategory;
     }
-}
+
+
+    // TODO: showScoreWindow och updateScore
+    /*
+    public void showScorewWindow(Player player, ArrayList<Integer> scoreList) {
+        if (scoreWindow == null) {
+            scoreWindow = new ScoreWindow(player1, player2);
+
+            // Lägg till ActionListener för "Nästa rond"-knappen
+            scoreWindow.getNextRoundButton().addActionListener(e -> {
+                scoreWindow.setVisible(false);
+                gameWindow.setVisible(true);
+            });
+        }
+
+        // Uppdatera poäng och visa ScoreWindow
+        scoreWindow.updateScores(List<Integer> player1Scores, List<Integer>player2Scores);
+        scoreWindow.setVisible(true);
+        gameWindow.setVisible(false);
+        }
+        */
+
+    }
+
+
+
+

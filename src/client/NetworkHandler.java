@@ -127,6 +127,7 @@ public class NetworkHandler {
                     //TODO skapa metod för att updatea GUI med rondresultat
 
 
+
                     //Skickar antal rätt till server
                     out.writeObject(scoreList);
                     out.flush();
@@ -135,6 +136,7 @@ public class NetworkHandler {
                     List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
                     for (Integer score : opponentScore) {
                         System.out.println(score);
+
                     }
                 } else if (state.equals(Protocol.GAME_OVER)) {
                     System.out.println("Game over");

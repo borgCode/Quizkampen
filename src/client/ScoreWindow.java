@@ -1,5 +1,6 @@
 package client;
 
+import server.entity.Game;
 import server.entity.Player;
 import server.network.PropertiesManager;
 
@@ -9,9 +10,16 @@ import java.awt.*;
 public class ScoreWindow extends JFrame {
 
     private Player player1, player2;
-    private int rounds = 6;
+    private int rounds = 0;
+    private int gritLayoutRounds;
+    private ImageIcon checkImageIcon;
+    private ImageIcon crossImageIcon;
+    private JButton nextRoundButton;
+    private JPanel rondPanel;
+    private Game game;
 
-    ScoreWindow(Player player1, Player player2) {
+
+    public ScoreWindow(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
         this.rounds = PropertiesManager.totalRoundsSet();
@@ -21,6 +29,15 @@ public class ScoreWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 500);
         setLayout(new BorderLayout());
+
+        // Sätt ikoner för rätt och fel
+        checkImageIcon = new ImageIcon("src/resources/images/check.png");
+        Image scaledCheckImage = checkImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        checkImageIcon = new ImageIcon(scaledCheckImage);
+
+        crossImageIcon = new ImageIcon("src/resources/images/cross.png");
+        Image scaledCrossImage = crossImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+        crossImageIcon = new ImageIcon(scaledCrossImage);
 
         // Lägger till bakgrundsbilden
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
@@ -32,6 +49,7 @@ public class ScoreWindow extends JFrame {
         panel.setLayout(new BorderLayout());
         panel.setOpaque(false);
         backgroundLabel.add(panel, BorderLayout.CENTER);
+
 
         //TODO: TOP PANEL
         JPanel topPanel = new JPanel(new GridLayout(1, 4));
@@ -51,10 +69,12 @@ public class ScoreWindow extends JFrame {
         player1Panel.add(avatar1, BorderLayout.NORTH);
         player1Panel.add(name1, BorderLayout.CENTER);
 
+
         // TODO: Poäng
         //TODO :OBS! HÅRDKODAT POÄNGEN!!
         JLabel score = new JLabel("0 - 0", SwingConstants.CENTER);
         score.setFont(new Font("Arial", Font.BOLD, 32));
+
 
         // TODO: Avatar och spelare nr 2
         JButton avatar2 = new JButton(player2.getAvatar());
@@ -69,6 +89,7 @@ public class ScoreWindow extends JFrame {
         player2Panel.add(avatar2, BorderLayout.NORTH);
         player2Panel.add(name2, BorderLayout.CENTER);
 
+
         // Lägg till spelare och poäng i top-panelen
         topPanel.add(player1Panel);
         topPanel.add(score);
@@ -76,11 +97,18 @@ public class ScoreWindow extends JFrame {
         topPanel.setOpaque(false);
         panel.add(topPanel, BorderLayout.NORTH);
 
+        //Metod som kontrollerar storleken på rutorna
+        if (rounds > 6) {
+            gritLayoutRounds = rounds;
+        } else
+            gritLayoutRounds = 6;
 
         //Mitt panelen med ronderna
-        JPanel rondPanel = new JPanel(new GridLayout(rounds, 1)); //TODO: 6 ändra till rounds
+        rondPanel = new JPanel(new GridLayout(gritLayoutRounds, 1));
         rondPanel.setOpaque(false);
-        for (int i = 1; i <= rounds; i++) { //TODO: 6 ändra till rounds
+
+
+        for (int i = 1; i <= rounds; i++) {
             // 7 kolumner motsvarar: 3 knappar + RondNr + 3 Knappar
             JPanel rowPanel = new JPanel(new GridLayout(1, 7));
             rowPanel.setOpaque(false);
@@ -90,8 +118,8 @@ public class ScoreWindow extends JFrame {
             for (int j = 1; j <= 3; j++) {
                 JButton buttonPlayer1 = new JButton();
                 buttonPlayer1.setEnabled(false);
+                //buttonPlayer1.setIcon(game.getPlayer1Score() == 1 ? checkImageIcon : crossImageIcon); //TODO
                 rowPanel.add(buttonPlayer1);
-
             }
 
             //Rond
@@ -103,6 +131,7 @@ public class ScoreWindow extends JFrame {
             for (int u = 1; u <= 3; u++) {
                 JButton buttonPlayer2 = new JButton();
                 buttonPlayer2.setEnabled(false);
+                //buttonPlayer2.setIcon(game.getPlayer2Score() == 1 ? checkImageIcon : crossImageIcon); //TODO
                 rowPanel.add(buttonPlayer2);
             }
 
@@ -114,7 +143,7 @@ public class ScoreWindow extends JFrame {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
         bottomPanel.setOpaque(false);
         JButton giveUpButton = new JButton("Ge upp");
-        JButton nextRoundButton = new JButton("Nästa rond");
+        nextRoundButton = new JButton("Nästa rond");
         nextRoundButton.setEnabled(false);
         bottomPanel.add(giveUpButton);
         bottomPanel.add(nextRoundButton);
@@ -124,9 +153,61 @@ public class ScoreWindow extends JFrame {
         panel.add(rondPanel, BorderLayout.CENTER);
         panel.add(bottomPanel, BorderLayout.SOUTH);
         setVisible(true);
+
+
     }
 
-    public static void main(String[] args) {
+    // Getter för knappen
+    public JButton getNextRoundButton() {
+        return nextRoundButton;
+    }
+
+    //TODO:METOD
+    /*
+
+    public void updateScores(List<Integer> player1Scores, List<Integer> player2Scores) {
+
+        for (int i = 0; i < rounds; i++) {
+            JPanel rowPanel = new JPanel(new GridLayout(1, 7));
+            rowPanel.setOpaque(false);
+
+            // Lägg till knappar för spelare 1
+            for (int j = 0; j < 3; j++) {
+                JButton buttonPlayer1 = new JButton();
+                buttonPlayer1.setEnabled(false);
+                buttonPlayer1.setIcon(player1Scores.get(i) == 1 ? checkImageIcon : crossImageIcon);
+                rowPanel.add(buttonPlayer1);
+            }
+
+            // Lägg till rondnummer
+            JLabel rondLabel = new JLabel("Rond " + (i + 1), SwingConstants.CENTER);
+            rondLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            rowPanel.add(rondLabel);
+
+            // Lägg till knappar för spelare 2
+            for (int j = 0; j < 3; j++) {
+                JButton buttonPlayer2 = new JButton();
+                buttonPlayer2.setEnabled(false);
+                buttonPlayer2.setIcon(player2Scores.get(i) == 1 ? checkImageIcon : crossImageIcon);
+                rowPanel.add(buttonPlayer2);
+            }
+
+            // Lägg till raden i rondPanel
+            rondPanel.add(rowPanel);
+        }
+
+        // Uppdatera GUI
+        rondPanel.revalidate();
+        rondPanel.repaint();
+        nextRoundButton.setEnabled(true); // Aktivera "Nästa rond"-knappen
+    }
+}
+
+
+     */
+
+
+   public static void main(String[] args) {
         //TODO: OBS HÅRDKODAT. Dessa ska man få från StartWindow
         Player player1 = new Player("Spelare 1",new ImageIcon("src/resources/avatars/Gengar.png"));
         Player player2 = new Player("Spelare 2",new ImageIcon("src/resources/avatars/Poliwag.png"));
