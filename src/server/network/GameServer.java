@@ -1,7 +1,5 @@
 package server.network;
 
-import server.data.UserDataManager;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

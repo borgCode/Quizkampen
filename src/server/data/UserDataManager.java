@@ -65,6 +65,8 @@ public class UserDataManager {
             return false;
         }
         
+        //Uppdatera Map
+        players.put(newPlayer.getName(), newPlayer);
         return true;
     }
 }

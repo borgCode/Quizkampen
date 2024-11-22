@@ -24,6 +24,7 @@ public class ClientHandler implements Runnable {
         this.gameServer = gameServer;
         userDataManager = UserDataManager.getInstance();
         
+        
     }
 
     @Override
