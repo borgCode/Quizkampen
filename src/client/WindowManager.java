@@ -1,9 +1,6 @@
 package client;
 
-import client.windows.CategoryWindow;
-import client.windows.QuestionWindow;
-import client.windows.ScoreWindow;
-import client.windows.StartWindow;
+import client.windows.*;
 import server.entity.Player;
 import server.entity.Question;
 
@@ -11,15 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindowManager {
-    private final StartWindow startWindow;
+    private StartWindow startWindow;
     private final QuestionWindow questionWindow;
     private final CategoryWindow categoryWindow;
     private String selectedCategory;
     private final ScoreWindow scoreWindow;
+    private WelcomeWindow welcomeWindow;
+    private LoginWindow loginWindow;
+    private RegisterWindow registerWindow;
+    private Player loggedInPlayer;
 
     public WindowManager() {
-        startWindow = new StartWindow();
-        startWindow.setVisible(true);
+//        startWindow = new StartWindow();
+//        startWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
@@ -27,6 +28,26 @@ public class WindowManager {
         scoreWindow = new ScoreWindow();
         categoryWindow = new CategoryWindow();
     }
+    public void showWelcomeWindow() {
+        welcomeWindow = new WelcomeWindow(this);
+        welcomeWindow.setVisible(true);
+    }
+
+    public void showLoginWindow() {
+        loginWindow = new LoginWindow(this);
+        loginWindow.setVisible(true);
+    }
+
+    public void showRegisterWindow() {
+        registerWindow = new RegisterWindow(this);
+        registerWindow.setVisible(true);
+    }
+
+    public void showStartWindow() {
+        startWindow = new StartWindow();
+        startWindow.setVisible(true);
+    }
+
 
     public void initScoreWindowData(int rounds, Player player, Player opponent) {
         scoreWindow.setRounds(rounds);
@@ -59,7 +80,11 @@ public class WindowManager {
 
 
     public Player getPlayer() {
-        return startWindow.getPlayer();
+        if (loggedInPlayer != null) {
+            return loggedInPlayer;
+        } else {
+            return startWindow.getPlayer();
+        }
     }
 
     public void displayQuestion(Question question) {
@@ -107,6 +132,25 @@ public class WindowManager {
     public void setHasClickedPlay(boolean hasClicked) {
         scoreWindow.setHasClickedPlay(hasClicked);
     }
+
+    public boolean authenticateUser(String username, String password) {
+        // TODO: Logik med server, skicka användarnamn och lösen till server och få svar. Hårdkodad nu.
+        return username.equals("testuser") && password.equals("password123");
+    }
+
+    public boolean registerUser(String username, String name, String password, String avatar) {
+        // TODO: Logik med server, skicka användaruppgifter till server och få bekräftelse
+        return true;
+    }
+
+        // TILLFÄLLIG MAIN FÖR TEST
+        public static void main(String[] args) {
+            WindowManager windowManager = new WindowManager();
+
+            windowManager.showWelcomeWindow();
+        }
+
+
 }
 
 
