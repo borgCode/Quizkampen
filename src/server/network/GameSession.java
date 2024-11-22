@@ -15,8 +15,8 @@ import java.util.List;
 
 public class GameSession implements Runnable {
 
-    private final Socket player1Socket;
-    private final Socket player2Socket;
+    private final ClientHandler player1;
+    private final ClientHandler player2;
     private final QuestionBank questionBank;
     private final int totalRounds;
     
@@ -24,8 +24,8 @@ public class GameSession implements Runnable {
 
     public GameSession(ClientHandler player1, ClientHandler player2) {
         System.out.println("Två spelare anslutna");
-        this.player1Socket = player1.getClientSocket();
-        this.player2Socket = player2.getClientSocket();
+        this.player1 = player1;
+        this.player2 = player2;
         this.questionBank = new QuestionBank();
         // Sätter rundor på totalRounds från läsning av PropertiesManager
         this.totalRounds = PropertiesManager.totalRoundsSet();
@@ -34,17 +34,29 @@ public class GameSession implements Runnable {
     @Override
     public void run() {
         try (
-                ObjectOutputStream outPlayer1 = new ObjectOutputStream(player1Socket.getOutputStream());
-                ObjectInputStream inPlayer1 = new ObjectInputStream(player1Socket.getInputStream());
-                ObjectOutputStream outPlayer2 = new ObjectOutputStream(player2Socket.getOutputStream());
-                ObjectInputStream inPlayer2 = new ObjectInputStream(player2Socket.getInputStream())
+                ObjectOutputStream outPlayer1 = player1.getOutputStream();
+                ObjectInputStream inPlayer1 = player1.getInputStream();
+                ObjectOutputStream outPlayer2 = player2.getOutputStream();
+                ObjectInputStream inPlayer2 = player2.getInputStream();
         ) {
+
+            System.out.println("About to send waiting for opponenet");
+            outPlayer1.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
+            outPlayer2.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
+            outPlayer1.flush();
+            outPlayer2.flush();
 
 
 
             //Hämta spelar objekt från båda klienterna
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
+
+            outPlayer1.writeObject(GameSessionProtocol.GAME_START);
+            outPlayer2.writeObject(GameSessionProtocol.GAME_START);
+            outPlayer1.flush();
+            outPlayer2.flush();
+
 
             //Lägg streamsen och players i arrays som används i loop för att växla mellan dem
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};

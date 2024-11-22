@@ -1,6 +1,8 @@
 package server.network;
 
 public enum GameSessionProtocol {
+    WAITING_FOR_OPPONENT,
+    GAME_START,
     WAITING,
     SENT_CATEGORY,
     SENT_QUESTIONS,

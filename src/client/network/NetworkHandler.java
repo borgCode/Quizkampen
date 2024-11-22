@@ -35,10 +35,29 @@ public class NetworkHandler {
         try (Socket socket = new Socket(ip, port);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+            
+            
+            //Berätta för server att vi vill spela mot en random spelare
+            out.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
+            out.flush();
+            
+            //Vänta på att server svarar
+            GameSessionProtocol serverMessage = (GameSessionProtocol) in.readObject();
+            if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
+                System.out.println("Waiting for an opponent...");
+            }
+            
 
-            //Skickar spelaren till servern
+            //Skickar spelaren till servern efter svar från server
             out.writeObject(windowManager.getPlayer());
+            out.flush();
 
+            //Servern meddelar att en spelare är hittad och spelet startar
+            serverMessage = (GameSessionProtocol) in.readObject();
+            if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
+                System.out.println("Game starting!");
+            }
+            
             Object serverResponse = in.readObject();
             if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
                 int rounds = (Integer) in.readObject();
