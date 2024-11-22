@@ -22,6 +22,7 @@ public class ScoreWindow extends JFrame {
     private List<List<JButton>> player1buttons = new ArrayList<>();
     private List<List<JButton>> player2buttons = new ArrayList<>();
     private int currentRound = 1;
+    private JLabel score;
     private boolean hasClickedPlay;
     
 
@@ -73,7 +74,7 @@ public class ScoreWindow extends JFrame {
 
         // Poäng
         //TODO :OBS! HÅRDKODAT POÄNGEN!!
-        JLabel score = new JLabel(playerCurrentScore + " - " + playerOpponentScore, SwingConstants.CENTER);
+        score = new JLabel(playerCurrentScore + " - " + playerOpponentScore, SwingConstants.CENTER);
         score.setFont(new Font("Arial", Font.BOLD, 32));
 
         //Avatar och spelare nr 2
@@ -183,23 +184,32 @@ public class ScoreWindow extends JFrame {
 
 
     public void updatePlayerScore(List<Integer> scoreList) {
-            List<JButton> player1Row = player1buttons.get(currentRound -1);
+        List<JButton> player1Row = player1buttons.get(currentRound -1);
+        int player1Score = 0;
+
         for (int i = 0; i < 3; i++) {
             JButton button = player1Row.get(i);
             button.setIcon(scoreList.get(i) == 1 ?  checkImageIcon : crossImageIcon);
             button.setEnabled(true);
+            player1Score += scoreList.get(i);
         }
+        this.playerCurrentScore += player1Score;
+        updateRounds();
         hasUpdatedPlayerScore = true;
     }
 
     public void updateOpponentScore(List<Integer> opponentScore) {
         List<JButton> player2Row = player2buttons.get(currentRound -1);
+        int player2Score = 0;
 
         for (int i = 0; i < 3; i++) {
             JButton button = player2Row.get(i);
             button.setIcon(opponentScore.get(i) == 1 ?  checkImageIcon : crossImageIcon);
             button.setEnabled(true);
+            player2Score += opponentScore.get(i);
         }
+        this.playerOpponentScore += player2Score;
+        updateRounds();
         hasUpdatedOpponentScore = true;
     }
     
@@ -214,5 +224,10 @@ public class ScoreWindow extends JFrame {
 
     public void setHasClickedPlay(boolean hasClickedPlay) {
         this.hasClickedPlay = hasClickedPlay;
+    }
+    public void updateRounds() {
+        score.setText(playerCurrentScore + " - " + playerOpponentScore);
+        score.setFont(new Font("Arial", Font.BOLD, 32));
+        score.setHorizontalAlignment(SwingConstants.CENTER);
     }
 }
