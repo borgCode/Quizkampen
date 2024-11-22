@@ -87,12 +87,12 @@ public class StartWindow extends JFrame {
         // Panel för Start-knapp
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
-        JButton startButton = new JButton("SPELA");
+        JButton startButton = new JButton("Fortsätt som gäst");
         startButton.setFocusable(false);
-        startButton.setFont(new Font("Arial", Font.BOLD, 20));
+        startButton.setFont(new Font("Arial", Font.BOLD, 18));
         startButton.setBackground(Color.WHITE);
         startButton.setForeground(Color.BLACK);
-        startButton.setPreferredSize(new Dimension(120, 40));
+        startButton.setPreferredSize(new Dimension(200, 40));
         startButton.addActionListener(e -> startGame()); // ActionListener för spel-knappen
         buttonPanel.add(startButton);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);

@@ -19,6 +19,7 @@ public class LoginWindow extends JFrame {
         JButton loginButton = new JButton("Logga in");
         JButton backButton = new JButton("Tillbaka");
 
+        // Action listener för loginButton
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -30,6 +31,12 @@ public class LoginWindow extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Felaktigt användarnamn eller lösenord!");
             }
+        });
+
+        // Action listener för backButton
+        backButton.addActionListener(e -> {
+            setVisible(false);
+            windowManager.showWelcomeWindow();
         });
 
         add(new JLabel("Användarnamn:"));

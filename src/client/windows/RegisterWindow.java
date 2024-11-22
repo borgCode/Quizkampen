@@ -41,6 +41,12 @@ public class RegisterWindow extends JFrame {
             }
         });
 
+        // Action listener för backButton
+        backButton.addActionListener(e -> {
+            setVisible(false);
+            windowManager.showWelcomeWindow();
+        });
+
         add(new JLabel("Användarnamn:"));
         add(usernameField);
         add(new JLabel("Namn:"));
