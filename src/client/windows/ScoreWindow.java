@@ -24,9 +24,8 @@ public class ScoreWindow extends JFrame {
     private int currentRound = 1;
     private JLabel score;
     private boolean hasClickedPlay;
-    
 
-   
+
     public void initScoreWindow() {
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,7 +103,6 @@ public class ScoreWindow extends JFrame {
             gritLayoutRounds = 6;
 
 
-
         //Mitt panelen med ronderna
         JPanel rondPanel = new JPanel(new GridLayout(gritLayoutRounds, 1));
         rondPanel.setOpaque(false);
@@ -126,7 +124,7 @@ public class ScoreWindow extends JFrame {
                 rowPlayer1.add(buttonPlayer1);
 
             }
-            
+
             player1buttons.add(rowPlayer1);
 
             //Rond
@@ -177,19 +175,19 @@ public class ScoreWindow extends JFrame {
     public boolean hasUserGivenUp() {
         return hasUserGivenUp;
     }
-    
+
     public boolean hasClickedPlay() {
         return hasClickedPlay;
     }
 
 
     public void updatePlayerScore(List<Integer> scoreList) {
-        List<JButton> player1Row = player1buttons.get(currentRound -1);
+        List<JButton> player1Row = player1buttons.get(currentRound - 1);
         int player1Score = 0;
 
         for (int i = 0; i < 3; i++) {
             JButton button = player1Row.get(i);
-            button.setIcon(scoreList.get(i) == 1 ?  checkImageIcon : crossImageIcon);
+            button.setIcon(scoreList.get(i) == 1 ? checkImageIcon : crossImageIcon);
             button.setEnabled(true);
             player1Score += scoreList.get(i);
         }
@@ -199,12 +197,12 @@ public class ScoreWindow extends JFrame {
     }
 
     public void updateOpponentScore(List<Integer> opponentScore) {
-        List<JButton> player2Row = player2buttons.get(currentRound -1);
+        List<JButton> player2Row = player2buttons.get(currentRound - 1);
         int player2Score = 0;
 
         for (int i = 0; i < 3; i++) {
             JButton button = player2Row.get(i);
-            button.setIcon(opponentScore.get(i) == 1 ?  checkImageIcon : crossImageIcon);
+            button.setIcon(opponentScore.get(i) == 1 ? checkImageIcon : crossImageIcon);
             button.setEnabled(true);
             player2Score += opponentScore.get(i);
         }
@@ -212,7 +210,7 @@ public class ScoreWindow extends JFrame {
         updateRounds();
         hasUpdatedOpponentScore = true;
     }
-    
+
 
     public void nextRound() {
         if (hasUpdatedPlayerScore && hasUpdatedOpponentScore) {
@@ -225,9 +223,17 @@ public class ScoreWindow extends JFrame {
     public void setHasClickedPlay(boolean hasClickedPlay) {
         this.hasClickedPlay = hasClickedPlay;
     }
+
     public void updateRounds() {
         score.setText(playerCurrentScore + " - " + playerOpponentScore);
         score.setFont(new Font("Arial", Font.BOLD, 32));
         score.setHorizontalAlignment(SwingConstants.CENTER);
+    }
+    public void resetScoreList() {
+        this.playerCurrentScore = 0;
+        this.playerOpponentScore = 0;
+        currentRound = 1;
+        player1buttons.clear();
+        player2buttons.clear();
     }
 }

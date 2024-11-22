@@ -90,6 +90,9 @@ public class WindowManager {
     public void updatePlayerScore(List<Integer> scoreList) {
         scoreWindow.updatePlayerScore(scoreList);
     }
+    public void resetScoreList() {
+        scoreWindow.resetScoreList();
+    }
 
     public void updateOpponentScore(List<Integer> opponentScore) {
         scoreWindow.updateOpponentScore(opponentScore);

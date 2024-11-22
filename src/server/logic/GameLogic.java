@@ -3,6 +3,7 @@ package server.logic;
 import server.entity.Game;
 import server.entity.Player;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

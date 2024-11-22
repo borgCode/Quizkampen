@@ -114,17 +114,36 @@ public class GameSession implements Runnable {
                 //TODO end game logic
 
                 outPlayer1.writeObject(GameSessionProtocol.GAME_OVER);
+                outPlayer1.flush();
                 outPlayer2.writeObject(GameSessionProtocol.GAME_OVER);
+                outPlayer2.flush();
 
 
                 GameLogic.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
-                
+
+                outPlayer1.writeObject(GameSessionProtocol.SENT_PLAY_AGAIN);
+                outPlayer2.writeObject(GameSessionProtocol.SENT_PLAY_AGAIN);
+                outPlayer1.flush();
+                outPlayer2.flush();
+
+                boolean playAgainPlayer1 = (Boolean) inPlayer1.readObject();
+                boolean playAgainPlayer2 = (Boolean) inPlayer2.readObject();
+
+                if (playAgainPlayer1 && playAgainPlayer2) {
+                    resetGameState(player1,player2,game);
+                    continue;
+                } else {
+                    System.out.println("Spelarna vill inte spela igen");
+                }
                 break;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    private void resetGameState(Player player1, Player player2, Game game) {
+        game.resetScores();
     }
 
     private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
