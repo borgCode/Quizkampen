@@ -12,7 +12,6 @@ public class GameServer {
     private final List<ClientHandler> clientHandlers = new ArrayList<>();
 
     public static void main(String[] args) {
-        UserDataManager.loadUsersFromFile();
         new GameServer();
     }
 
