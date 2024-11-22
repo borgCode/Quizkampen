@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameSession extends Thread {
+public class GameSession implements Runnable {
 
     private final Socket player1Socket;
     private final Socket player2Socket;
@@ -22,15 +22,16 @@ public class GameSession extends Thread {
     
 
 
-    public GameSession(Socket player1Socket, Socket player2Socket) {
+    public GameSession(ClientHandler player1, ClientHandler player2) {
         System.out.println("Två spelare anslutna");
-        this.player1Socket = player1Socket;
-        this.player2Socket = player2Socket;
+        this.player1Socket = player1.getClientSocket();
+        this.player2Socket = player2.getClientSocket();
         this.questionBank = new QuestionBank();
         // Sätter rundor på totalRounds från läsning av PropertiesManager
         this.totalRounds = PropertiesManager.totalRoundsSet();
     }
 
+    @Override
     public void run() {
         try (
                 ObjectOutputStream outPlayer1 = new ObjectOutputStream(player1Socket.getOutputStream());

@@ -4,21 +4,24 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameServer {
-    private ArrayList<Socket> clientList;
+    private final List<ClientHandler> clientHandlers = new ArrayList<>();
+
+    public static void main(String[] args) {
+        new GameServer();
+    }
 
     public GameServer() {
-        clientList = new ArrayList<>();
         try (ServerSocket serverSocket = new ServerSocket(55566)) {
             while (true) {
-                Socket socketToClient = serverSocket.accept();
-                clientList.add(socketToClient);
-                if (clientList.size() == 2) {
-                    GameSession gameSession = new GameSession(clientList.get(0), clientList.get(1));
-                    gameSession.start();
-                    clientList.clear();
+                Socket clientSocket = serverSocket.accept();
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                synchronized (clientHandlers) {
+                    clientHandlers.add(clientHandler);
                 }
+                new Thread(clientHandler).start();
 
             }
         } catch (IOException e) {
@@ -26,8 +29,12 @@ public class GameServer {
         }
     }
 
-    public static void main(String[] args) {
-        GameServer gameServer = new GameServer();
+    public List<ClientHandler> getClientHandlers() {
+        return clientHandlers;
     }
 
+    public void startGame(ClientHandler player1, ClientHandler player2) {
+        GameSession gameSession = new GameSession(player1, player2);
+        new Thread (gameSession).start();
+    }
 }
