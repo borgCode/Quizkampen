@@ -71,10 +71,7 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
+    
 
     public ObjectOutputStream getOutputStream() {
         return outputStream;
