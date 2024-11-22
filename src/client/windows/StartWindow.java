@@ -12,9 +12,9 @@ import java.util.ArrayList;
 public class StartWindow extends JFrame {
 
     private JTextField nameField;
-    private ImageIcon selectedAvatar;
+    private String selectedAvatarPath;
     private ArrayList<JButton> avatarButtons = new ArrayList<>();
-    Player player;
+    private Player player;
 
     public Player getPlayer() {
         return player;
@@ -155,7 +155,7 @@ public class StartWindow extends JFrame {
                         avatarButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3)); // Markerar den valda avataren
 
                         // Gör om action command (filnamn) till en ImageIcon för att langa in det i player korrekt
-                        selectedAvatar = new ImageIcon("src/resources/avatars/" + e.getActionCommand());
+                        selectedAvatarPath = "src/resources/avatars/" + e.getActionCommand();
                     });
 
                     avatarButtons.add(avatarButton);
@@ -180,12 +180,12 @@ public class StartWindow extends JFrame {
             return;
         }
         // Kontrollerar att en avatar är vald, annars skriver ut felmeddelande
-        if (selectedAvatar == null) {
+        if (selectedAvatarPath == null) {
             JOptionPane.showMessageDialog(this, "Vänligen välj en avatar.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        player = new Player(playerName, selectedAvatar);
+        player = new Player(playerName, selectedAvatarPath);
 
         // Stänger StartWindow
         dispose();
