@@ -18,7 +18,7 @@ public class GameSession extends Thread {
     private final Socket player1Socket;
     private final Socket player2Socket;
     private final QuestionBank questionBank;
-    private int totalRounds = 0;
+    private final int totalRounds;
     
 
 
@@ -59,7 +59,7 @@ public class GameSession extends Thread {
                 Game game = new Game(player1, player2);
 
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
-                outPlayer2.writeObject(Protocol.WAITING);
+                outPlayer2.writeObject(GameSessionProtocol.WAITING);
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV-serier", "TV-spel", "Mat", "Litteratur", "Sport"));
                 for (int i = 0; i < totalRounds; i++){
                     // Låt currentplayer välja kategori
@@ -92,7 +92,7 @@ public class GameSession extends Thread {
                     sendResultsToOpponent(outputStreams[currentPlayer], player2Score);
 
                     // Informera om att vänta
-                    outputStreams[currentPlayer].writeObject(Protocol.WAITING);
+                    outputStreams[currentPlayer].writeObject(GameSessionProtocol.WAITING);
                     currentPlayer = (currentPlayer + 1) % 2;
 
                 }
@@ -101,8 +101,8 @@ public class GameSession extends Thread {
 
                 //TODO end game logic
 
-                outPlayer1.writeObject(Protocol.GAME_OVER);
-                outPlayer2.writeObject(Protocol.GAME_OVER);
+                outPlayer1.writeObject(GameSessionProtocol.GAME_OVER);
+                outPlayer2.writeObject(GameSessionProtocol.GAME_OVER);
 
 
                 GameLogic.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
@@ -116,10 +116,10 @@ public class GameSession extends Thread {
     }
 
     private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
-        outPlayer1.writeObject(Protocol.SEND_SCORE_WINDOW_DATA);
+        outPlayer1.writeObject(GameSessionProtocol.SEND_SCORE_WINDOW_DATA);
         outPlayer1.writeObject(totalRounds);
         outPlayer1.writeObject(player2);
-        outPlayer2.writeObject(Protocol.SEND_SCORE_WINDOW_DATA);
+        outPlayer2.writeObject(GameSessionProtocol.SEND_SCORE_WINDOW_DATA);
         outPlayer2.writeObject(totalRounds);
         outPlayer2.writeObject(player1);
     }
@@ -127,7 +127,7 @@ public class GameSession extends Thread {
 
     private String handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream, ArrayList<String> categories) throws IOException, ClassNotFoundException {
         //Hämta random lista med 3 kategorier
-        outputStream.writeObject(Protocol.SENT_CATEGORY);
+        outputStream.writeObject(GameSessionProtocol.SENT_CATEGORY);
         ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
 
         //Skickar tre kategorier till client
@@ -137,7 +137,7 @@ public class GameSession extends Thread {
         Object clientResponse = inputStream.readObject();
         
         //Kollar om spelaren gav upp
-        if (clientResponse.equals(Protocol.CLIENT_GAVE_UP)) {
+        if (clientResponse.equals(GameSessionProtocol.CLIENT_GAVE_UP)) {
             return null;
         }
 
@@ -152,13 +152,13 @@ public class GameSession extends Thread {
 
     private boolean processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player1, Round round) throws IOException, ClassNotFoundException {
         
-        outputStream.writeObject(Protocol.SENT_QUESTIONS);
+        outputStream.writeObject(GameSessionProtocol.SENT_QUESTIONS);
         outputStream.writeObject(round.getCurrentQuestions());
         outputStream.flush();
 
         //Kollar om spelaren har gett up
         Object clientResponse = inputStream.readObject();
-        if (clientResponse.equals(Protocol.CLIENT_GAVE_UP)) {
+        if (clientResponse.equals(GameSessionProtocol.CLIENT_GAVE_UP)) {
             return false;
         }
 
@@ -172,7 +172,7 @@ public class GameSession extends Thread {
 
     private void sendResultsToOpponent(ObjectOutputStream outputStream, ArrayList<Integer> score) throws IOException {
         //Skicka resultat till andra spelaren
-        outputStream.writeObject(Protocol.SENT_ROUND_SCORE);
+        outputStream.writeObject(GameSessionProtocol.SENT_ROUND_SCORE);
         outputStream.writeObject(score);
         outputStream.flush();
     }
@@ -182,14 +182,14 @@ public class GameSession extends Thread {
 
         
         if (currentPlayer == 0) {
-            outPlayer1.writeObject(Protocol.PLAYER_GAVE_UP);
+            outPlayer1.writeObject(GameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Du gav upp! Din motståndare vann");
-            outPlayer2.writeObject(Protocol.PLAYER_GAVE_UP);
+            outPlayer2.writeObject(GameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer2.writeObject("Den andra spelaren gav upp! Du vann");
         } else {
-            outPlayer2.writeObject(Protocol.PLAYER_GAVE_UP);
+            outPlayer2.writeObject(GameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer2.writeObject("Du gav upp! Din motståndare vann");
-            outPlayer1.writeObject(Protocol.PLAYER_GAVE_UP);
+            outPlayer1.writeObject(GameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Den andra spelaren gav upp! Du vann");
         }
     }

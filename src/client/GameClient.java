@@ -1,5 +1,7 @@
 package client;
 
+import client.network.NetworkHandler;
+
 public class GameClient {
     private NetworkHandler networkHandler;
     private WindowManager windowManager;

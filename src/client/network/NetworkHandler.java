@@ -1,11 +1,11 @@
-package client;
+package client.network;
 
 
+import client.WindowManager;
 import server.entity.Player;
 import server.entity.Question;
-import server.network.Protocol;
+import server.network.GameSessionProtocol;
 
-import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -16,15 +16,12 @@ import java.util.List;
 public class NetworkHandler {
     private WindowManager windowManager;
 
-    NetworkHandler(WindowManager windowManager) {
+    public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
 
         int port = 55566;
         String ip = "127.0.0.1";
-
-        String name;
-        ImageIcon avatar;
-
+        
 
         //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
         while (windowManager.getPlayer() == null) {
@@ -43,7 +40,7 @@ public class NetworkHandler {
             out.writeObject(windowManager.getPlayer());
 
             Object serverResponse = in.readObject();
-            if (serverResponse.equals(Protocol.SEND_SCORE_WINDOW_DATA)) {
+            if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
                 int rounds = (Integer) in.readObject();
                 Player opponent = (Player) in.readObject();
                 windowManager.initScoreWindowData(rounds, windowManager.getPlayer(), opponent);
@@ -57,13 +54,13 @@ public class NetworkHandler {
                     continue;
                 }
                 windowManager.nextRound();
-                Protocol state = (Protocol) in.readObject();
+                GameSessionProtocol state = (GameSessionProtocol) in.readObject();
                 // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
                 switch (state) {
-                    case Protocol.WAITING:
+                    case GameSessionProtocol.WAITING:
                         windowManager.showScoreWindow();
                         break;
-                    case Protocol.SENT_CATEGORY:
+                    case GameSessionProtocol.SENT_CATEGORY:
                         while (!windowManager.hasClickedPlay()) {
                             try {
                                 Thread.sleep(100);
@@ -73,7 +70,7 @@ public class NetworkHandler {
                         }
                         handleCategorySelection(out, in);
                         break;
-                    case Protocol.SENT_QUESTIONS:
+                    case GameSessionProtocol.SENT_QUESTIONS:
                         while (!windowManager.hasClickedPlay()) {
                             try {
                                 Thread.sleep(100);
@@ -84,17 +81,17 @@ public class NetworkHandler {
                         handleQuestionRound(out, in);
                         windowManager.setHasClickedPlay(false);
                         break;
-                    case Protocol.SENT_ROUND_SCORE:
+                    case GameSessionProtocol.SENT_ROUND_SCORE:
                         List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
                         windowManager.updateOpponentScore(opponentScore);
                         break;
-                    case Protocol.GAME_OVER:
+                    case GameSessionProtocol.GAME_OVER:
                         System.out.println("Game over");
                         out.flush();
                         String resultat = (String) in.readObject();
                         System.out.println(resultat);
                         break;
-                    case Protocol.PLAYER_GAVE_UP:
+                    case GameSessionProtocol.PLAYER_GAVE_UP:
                         String message = (String) in.readObject();
                         System.out.println(message);
                 }
@@ -137,7 +134,7 @@ public class NetworkHandler {
     }
 
     private void sendGiveUpSignal(ObjectOutputStream out) throws IOException {
-        out.writeObject(Protocol.CLIENT_GAVE_UP);
+        out.writeObject(GameSessionProtocol.CLIENT_GAVE_UP);
     }
 
     private void handleQuestionRound(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {

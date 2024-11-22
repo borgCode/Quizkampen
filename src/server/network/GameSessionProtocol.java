@@ -1,6 +1,6 @@
 package server.network;
 
-public enum Protocol {
+public enum GameSessionProtocol {
     WAITING,
     SENT_CATEGORY,
     SENT_QUESTIONS,
