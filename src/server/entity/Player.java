@@ -1,51 +1,36 @@
 package server.entity;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Player implements Serializable {
     private String name;
-    private int playerScore;
+    private String password;
+    private int numOfWins;
     private int numOfLosses;
-    private ImageIcon avatar;
-    private Player opponent;
+    private String avatarPath;
 
 
-    public Player(String name, ImageIcon avatar) {
+    public Player(String name, String avatarPath) {
         this.name = name;
-        this.avatar = avatar;
+        this.avatarPath = avatarPath;
     }
-
-    public void setOpponent(Player opponent) {
-        this.opponent = opponent;
-    }
-    public Player getOpponent() {
-        return opponent;
-    }
+    
 
     public String getName() {
         return name;
     }
+    
 
-    public int getPlayerScore() {
-        return playerScore;
+    public String getAvatarPath() {
+        return avatarPath;
     }
 
-    public void setPlayerScore(int playerScore) {
-        this.playerScore = playerScore;
+    public ImageIcon getAvatar(String imagePath) {
+        ImageIcon avatarIcon = new ImageIcon(imagePath);
+        Image scaledImage = avatarIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); 
+        return new ImageIcon(scaledImage);
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public ImageIcon getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(ImageIcon avatar) {
-        this.avatar = avatar;
-    }
+    
 }

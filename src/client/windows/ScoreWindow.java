@@ -60,7 +60,7 @@ public class ScoreWindow extends JFrame {
 
 
         //Avatar och spelare nr 1
-        JButton avatar1 = new JButton(player1.getAvatar());
+        JButton avatar1 = new JButton(player1.getAvatar(player1.getAvatarPath()));
         avatar1.setContentAreaFilled(false); // Tar bort bakgrund
         avatar1.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
         avatar1.setFocusable(false);
@@ -78,7 +78,7 @@ public class ScoreWindow extends JFrame {
         score.setFont(new Font("Arial", Font.BOLD, 32));
 
         //Avatar och spelare nr 2
-        JButton avatar2 = new JButton(player2.getAvatar());
+        JButton avatar2 = new JButton(player2.getAvatar(player2.getAvatarPath()));
         avatar2.setContentAreaFilled(false); // Tar bort bakgrund
         avatar2.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
         avatar2.setFocusable(false);
