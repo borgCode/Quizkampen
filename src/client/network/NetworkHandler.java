@@ -37,34 +37,16 @@ public class NetworkHandler {
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
             
             
-            //Berätta för server att vi vill spela mot en random spelare
-            out.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
-            out.flush();
             
-            //Vänta på att server svarar
-            GameSessionProtocol serverMessage = (GameSessionProtocol) in.readObject();
-            if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
-                System.out.println("Waiting for an opponent...");
-            }
+            //TODO Koppla till start random game knapp i GUI
+            startRandomGame(out, in);
             
-
-            //Skickar spelaren till servern efter svar från server
-            out.writeObject(windowManager.getPlayer());
-            out.flush();
-
-            //Servern meddelar att en spelare är hittad och spelet startar
-            serverMessage = (GameSessionProtocol) in.readObject();
-            if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
-                System.out.println("Game starting!");
-            }
+            //TODO registrera metod
             
-            Object serverResponse = in.readObject();
-            if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
-                int rounds = (Integer) in.readObject();
-                Player opponent = (Player) in.readObject();
-                windowManager.initScoreWindowData(rounds, windowManager.getPlayer(), opponent);
-                windowManager.initScoreWindow();
-            }
+            //TODO logga in metod
+            
+            //TODO Topplista metod
+            
 
 
             while (true) {
@@ -127,7 +109,37 @@ public class NetworkHandler {
         }
     }
 
-    
+    private void startRandomGame(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
+        //Berätta för server att vi vill spela mot en random spelare
+        out.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
+        out.flush();
+
+        //Vänta på att server svarar
+        GameSessionProtocol serverMessage = (GameSessionProtocol) in.readObject();
+        if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
+            System.out.println("Waiting for an opponent...");
+        }
+
+
+        //Skickar spelaren till servern efter svar från server
+        out.writeObject(windowManager.getPlayer());
+        out.flush();
+
+        //Servern meddelar att en spelare är hittad och spelet startar
+        serverMessage = (GameSessionProtocol) in.readObject();
+        if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
+            System.out.println("Game starting!");
+        }
+
+        Object serverResponse = in.readObject();
+        if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
+            int rounds = (Integer) in.readObject();
+            Player opponent = (Player) in.readObject();
+            windowManager.initScoreWindowData(rounds, windowManager.getPlayer(), opponent);
+            windowManager.initScoreWindow();
+        }
+    }
+
 
     private void handleCategorySelection(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, InterruptedException {
         // Läser in kategorier från servern
