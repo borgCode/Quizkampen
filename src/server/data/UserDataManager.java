@@ -3,6 +3,7 @@ package server.data;
 import server.entity.Player;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDataManager {
@@ -68,5 +69,9 @@ public class UserDataManager {
         //Uppdatera Map
         players.put(newPlayer.getName(), newPlayer);
         return true;
+    }
+    
+    public ArrayList<Player> getAllPlayers() {
+        return new ArrayList<>(players.values());
     }
 }

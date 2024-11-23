@@ -7,7 +7,9 @@ import server.entity.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
@@ -44,12 +46,16 @@ public class ClientHandler implements Runnable {
                 switch (request) {
                     case ClientPreGameProtocol.REGISTER_USER:
                         registerUser();
+                        break;
                     case ClientPreGameProtocol.LOGIN_USER:
                         loginUser();
+                        break;
                     case ClientPreGameProtocol.START_RANDOM_GAME:
                         findMatch();
                         return;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
+                    case ClientPreGameProtocol.SHOW_TOP_LIST:
+                        sendListOfAllPlayers();
                         
                 }
             }
@@ -60,6 +66,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    
     private void registerUser() throws IOException, ClassNotFoundException {
         Player newPlayer = (Player) inputStream.readObject();
         if (userDataManager.registerNewUser(newPlayer)) {
@@ -97,8 +104,18 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-    
 
+    private void sendListOfAllPlayers() throws IOException {
+        ArrayList<Player> allPLayers = userDataManager.getAllPlayers();
+        if (allPLayers.isEmpty()) {
+            outputStream.writeObject(ServerPreGameProtocol.NO_REGISTERED_PLAYERS);
+        } else {
+            outputStream.writeObject(ServerPreGameProtocol.TOP_LIST_SENT);
+            outputStream.writeObject(userDataManager.getAllPlayers());
+            outputStream.flush();
+        }
+    }
+    
     public ObjectOutputStream getOutputStream() {
         return outputStream;
     }
