@@ -1,6 +1,8 @@
 package server.network;
 
 
+import server.data.QuestionManager;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,6 +13,8 @@ public class GameServer {
     private final List<ClientHandler> clientHandlers = new ArrayList<>();
 
     public static void main(String[] args) {
+        //Läser frågor från fil till HashMap
+        QuestionManager.getInstance();
         new GameServer();
     }
 

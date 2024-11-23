@@ -1,0 +1,55 @@
+category,question,option1,option2,option3,option4,correct_answer
+geografi,Vilken kontinent är den största till ytan?,Afrika,Europa,Asien,Antarktis,Asien
+geografi,Vilken flod är världens längsta?,Amazonas,Nilen,Yangtze,Mississippi,Nilen
+geografi,Vilken stad kallas 'Ljusets stad'?,Paris,London,Rom,Berlin,Paris
+geografi,Vilket berg är världens högsta?,Mount Everest,K2,Kangchenjunga,Lhotse,Mount Everest
+geografi,Vilken stad är världens största i befolkning?,Moskva,Berlin,Peking,Tokyo,Tokyo
+geografi,Vilken öken är den största i världen?,Sahara,Kalahari,Gobi,Atacama,Sahara
+historia,Vem var ledare för det största sammanhängande imperiet i historien?,André the Giant,Genghis Khan,Alexander den store,Napoleon Bonaparte,Genghis Khan
+historia,Vilket krig började 1939?,Första världskriget,Andra världskriget,Napoleonskrigen,Koreakriget,Andra världskriget
+historia,Vem grundade det svenska kungariket?,Karl XII,Gustav Vasa,Olof Skötkonung,Erik XIV,Gustav Vasa
+historia,Vem var den sista faraonen i Egypten?,Cleopatra,Nefertiti,Hatshepsut,Elizabeth I,Cleopatra
+historia,Vem uppfann boktryckarkonsten?,Martin Luther,Johannes Gutenberg,Galileo Galilei,Isaac Newton,Johannes Gutenberg
+historia,Vilket datum firas Bastilledagen en viktig fransk nationaldag?,Independence Day,Bastilledagen,Midsommar,Valborg,14 juli
+vetenskap,Vem formulerade relativitetsteorin?,Albert Einstein,Isaac Newton,Nikola Tesla,Marie Curie,Albert Einstein
+vetenskap,Vilket är det lättaste grundämnet i det periodiska systemet?,Hydrogen,Oxygen,Nitrogen,Carbon,Hydrogen
+vetenskap,Vilken planet i vårt solsystem är känd som den röda planeten?,Mars,Venus,Jupiter,Saturnus,Mars
+vetenskap,Vilken subatomär partikel har en negativ laddning?,Proton,Neutron,Electron,Photon,Electron
+vetenskap,Vad heter galaxen som jorden är en del av?,Andromedagalaxen,Vintergatan,Triangelgalaxen,Sombrerogalaxen,Vintergatan
+vetenskap,Vilket ämne ger växter deras gröna färg och är viktigt för fotosyntesen?,Klorofyll,Hemoglobin,Keratin,Insulin,Klorofyll
+sport,Vem är känd för att ha gjort 'Guds hand'-målet i VM 1986?,Pele,Diego Maradona,Lionel Messi,Cristiano Ronaldo,Diego Maradona
+sport,Vilken sport spelas med en boll och en basketkorg?,Basket,Fotboll,Baseboll,Tennis,Basket
+sport,Vem har vunnit flest Grand Slam-titlar i tennis (herrsingel) fram till 2023?,Roger Federer,Rafael Nadal,Novak Djokovic,Andy Murray,Novak Djokovic
+sport,Vilket är världens mest kända cykellopp?,Tour de France,Giro d'Italia,Vuelta a España,Paris-Roubaix,Tour de France
+sport,Vilken basketspelare är känd för att bära tröja nummer 23 i Chicago Bulls?,Michael Jordan,Kobe Bryant,LeBron James,Shaquille O'Neal,Michael Jordan
+sport,Vilken sport spelas vid Ryder Cup?,Golf,Hockey,Rugby,Cricket,Golf
+nöje,Vilken film är känd för citatet 'I'm gonna make him an offer he can't refuse'?,The Godfather,Titanic,The Shawshank Redemption,Pulp Fiction,The Godfather
+nöje,Vem sjöng hits som 'Rolling in the Deep' och 'Someone Like You'?,Taylor Swift,Beyoncé,Adele,Lady Gaga,Adele
+nöje,Vilken TV-serie handlar om en familj som slåss om kontrollen över de sju kungadömena i Westeros?,Game of Thrones,Breaking Bad,The Sopranos,Friends,Game of Thrones
+nöje,Vilket filmstudio-universum inkluderar karaktärer som Iron Man Thor och Captain America?,Marvel,DC,Pixar,Lucasfilm,Marvel
+nöje,Vem kallas 'The King of Pop'?,Elvis Presley,Michael Jackson,Freddie Mercury,Prince,Michael Jackson
+nöje,Vilket brittiskt band är känt för låtar som 'Hey Jude' och 'Let It Be'?,The Beatles,The Rolling Stones,Queen,Led Zeppelin,The Beatles
+litteratur,Vem skrev 'Sagan om ringen'-trilogin?,J.K. Rowling,J.R.R. Tolkien,George R.R. Martin,C.S. Lewis,J.R.R. Tolkien
+litteratur,Vilket Shakespeare-verk innehåller citatet 'Att vara eller inte vara det är frågan'?,Romeo och Julia,Hamlet,Macbeth,Othello,Hamlet
+litteratur,Vilken dystopisk roman skrevs av George Orwell?,1984,Brave New World,Fahrenheit 451,The Handmaid's Tale,1984
+litteratur,Vem är författaren till 'Iliaden' och 'Odysséen'?,Homer,Virgil,Sophocles,Herodotus,Homer
+litteratur,Vilken roman skrevs av Jane Austen och handlar om Elizabeth Bennet och Mr. Darcy?,Jane Eyre,Stolthet och fördom,Emma,Wuthering Heights,Stolthet och fördom
+litteratur,Vilken klassisk roman skrevs av Mary Shelley?,Frankenstein,Dracula,Dorian Grays porträtt,Dr. Jekyll och Mr. Hyde,Frankenstein
+tv-spel,Vilken är den mest kända plattformsspelserien skapad av Nintendo?,Super Mario,The Legend of Zelda,Donkey Kong,Metroid,Super Mario
+tv-spel,Vilket spel är känt för sin pixelgrafik och blockiga värld där spelare kan bygga och överleva?,Minecraft,Fortnite,Among Us,Roblox,Minecraft
+tv-spel,Vilken rollspelsserie är känd för sina öppna världar och episka berättelser om fantasy?,The Elder Scrolls V: Skyrim,Fallout 4,World of Warcraft,Dragon Age: Inquisition,The Elder Scrolls V: Skyrim
+tv-spel,Vilken populär first-person shooter-serie är känd för sina strider och krigsoperationer?,Call of Duty,Battlefield,Halo,Counter-Strike,Call of Duty
+tv-spel,Vilket spel är känt för sitt fokus på teambaserad taktik och hjältekaraktärer?,Overwatch,League of Legends,Dota 2,Valorant,Overwatch
+tv-spel,Vilken populär japansk RPG-serie handlar om att fånga och träna varelser i en fiktiv värld?,Pokémon,Final Fantasy,Dragon Quest,Chrono Trigger,Pokémon
+mat,Vilken rätt kommer ursprungligen från Italien och består av en rund degbas med tomatsås och ost?,Sushi,Tacos,Pizza,Pasta,Pizza
+mat,Vilken japansk rätt består ofta av ris rå fisk och andra ingredienser?,Sushi,Dim Sum,Pad Thai,Ramen,Sushi
+mat,Vilken italiensk rätt är en krämig risbaserad maträtt som ofta innehåller svamp eller skaldjur?,Gnocchi,Frittata,Risotto,Lasagne,Risotto
+mat,Vilken frukt är känd för att vara gul när den är mogen och har en söt mjuk smak?,Apple,Banana,Mango,Pineapple,Banana
+mat,Vilken typ av bröd är lång och smal och kommer från Frankrike?,Baguette,Ciabatta,Sourdough,Pita,Baguette
+mat,Vilken italiensk efterrätt är gjord på mascarpone kaffe och kakao?,Tiramisu,Gelato,Cannoli,Panna Cotta,Tiramisu
+tv-serier,Vilken TV-serie handlar om en kemilärare som blir en droghandlare?,Breaking Bad,The Sopranos,Game of Thrones,Friends,Breaking Bad
+tv-serier,Vilken TV-serie utspelar sig i en värld där en grupp barn stöter på övernaturliga krafter?,Stranger Things,The Mandalorian,The Witcher,Westworld,Stranger Things
+tv-serier,Vilken mockumentary-serie följer livet på ett kontor i Scranton Pennsylvania?,The Office,Parks and Recreation,Brooklyn Nine-Nine,Arrested Development,The Office
+tv-serier,Vilken TV-serie handlar om det brittiska kungahuset och drottning Elizabeth II:s regeringstid?,The Crown,Downton Abbey,Vikings,The Tudors,The Crown
+tv-serier,Vilken TV-serie handlar om ett gäng vänner som bor i New York?,Friends,How I Met Your Mother,Big Bang Theory,Two and a Half Men,Friends
+tv-serier,Vilken serie handlar om en colombiansk drogkartell och dess ledare Pablo Escobar?,Narcos,Breaking Bad,Peaky Blinders,Ozark,Narcos

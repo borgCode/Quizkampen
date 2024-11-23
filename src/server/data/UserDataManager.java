@@ -23,8 +23,6 @@ public class UserDataManager {
     }
 
     private void loadUsersFromFile() {
-        
-        
         try (BufferedReader reader = new BufferedReader(new FileReader("src/server/data/userdata.csv"))) {
             //Skippa första raden
             String line = reader.readLine();
