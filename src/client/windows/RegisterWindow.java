@@ -32,17 +32,17 @@ public class RegisterWindow extends JFrame {
         JLabel usernameLabel = new JLabel("Användarnamn:");
         usernameLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Ändra teckensnitt och storlek
         JTextField usernameField = new JTextField();
-        usernameField.setFont(new Font("Arial", Font.BOLD, 14)); // Ändra storlek för text i textfält
+        usernameField.setFont(new Font("Arial", Font.PLAIN, 14)); // Ändra storlek för text i textfält
 
         JLabel nameLabel = new JLabel("Namn:");
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         JTextField nameField = new JTextField();
-        nameField.setFont(new Font("Arial", Font.BOLD, 14));
+        nameField.setFont(new Font("Arial", Font.PLAIN, 14));
 
         JLabel passwordLabel = new JLabel("Lösenord:");
         passwordLabel.setFont(new Font("Arial", Font.BOLD, 16));
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setFont(new Font("Arial", Font.BOLD, 14));
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
 
         // Checkbox för att visa/dölja lösenordet
         JCheckBox showPasswordCheckBox = new JCheckBox("Visa lösenord");
@@ -73,7 +73,7 @@ public class RegisterWindow extends JFrame {
         // Panel för avatarval
         JPanel avatarPanel = new JPanel(new GridLayout(2, 3, 15, 15));
         TitledBorder avatarBorder = BorderFactory.createTitledBorder("Välj din avatar");
-        avatarBorder.setTitleFont(new Font("Arial", Font.BOLD, 16)); // Ändra teckensnittet och storleken här
+        avatarBorder.setTitleFont(new Font("Arial", Font.BOLD, 16));
         avatarPanel.setBorder(avatarBorder);
         avatarPanel.setOpaque(false); // Gör panelen genomskinlig
         loadAvatarGrid(avatarPanel);
@@ -86,19 +86,27 @@ public class RegisterWindow extends JFrame {
         JButton registerButton = new JButton("Registrera dig");
         registerButton.setFocusable(false);
         registerButton.setFont(new Font("Arial", Font.BOLD, 16));
+        registerButton.setPreferredSize(new Dimension(200, 30));
         registerButton.setBackground(Color.WHITE);
         registerButton.setForeground(Color.BLACK);
 
         JButton backButton = new JButton("Tillbaka");
         backButton.setFocusable(false);
-        backButton.setFont(new Font("Arial", Font.BOLD, 12));
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setPreferredSize(new Dimension(100, 30));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
 
         registerButton.addActionListener(e -> {
-            String username = usernameField.getText();
-            String name = nameField.getText();
-            String password = new String(passwordField.getPassword());
+            String username = usernameField.getText().trim();
+            String name = nameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+
+            // Kontrollera att alla fält är ifyllda
+            if (username.isEmpty() || name.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Alla fält måste fyllas i.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             if (selectedAvatarPath == null) {
                 JOptionPane.showMessageDialog(this, "Vänligen välj en avatar.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);

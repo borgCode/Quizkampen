@@ -18,12 +18,12 @@ public class LoginWindow extends JFrame {
         backgroundLabel.setLayout(new BorderLayout()); // Gör så att komponenter kan placeras ovanpå
         setContentPane(backgroundLabel);
 
-        // Bild högst upp
+        // Bilden högst upp
         JLabel headerImage = new JLabel(new ImageIcon("src/resources/images/loggain.png"));
-        headerImage.setHorizontalAlignment(SwingConstants.CENTER); // Centrerar bilden
+        headerImage.setHorizontalAlignment(SwingConstants.CENTER);
         headerImage.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // Padding runt bilden
 
-        // Skapa panel för inloggningsfälten
+        // Panel för inloggningsfälten
         JPanel fieldPanel = new JPanel();
         fieldPanel.setLayout(new BoxLayout(fieldPanel, BoxLayout.Y_AXIS));
         fieldPanel.setOpaque(false); // Gör panelen genomskinlig
@@ -65,19 +65,21 @@ public class LoginWindow extends JFrame {
         backgroundLabel.add(fieldPanel, BorderLayout.CENTER);
         backgroundLabel.add(headerImage, BorderLayout.NORTH);
 
-        // Skapa panel för knappar
+        // panel för knappar
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false); // Gör panelen genomskinlig
 
         JButton loginButton = new JButton("Logga in");
         loginButton.setFocusable(false);
         loginButton.setFont(new Font("Arial", Font.BOLD, 16));
+        loginButton.setPreferredSize(new Dimension(200, 30));
         loginButton.setBackground(Color.WHITE);
         loginButton.setForeground(Color.BLACK);
 
         JButton backButton = new JButton("Tillbaka");
         backButton.setFocusable(false);
-        backButton.setFont(new Font("Arial", Font.BOLD, 16));
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setPreferredSize(new Dimension(100, 30));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
 
