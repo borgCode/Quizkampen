@@ -1,10 +1,10 @@
 package server.network;
 
+import server.data.QuestionManager;
 import server.entity.Game;
 import server.entity.Player;
 import server.entity.Round;
 import server.logic.GameLogic;
-import server.logic.QuestionBank;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,7 +16,7 @@ public class GameSession implements Runnable {
 
     private final ClientHandler player1;
     private final ClientHandler player2;
-    private final QuestionBank questionBank;
+    private final QuestionManager questionManager;
     private final int totalRounds;
     
 
@@ -25,7 +25,7 @@ public class GameSession implements Runnable {
         System.out.println("Två spelare anslutna");
         this.player1 = player1;
         this.player2 = player2;
-        this.questionBank = new QuestionBank();
+        this.questionManager = QuestionManager.getInstance();
         // Sätter rundor på totalRounds från läsning av PropertiesManager
         this.totalRounds = PropertiesManager.totalRoundsSet();
     }
@@ -81,8 +81,8 @@ public class GameSession implements Runnable {
                         return;
                     }
 
-                    //Hämta random frågor från questionBank och skapa Round object
-                    Round round = new Round(questionBank.getRandomQuestionsByCategory(selectedCategory.toLowerCase()), selectedCategory);
+                    //Hämta random frågor från questionManager och skapa Round object
+                    Round round = new Round(questionManager.getRandomQuestionsByCategory(selectedCategory.toLowerCase()), selectedCategory);
                     // Spelaren som vlade kategori får svara
                     if (!processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round)) {
                         handlePlayerGaveUp(currentPlayer, (currentPlayer + 1) % 2, outPlayer1, outPlayer2);
