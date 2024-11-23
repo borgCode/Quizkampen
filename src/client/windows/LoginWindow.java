@@ -10,7 +10,7 @@ public class LoginWindow extends JFrame {
     public LoginWindow(WindowManager windowManager) {
         setTitle("Logga in");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500,400);
+        setSize(400,500);
         setLayout(new GridLayout(3,1,10,10));
 
         JTextField usernameField = new JTextField();

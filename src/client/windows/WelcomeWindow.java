@@ -21,7 +21,7 @@ public class WelcomeWindow extends JFrame {
         // Bild högst upp
         JLabel headerImage = new JLabel(new ImageIcon("src/resources/categoryImages/quizkampen.png"));
         headerImage.setHorizontalAlignment(SwingConstants.CENTER); // Centrerar bilden
-        headerImage.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0)); // Padding runt bilden
+        headerImage.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // Padding runt bilden
 
         // Panel för knapparna
         JPanel buttonPanel = new JPanel();

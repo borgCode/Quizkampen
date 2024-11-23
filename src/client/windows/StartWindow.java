@@ -41,7 +41,7 @@ public class StartWindow extends JFrame {
         // Övre panel: Bilden högst upp
         JLabel headerImage = new JLabel(new ImageIcon("src/resources/categoryImages/quizkampen.png")); // Sökväg till bilden
         headerImage.setHorizontalAlignment(SwingConstants.CENTER); // Centrerar bilden
-        headerImage.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Lägger till padding runt bilden
+        headerImage.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // Lägger till padding runt bilden
         mainPanel.add(headerImage, BorderLayout.NORTH);
 
         // Panel för namn och avatarer
@@ -59,6 +59,7 @@ public class StartWindow extends JFrame {
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         nameField = new JTextField(20); // Textfält för namn
+        nameField.setFont(new Font("Arial", Font.BOLD, 16));
         nameField.setMaximumSize(new Dimension(300, 30));
         nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -191,8 +192,5 @@ public class StartWindow extends JFrame {
         dispose();
 
     }
-    // Tillfällig main för test
-    public static void main(String[] args) {
-        new StartWindow();
-    }
+
 }
