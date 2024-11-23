@@ -44,7 +44,7 @@ public class WindowManager {
     }
 
     public void showStartWindow() {
-        startWindow = new StartWindow();
+        startWindow = new StartWindow(this);
         startWindow.setVisible(true);
     }
 

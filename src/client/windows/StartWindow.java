@@ -1,5 +1,6 @@
 package client.windows;
 
+import client.WindowManager;
 import server.entity.Player;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ public class StartWindow extends JFrame {
         return player;
     }
 
-    public StartWindow() {
+    public StartWindow(WindowManager windowManager) {
 
         // Grundinställningar för startfönstret
         setTitle("Quizkampen");
@@ -85,17 +86,34 @@ public class StartWindow extends JFrame {
         contentPanel.add(Box.createVerticalStrut(20)); // Lägger till mellanrum under avatarerna
         mainPanel.add(contentPanel, BorderLayout.CENTER);
 
-        // Panel för Start-knapp
-        JPanel buttonPanel = new JPanel();
+        // Panel för knappar
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10)); // Lägg till mellanrum mellan knapparna
         buttonPanel.setOpaque(false);
+
         JButton startButton = new JButton("Fortsätt som gäst");
         startButton.setFocusable(false);
-        startButton.setFont(new Font("Arial", Font.BOLD, 18));
+        startButton.setFont(new Font("Arial", Font.BOLD, 16));
         startButton.setBackground(Color.WHITE);
         startButton.setForeground(Color.BLACK);
-        startButton.setPreferredSize(new Dimension(200, 40));
+        startButton.setPreferredSize(new Dimension(200, 30));
         startButton.addActionListener(e -> startGame()); // ActionListener för spel-knappen
+
+        JButton backButton = new JButton("Tillbaka");
+        backButton.setFocusable(false);
+        backButton.setFont(new Font("Arial", Font.BOLD, 16));
+        backButton.setBackground(Color.WHITE);
+        backButton.setForeground(Color.BLACK);
+        backButton.setPreferredSize(new Dimension(100, 30));
+        backButton.addActionListener(e -> {
+            // Stänger detta fönster och öppnar WelcomeWindow
+            setVisible(false);
+            windowManager.showWelcomeWindow();
+        });
+
         buttonPanel.add(startButton);
+//        buttonPanel.add(Box.createHorizontalStrut(20)); // Lägger till mellanrum mellan knapparna
+        buttonPanel.add(backButton);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // KeyListener för Enter-knappen

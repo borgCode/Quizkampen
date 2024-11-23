@@ -44,7 +44,7 @@ public class LoginWindow extends JFrame {
         // Checkbox för att visa/dölja lösenordet
         JCheckBox showPasswordCheckBox = new JCheckBox("Visa lösenord");
         showPasswordCheckBox.setOpaque(false); // Gör checkboxen genomskinlig
-        showPasswordCheckBox.setFont(new Font("Arial", Font.BOLD, 14));
+        showPasswordCheckBox.setFont(new Font("Arial", Font.PLAIN, 14));
         showPasswordCheckBox.addActionListener(e -> {
             if (showPasswordCheckBox.isSelected()) {
                 passwordField.setEchoChar((char) 0); // Visa texten i lösenordsfältet
