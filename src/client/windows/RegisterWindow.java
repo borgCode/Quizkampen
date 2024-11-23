@@ -44,6 +44,18 @@ public class RegisterWindow extends JFrame {
         JPasswordField passwordField = new JPasswordField();
         passwordField.setFont(new Font("Arial", Font.BOLD, 14));
 
+        // Checkbox för att visa/dölja lösenordet
+        JCheckBox showPasswordCheckBox = new JCheckBox("Visa lösenord");
+        showPasswordCheckBox.setOpaque(false); // Gör checkboxen genomskinlig
+        showPasswordCheckBox.setFont(new Font("Arial", Font.PLAIN, 14));
+        showPasswordCheckBox.addActionListener(e -> {
+            if (showPasswordCheckBox.isSelected()) {
+                passwordField.setEchoChar((char) 0); // Visa texten i lösenordsfältet
+            } else {
+                passwordField.setEchoChar('*'); // Döljer texten med stjärnor
+            }
+        });
+
         fieldPanel.add(usernameLabel);
         fieldPanel.add(usernameField);
         fieldPanel.add(Box.createVerticalStrut(10));
@@ -52,6 +64,8 @@ public class RegisterWindow extends JFrame {
         fieldPanel.add(Box.createVerticalStrut(10));
         fieldPanel.add(passwordLabel);
         fieldPanel.add(passwordField);
+        fieldPanel.add(Box.createVerticalStrut(10));
+        fieldPanel.add(showPasswordCheckBox);
         fieldPanel.add(Box.createVerticalStrut(10));
 
         backgroundLabel.add(fieldPanel, BorderLayout.NORTH);
