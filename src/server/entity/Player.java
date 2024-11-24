@@ -16,15 +16,46 @@ public class Player implements Serializable {
         this.name = name;
         this.avatarPath = avatarPath;
     }
-    
+
 
     public String getName() {
         return name;
     }
-    
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public int getNumOfWins() {
+        return numOfWins;
+    }
+
+    public void setNumOfWins(int numOfWins) {
+        this.numOfWins = numOfWins;
+    }
+
+    public int getNumOfLosses() {
+        return numOfLosses;
+    }
+
+    public void setNumOfLosses(int numOfLosses) {
+        this.numOfLosses = numOfLosses;
+    }
 
     public String getAvatarPath() {
         return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
     }
 
     public ImageIcon getAvatar(String imagePath) {
