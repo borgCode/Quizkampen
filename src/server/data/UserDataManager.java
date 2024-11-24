@@ -4,11 +4,12 @@ import server.entity.Player;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserDataManager {
     private static UserDataManager instance;
-    private ConcurrentHashMap<String, Player> players;
+    private final ConcurrentHashMap<String, Player> players;
 
     public UserDataManager() {
         players = new ConcurrentHashMap<>();
@@ -35,7 +36,6 @@ public class UserDataManager {
                 player.setNumOfLosses(Integer.parseInt(parts[3]));
                 players.put(player.getName(), player);
             }
-            
             
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -69,7 +69,12 @@ public class UserDataManager {
         return true;
     }
     
-    public ArrayList<Player> getAllPlayers() {
-        return new ArrayList<>(players.values());
+    public ArrayList<Player> getAllPlayersRanked() {
+        ArrayList<Player> playersList = new ArrayList<>(players.values());
+        
+        //Sortera listan till flest vinster först
+        playersList.sort(Comparator.comparingInt(Player::getNumOfWins).reversed());
+        
+        return playersList;
     }
 }

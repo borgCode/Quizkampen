@@ -7,7 +7,6 @@ import server.entity.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,12 +105,12 @@ public class ClientHandler implements Runnable {
     }
 
     private void sendListOfAllPlayers() throws IOException {
-        ArrayList<Player> allPLayers = userDataManager.getAllPlayers();
+        ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
         if (allPLayers.isEmpty()) {
             outputStream.writeObject(ServerPreGameProtocol.NO_REGISTERED_PLAYERS);
         } else {
             outputStream.writeObject(ServerPreGameProtocol.TOP_LIST_SENT);
-            outputStream.writeObject(userDataManager.getAllPlayers());
+            outputStream.writeObject(userDataManager.getAllPlayersRanked());
             outputStream.flush();
         }
     }
