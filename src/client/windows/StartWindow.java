@@ -113,7 +113,7 @@ public class StartWindow extends JFrame {
         // Lägger till bakgrundsbilden till fönstret
         setContentPane(backgroundLabel);
 
-        setVisible(true);
+//        setVisible(true);
     }
 
     // Metod för att ladda avatarer

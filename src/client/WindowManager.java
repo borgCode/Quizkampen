@@ -1,9 +1,11 @@
 package client;
 
+import client.network.NetworkHandler;
 import client.windows.*;
 import server.entity.Player;
 import server.entity.Question;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +15,12 @@ public class WindowManager {
     private final CategoryWindow categoryWindow;
     private String selectedCategory;
     private final ScoreWindow scoreWindow;
+    private NetworkHandler networkHandler;
+    
 
     public WindowManager() {
         startWindow = new StartWindow();
-        startWindow.setVisible(true);
+//        startWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
@@ -24,6 +28,17 @@ public class WindowManager {
         scoreWindow = new ScoreWindow();
         categoryWindow = new CategoryWindow();
     }
+    public void showWelcomeWindow() {
+        WelcomeWindow welcomeWindow = new WelcomeWindow(this);
+        welcomeWindow.setVisible(true);
+    }
+
+    public void showLoginWindow() {
+        LoginWindow loginWindow = new LoginWindow(this);
+        loginWindow.setVisible(true);
+    }
+    
+
 
     public void initScoreWindowData(int rounds, Player player, Player opponent) {
         scoreWindow.setRounds(rounds);
@@ -103,6 +118,19 @@ public class WindowManager {
 
     public void setHasClickedPlay(boolean hasClicked) {
         scoreWindow.setHasClickedPlay(hasClicked);
+    }
+
+    public NetworkHandler getNetworkHandler() {
+        return networkHandler;
+    }
+
+    public void setNetworkHandler(NetworkHandler networkHandler) {
+        this.networkHandler = networkHandler;
+    }
+    
+
+    public void initMenuWindow(Player currentPlayer) {
+        MenuWindow menuWindow = new MenuWindow(currentPlayer, this);
     }
 }
 

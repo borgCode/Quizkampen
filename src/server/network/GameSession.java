@@ -1,5 +1,6 @@
 package server.network;
 
+import client.network.ClientGameSessionProtocol;
 import server.data.QuestionManager;
 import server.entity.Game;
 import server.entity.Player;
@@ -44,12 +45,12 @@ public class GameSession implements Runnable {
             outPlayer2.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
             outPlayer1.flush();
             outPlayer2.flush();
-
-
-
+            
+            
             //Hämta spelar objekt från båda klienterna
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
+            
 
             outPlayer1.writeObject(GameSessionProtocol.GAME_START);
             outPlayer2.writeObject(GameSessionProtocol.GAME_START);

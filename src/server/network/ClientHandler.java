@@ -37,7 +37,9 @@ public class ClientHandler implements Runnable {
             
             while (true) {
                 //Titta vad det är klienten vill göra
+                System.out.println("Receiving request");
                 ClientPreGameProtocol request = (ClientPreGameProtocol) inputStream.readObject();
+                System.out.println(request);
                 if (request == null) {
                     break;
                 }
