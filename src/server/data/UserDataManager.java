@@ -30,11 +30,12 @@ public class UserDataManager {
             
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                Player player = new Player(parts[0], parts[4]);
+                Player player = new Player(parts[2], parts[5]);
+                player.setUsername(parts[0]);
                 player.setPassword(parts[1]);
-                player.setNumOfWins(Integer.parseInt(parts[2]));
-                player.setNumOfLosses(Integer.parseInt(parts[3]));
-                players.put(player.getName(), player);
+                player.setNumOfWins(Integer.parseInt(parts[3]));
+                player.setNumOfLosses(Integer.parseInt(parts[4]));
+                players.put(player.getUsername(), player);
             }
             
         } catch (IOException e) {
@@ -53,9 +54,10 @@ public class UserDataManager {
 
     public boolean registerNewUser(Player newPlayer) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("src/server/data/userdata.csv", true))) {
-            bufferedWriter.write((String.format("%s,%s,%d,%d,%s\n",
-                    newPlayer.getName(),
+            bufferedWriter.write((String.format("%s,%s,%s,%d,%d,%s\n",
+                    newPlayer.getUsername(),
                     newPlayer.getPassword(),
+                    newPlayer.getName(),
                     0,
                     0,
                     newPlayer.getAvatarPath())));
@@ -65,7 +67,7 @@ public class UserDataManager {
         }
         
         //Uppdatera Map
-        players.put(newPlayer.getName(), newPlayer);
+        players.put(newPlayer.getUsername(), newPlayer);
         return true;
     }
     
