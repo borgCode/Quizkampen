@@ -1,11 +1,10 @@
-package client;
+package client.gui;
 
+import client.gui.windows.*;
 import client.network.NetworkHandler;
-import client.windows.*;
 import server.entity.Player;
 import server.entity.Question;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

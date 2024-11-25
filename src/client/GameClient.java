@@ -1,5 +1,6 @@
 package client;
 
+import client.gui.WindowManager;
 import client.network.NetworkHandler;
 
 public class GameClient {

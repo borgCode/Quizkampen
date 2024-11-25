@@ -1,7 +1,7 @@
 package client.network;
 
 
-import client.WindowManager;
+import client.gui.WindowManager;
 import server.entity.Player;
 import server.entity.Question;
 import server.network.GameSessionProtocol;
@@ -264,6 +264,24 @@ public class NetworkHandler {
 
         return false;
 
+    }
+
+    public ArrayList<Player> getAllPLayersRanked() {
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.SHOW_TOP_LIST);
+            
+            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+            if (response.equals(ServerPreGameProtocol.TOP_LIST_SENT)) {
+                return (ArrayList<Player>) inputStream.readObject();
+            } else if (response.equals(ServerPreGameProtocol.NO_REGISTERED_PLAYERS)) {
+                return null;
+            }
+            
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        
+        return null;
     }
 }
 

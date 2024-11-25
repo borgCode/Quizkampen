@@ -1,7 +1,6 @@
-package client.windows;
+package client.gui.windows;
 
-import client.WindowManager;
-import server.entity.Player;
+import client.gui.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;

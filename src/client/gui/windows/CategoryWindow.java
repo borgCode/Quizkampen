@@ -1,4 +1,4 @@
-package client.windows;
+package client.gui.windows;
 
 import client.listeners.CategorySelectionListener;
 
