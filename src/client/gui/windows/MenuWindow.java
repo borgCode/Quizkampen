@@ -17,44 +17,61 @@ public class MenuWindow extends JFrame {
         setResizable(false);
         setFocusable(false);
 
-
+        // Bakgrundsbild
         JLabel background = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
-        background.setLayout(new BorderLayout());
+        background.setLayout(new GridBagLayout());
 
-        JPanel centerPanel = getCenterPanel(currentPlayer, windowManager);
-        JPanel topPanel = createTopPanel(currentPlayer);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10); // Marginaler mellan komponenter
 
-        background.add(topPanel, BorderLayout.NORTH);
-        background.add(centerPanel, BorderLayout.CENTER);
-        add(background);
-
-        setVisible(true);
-    }
-
-    private JPanel createTopPanel(Player currentPlayer) {
-
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        topPanel.setOpaque(false);
-
-        JLabel welcomeLabel = new JLabel("Välkommen, " + currentPlayer.getName());
+        // Välkomstmeddelande
+        JLabel welcomeLabel = new JLabel("Välkommen, " + currentPlayer.getName() + "!");
         welcomeLabel.setForeground(Color.WHITE);
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        topPanel.add(welcomeLabel);
-        return topPanel;
-    }
+        gbc.gridx = 0; // Kolumn
+        gbc.gridy = 0; // Rad
+        gbc.gridwidth = 3; // Sträcker sig över alla kolumner
+        background.add(welcomeLabel, gbc);
 
-    private JPanel getCenterPanel(Player currentPlayer, WindowManager windowManager) {
-        // Center panel with buttons
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        centerPanel.setOpaque(false);
-
-        JButton button1 = new JButton("Spela mot slumpmässig motståndare");
+        // Knapp 1 - Slumpad spelare
+        JButton button1 = new JButton("Slumpad spelare");
+        button1.setFont(new Font("Arial", Font.BOLD, 14));
+        button1.setPreferredSize(new Dimension(150, 100));
+        button1.setBackground(new Color(109, 187, 107));
+        button1.setForeground(Color.WHITE);
+        button1.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        button1.setFocusable(false);
         button1.addActionListener(e -> windowManager.getNetworkHandler().startRandomGame(currentPlayer));
 
-        JButton button2 = new JButton("Leta efter spelare att spela mot");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        background.add(button1, gbc);
 
-        JButton button3 = new JButton("Se topplista");
+        // Knapp 2 - Spela mot en vän
+        JButton button2 = new JButton("Spela mot en vän");
+        button2.setFont(new Font("Arial", Font.BOLD, 14));
+        button2.setPreferredSize(new Dimension(150, 100));
+        button2.setBackground(new Color(80, 127, 194));
+        button2.setForeground(Color.WHITE);
+        button2.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        button2.setFocusable(false);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        background.add(button2, gbc);
+
+        // Knapp 3 - Topplista
+        JButton button3 = new JButton("Topplista");
+        button3.setFont(new Font("Arial", Font.BOLD, 16));
+        button3.setPreferredSize(new Dimension(200, 50));
+        button3.setBackground(new Color(96, 140, 203));
+        button3.setForeground(Color.WHITE);
+        button3.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        button3.setFocusable(false);
         button3.addActionListener(e -> {
             ArrayList<Player> players = windowManager.getNetworkHandler().getAllPLayersRanked();
             if (players == null) {
@@ -64,11 +81,13 @@ public class MenuWindow extends JFrame {
             }
         });
 
-        centerPanel.add(button1);
-        centerPanel.add(button2);
-        centerPanel.add(button3);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3; // Tar hela bredden
+        background.add(button3, gbc);
 
-        return centerPanel;
+        add(background);
+        setVisible(true);
     }
 
     private void initPlayerRankings(ArrayList<Player> players) {
@@ -86,5 +105,13 @@ public class MenuWindow extends JFrame {
         rankingsFrame.add(scrollPane, BorderLayout.CENTER);
         rankingsFrame.add(closeButton, BorderLayout.SOUTH);
         rankingsFrame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        // TILLFÄLLIG MAIN FÖR TEST
+        Player dummyPlayer = new Player("TestSpelare", "src/resources/avatars/Poliwag.png");
+        WindowManager dummyWindowManager = new WindowManager();
+
+        SwingUtilities.invokeLater(() -> new MenuWindow(dummyPlayer, dummyWindowManager));
     }
 }
