@@ -5,8 +5,9 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class Player implements Serializable {
-    private String name;
+    private String username;
     private String password;
+    private String name;
     private int numOfWins;
     private int numOfLosses;
     private String avatarPath;
@@ -17,6 +18,13 @@ public class Player implements Serializable {
         this.avatarPath = avatarPath;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getName() {
         return name;
