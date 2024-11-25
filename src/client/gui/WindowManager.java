@@ -16,10 +16,12 @@ public class WindowManager {
     private String selectedCategory;
     private final ScoreWindow scoreWindow;
     private NetworkHandler networkHandler;
+    private RegisterWindow registerWindow;
+    private WelcomeWindow welcomeWindow;
     
 
     public WindowManager() {
-        startWindow = new StartWindow();
+        startWindow = new StartWindow(this);
 //        startWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
@@ -37,7 +39,10 @@ public class WindowManager {
         LoginWindow loginWindow = new LoginWindow(this);
         loginWindow.setVisible(true);
     }
-    
+    public void showRegisterWindow() {
+        registerWindow = new RegisterWindow(this);
+        registerWindow.setVisible(true);
+    }
 
 
     public void initScoreWindowData(int rounds, Player player, Player opponent) {
@@ -132,6 +137,12 @@ public class WindowManager {
 
     public void initMenuWindow(Player currentPlayer) {
         menuWindow = new MenuWindow(currentPlayer, this);
+    }
+
+    public void setLoggedInPlayer(Player player) {
+    }
+
+    public void showStartWindow() {
     }
 }
 

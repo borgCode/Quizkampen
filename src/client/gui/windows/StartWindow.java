@@ -1,6 +1,6 @@
 package client.gui.windows;
 
-import client.WindowManager;
+import client.gui.WindowManager;
 import client.network.NetworkHandler;
 import server.entity.Player;
 

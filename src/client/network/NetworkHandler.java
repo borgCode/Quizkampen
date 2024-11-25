@@ -18,14 +18,15 @@ public class NetworkHandler {
     private WindowManager windowManager;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+    static int port = 55566;
+    static String ip = "127.0.0.1";
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
         windowManager.setNetworkHandler(this);
         windowManager.showWelcomeWindow();
 
-        int port = 55566;
-        String ip = "127.0.0.1";
+
 
 
         try {
@@ -242,6 +243,33 @@ public class NetworkHandler {
         outputStream.writeObject(scoreList);
         outputStream.flush();
     }
+
+    public static boolean registerUser(String username, String password, String name, String avatarPath) {
+        try (Socket socket = new Socket(ip, port);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+            // mddela för servern att vi vill registrera en användare
+            out.writeObject(ClientPreGameProtocol.REGISTER_USER);
+            out.flush();
+
+            // Skapa spelarobjekt och skicka till servern
+            Player newPlayer = new Player(name, avatarPath);
+            newPlayer.setPassword(password);
+            out.writeObject(newPlayer);
+            out.flush();
+
+            // Tar emot svar från servern
+            ServerPreGameProtocol response = (ServerPreGameProtocol) in.readObject();
+            return response == ServerPreGameProtocol.REGISTER_SUCCESS;
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 
 
     public boolean loginUser(String username, String password) {
