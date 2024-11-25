@@ -158,10 +158,29 @@ public class NetworkHandler {
             Thread.sleep(100);
         }
 
-        // Skicka vald kategori till servern
+        /*// Skicka vald kategori till servern
         out.writeObject(windowManager.getSelectedCategory());
         out.flush();
-        windowManager.setSelectedCategory(null);
+        windowManager.setSelectedCategory(null);*/
+
+        //TODO:NYTT
+        String selectedCategory = windowManager.getSelectedCategory();
+        if (selectedCategory == null) {
+            System.err.println("Ingen kategori vald!");
+            return;
+        }
+
+        int currentRound = windowManager.getCurrentRound();
+        windowManager.updateRoundCategory(currentRound, selectedCategory);
+
+        // Uppdatera alla ronder i ScoreWindow
+        windowManager.updateAllRoundsInScoreWindow();
+
+        // Skriv ut alla kategorier för felsökning
+        windowManager.printAllCategoriesFromScoreWindow();
+
+        out.writeObject(selectedCategory); // Skicka kategori till servern
+        windowManager.setSelectedCategory(null); // Återställ vald kategori
     }
 
     private void sendGiveUpSignal(ObjectOutputStream out) throws IOException {
@@ -230,8 +249,5 @@ public class NetworkHandler {
         out.writeObject(scoreList);
         out.flush();
     }
-    
-
-
 }
 

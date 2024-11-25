@@ -24,6 +24,7 @@ public class ScoreWindow extends JFrame {
     private int currentRound = 1;
     private JLabel score;
     private boolean hasClickedPlay;
+    private List<JLabel> rondLabels = new ArrayList<>();
     
 
    
@@ -73,7 +74,6 @@ public class ScoreWindow extends JFrame {
         player1Panel.add(name1, BorderLayout.CENTER);
 
         // Poäng
-        //TODO :OBS! HÅRDKODAT POÄNGEN!!
         score = new JLabel(playerCurrentScore + " - " + playerOpponentScore, SwingConstants.CENTER);
         score.setFont(new Font("Arial", Font.BOLD, 32));
 
@@ -132,6 +132,7 @@ public class ScoreWindow extends JFrame {
             //Rond
             JLabel rondLabel = new JLabel("Rond " + i, SwingConstants.CENTER);
             rondLabel.setFont(new Font("Arial", Font.BOLD, 14));
+            rondLabels.add(rondLabel); //TODO:NYTT
             rowPanel.add(rondLabel);
 
             //Knappar spelare 2:
@@ -182,7 +183,6 @@ public class ScoreWindow extends JFrame {
         return hasClickedPlay;
     }
 
-
     public void updatePlayerScore(List<Integer> scoreList) {
         List<JButton> player1Row = player1buttons.get(currentRound -1);
         int player1Score = 0;
@@ -197,6 +197,29 @@ public class ScoreWindow extends JFrame {
         updateRounds();
         hasUpdatedPlayerScore = true;
     }
+    //TODO:NYTT updateAllRoundCategories
+    public void updateAllRoundCategories(List<String> categories) {
+        for (int i = 0; i < categories.size(); i++) {
+            String category = categories.get(i);
+            if (category != null) {
+                rondLabels.get(i).setText("Rond " + (i + 1) + "\n" + category);
+            }
+        }
+    }
+
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    public void printAllRoundCategories() {
+        System.out.println("Kategorier för alla ronder:");
+        for (int i = 0; i < rondLabels.size(); i++) {
+            String text = rondLabels.get(i).getText();
+            System.out.println(text);
+        }
+    }
+
+    //TODO:SLUT
 
     public void updateOpponentScore(List<Integer> opponentScore) {
         List<JButton> player2Row = player2buttons.get(currentRound -1);

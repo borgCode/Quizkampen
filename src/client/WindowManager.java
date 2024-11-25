@@ -16,6 +16,7 @@ public class WindowManager {
     private final CategoryWindow categoryWindow;
     private String selectedCategory;
     private final ScoreWindow scoreWindow;
+    private List<String> roundCategories = new ArrayList<>();
 
     public WindowManager() {
         startWindow = new StartWindow();
@@ -27,6 +28,37 @@ public class WindowManager {
         scoreWindow = new ScoreWindow();
         categoryWindow = new CategoryWindow();
     }
+
+    //TODO: NYTT:
+
+    public void printAllCategoriesFromScoreWindow() {
+        scoreWindow.printAllRoundCategories();
+    }
+
+    public int getCurrentRound() {
+        return scoreWindow.getCurrentRound();
+    }
+    public void updateRoundCategory(int roundNumber, String category) {
+        // Säkerställ att listan är tillräckligt stor
+        while (roundCategories.size() < roundNumber) {
+            roundCategories.add(null); // Lägg till tomma platser
+        }
+
+        // Uppdatera kategorin för ronden
+        roundCategories.set(roundNumber - 1, category);
+
+        // Uppdatera ScoreWindow
+        scoreWindow.updateAllRoundCategories(roundCategories);
+    }
+
+    public void updateAllRoundsInScoreWindow() {
+        scoreWindow.updateAllRoundCategories(roundCategories);
+    }
+
+    public List<String> getRoundCategories() {
+        return roundCategories;
+    }
+
 
     public void initScoreWindowData(int rounds, Player player, Player opponent) {
         scoreWindow.setRounds(rounds);
