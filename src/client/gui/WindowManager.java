@@ -18,7 +18,6 @@ public class WindowManager {
     private NetworkHandler networkHandler;
     private RegisterWindow registerWindow;
     private WelcomeWindow welcomeWindow;
-    
 
     public WindowManager() {
         startWindow = new StartWindow(this);
@@ -75,6 +74,10 @@ public class WindowManager {
         questionWindow.setVisible(false);
     }
 
+    public NetworkHandler getNetworkHandler() {
+        return networkHandler;
+    }
+
 
     public Player getPlayer() {
         return startWindow.getPlayer();
@@ -124,10 +127,6 @@ public class WindowManager {
 
     public void setHasClickedPlay(boolean hasClicked) {
         scoreWindow.setHasClickedPlay(hasClicked);
-    }
-
-    public NetworkHandler getNetworkHandler() {
-        return networkHandler;
     }
 
     public void setNetworkHandler(NetworkHandler networkHandler) {

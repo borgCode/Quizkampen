@@ -244,7 +244,7 @@ public class NetworkHandler {
         outputStream.flush();
     }
 
-    public static boolean registerUser(String username, String password, String name, String avatarPath) {
+    public boolean registerUser(String username, String password, String name, String avatarPath) {
         try (Socket socket = new Socket(ip, port);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
@@ -254,8 +254,9 @@ public class NetworkHandler {
             out.flush();
 
             // Skapa spelarobjekt och skicka till servern
-            Player newPlayer = new Player(name, avatarPath);
+            Player newPlayer = new Player(username, avatarPath);
             newPlayer.setPassword(password);
+            newPlayer.setName(name);
             out.writeObject(newPlayer);
             out.flush();
 
