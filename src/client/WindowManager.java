@@ -1,9 +1,16 @@
 package client;
 
+import client.network.ClientPreGameProtocol;
+import client.network.NetworkHandler;
 import client.windows.*;
 import server.entity.Player;
 import server.entity.Question;
+import server.network.ServerPreGameProtocol;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +24,11 @@ public class WindowManager {
     private LoginWindow loginWindow;
     private RegisterWindow registerWindow;
     private Player loggedInPlayer;
+    private NetworkHandler networkHandler;
 
     public WindowManager() {
-//        startWindow = new StartWindow();
+        //this.networkHandler = new NetworkHandler(this);
+        startWindow = new StartWindow(this);
 //        startWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
@@ -91,6 +100,10 @@ public class WindowManager {
         questionWindow.updateQuestion(question);
     }
 
+    public void setLoggedInPlayer(Player player) {
+        this.loggedInPlayer = player;
+    }
+
     public QuestionWindow getGameWindow() {
         return questionWindow;
     }
@@ -132,16 +145,19 @@ public class WindowManager {
     public void setHasClickedPlay(boolean hasClicked) {
         scoreWindow.setHasClickedPlay(hasClicked);
     }
+    public NetworkHandler getNetworkHandler() {
+        return networkHandler;
+    }
 
-    public boolean authenticateUser(String username, String password) {
-        // TODO: Logik med server, skicka användarnamn och lösen till server och få svar. Hårdkodad nu.
-        return username.equals("testuser") && password.equals("password123");
+    public Player getLoggedInPlayer() {
+        return loggedInPlayer;
     }
 
     public boolean registerUser(String username, String name, String password, String avatar) {
-        // TODO: Logik med server, skicka användaruppgifter till server och få bekräftelse
-        return true;
+        return networkHandler.registerUser(username, name, password, avatar);
     }
+
+
 
         // TILLFÄLLIG MAIN FÖR TEST
         public static void main(String[] args) {

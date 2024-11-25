@@ -1,6 +1,7 @@
 package client.windows;
 
 import client.WindowManager;
+import server.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,13 +88,22 @@ public class LoginWindow extends JFrame {
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            // Skicka inloggningsuppgifter till servern
-            if (windowManager.authenticateUser(username, password)) {
+
+            // Kontrollera att fälten inte är tomma
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Alla fält måste vara ifyllda.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Anropa servern för inloggning
+            Player loggedInPlayer = windowManager.getNetworkHandler().loginUser(username, password);
+            if (loggedInPlayer != null) {
                 JOptionPane.showMessageDialog(this, "Inloggning lyckades!");
-                windowManager.showScoreWindow();
+                windowManager.setLoggedInPlayer(loggedInPlayer); // Spara spelaren
+                windowManager.showScoreWindow(); // Skicka användaren till scorefönstret
                 setVisible(false);
             } else {
-                JOptionPane.showMessageDialog(this, "Felaktigt användarnamn eller lösenord!");
+                JOptionPane.showMessageDialog(this, "Felaktigt användarnamn eller lösenord.");
             }
         });
 

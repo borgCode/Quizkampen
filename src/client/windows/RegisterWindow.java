@@ -113,7 +113,7 @@ public class RegisterWindow extends JFrame {
                 return;
             }
 
-            // Skicka registreringsuppgifter till servern
+            // Skicka registreringsförfrågan till servern via WindowManager
             if (windowManager.registerUser(username, name, password, selectedAvatarPath)) {
                 JOptionPane.showMessageDialog(this, "Registrering lyckades!");
                 windowManager.showStartWindow();

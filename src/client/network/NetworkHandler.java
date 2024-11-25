@@ -2,9 +2,11 @@ package client.network;
 
 
 import client.WindowManager;
+import server.data.UserDataManager;
 import server.entity.Player;
 import server.entity.Question;
 import server.network.GameSessionProtocol;
+import server.network.ServerPreGameProtocol;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,12 +17,13 @@ import java.util.List;
 
 public class NetworkHandler {
     private WindowManager windowManager;
+    int port = 55566;
+    String ip = "127.0.0.1";
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
 
-        int port = 55566;
-        String ip = "127.0.0.1";
+
         
 
         //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
@@ -230,8 +233,43 @@ public class NetworkHandler {
         out.writeObject(scoreList);
         out.flush();
     }
-    
+    public boolean registerUser(String username, String password, String name, String avatarPath) {
+        try (Socket socket = new Socket(ip, port);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
+            // mddela för servern att vi vill registrera en användare
+            out.writeObject(ClientPreGameProtocol.REGISTER_USER);
+            out.flush();
 
+            // Skapa spelarobjekt och skicka till servern
+            Player newPlayer = new Player(name, avatarPath);
+            newPlayer.setPassword(password); // Sätt lösenordet
+            out.writeObject(newPlayer);
+            out.flush();
+
+            // Ta emot svar från servern
+            ServerPreGameProtocol response = (ServerPreGameProtocol) in.readObject();
+            return response == ServerPreGameProtocol.REGISTER_SUCCESS;
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Player loginUser(String username, String password) {
+        UserDataManager userDataManager = UserDataManager.getInstance();
+        Player loggedInPlayer = userDataManager.authenticatePlayer(username, password);
+
+        if (loggedInPlayer != null) {
+            System.out.println("Inloggningen lyckades!");
+            return loggedInPlayer;
+        } else {
+            System.out.println("Felaktigt användarnamn eller lösenord.");
+            return null;
+        }
+    }
 }
+
 

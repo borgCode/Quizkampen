@@ -87,22 +87,31 @@ public class ClientHandler implements Runnable {
             outputStream.writeObject(ServerPreGameProtocol.LOGIN_FAIL);
             outputStream.flush();
         }
+
     }
 
     private void findMatch() {
         synchronized (gameServer) {
-            
-            //Hitta en annan client som väntar på att få spela
-            List<ClientHandler> clients = gameServer.getClientHandlers();
-            for (ClientHandler otherClient : clients) {
-                if (otherClient != this && !otherClient.isInGame) {
-                    otherClient.isInGame = true;
-                    this.isInGame = true;
-                    gameServer.startGame(this, otherClient);
-                    return;
+
+                //Hitta en annan client som väntar på att få spela
+                List<ClientHandler> clients = gameServer.getClientHandlers();
+                for (ClientHandler otherClient : clients) {
+                    if (otherClient != this && !otherClient.isInGame) {
+                        otherClient.isInGame = true;
+                        this.isInGame = true;
+                        gameServer.startGame(this, otherClient);
+                        return;
+                    }
+                }
+            // Ingen motståndare hittad, väntar
+                try {
+                    outputStream.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
+                    outputStream.flush();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        }
     }
 
     private void sendListOfAllPlayers() throws IOException {

@@ -1,6 +1,7 @@
 package client.windows;
 
 import client.WindowManager;
+import client.network.NetworkHandler;
 import server.entity.Player;
 
 import javax.swing.*;
@@ -101,7 +102,7 @@ public class StartWindow extends JFrame {
 
         JButton backButton = new JButton("Tillbaka");
         backButton.setFocusable(false);
-        backButton.setFont(new Font("Arial", Font.BOLD, 16));
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
         backButton.setBackground(Color.WHITE);
         backButton.setForeground(Color.BLACK);
         backButton.setPreferredSize(new Dimension(100, 30));
@@ -205,6 +206,13 @@ public class StartWindow extends JFrame {
         }
 
         player = new Player(playerName, selectedAvatarPath);
+
+        // Skicka spelaren till WindowManager och starta NetworkHandler
+        WindowManager windowManager = new WindowManager();
+        windowManager.setLoggedInPlayer(player);
+
+        // Starta NetworkHandler i en ny tråd
+        new Thread(() -> new NetworkHandler(windowManager)).start();
 
         // Stänger StartWindow
         dispose();
