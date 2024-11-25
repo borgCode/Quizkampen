@@ -1,9 +1,6 @@
 package client;
 
-import client.windows.CategoryWindow;
-import client.windows.QuestionWindow;
-import client.windows.ScoreWindow;
-import client.windows.StartWindow;
+import client.windows.*;
 import server.entity.Player;
 import server.entity.Question;
 
