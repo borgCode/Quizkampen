@@ -1,8 +1,7 @@
 package client.network;
 
 
-import client.WindowManager;
-import server.data.UserDataManager;
+import client.gui.WindowManager;
 import server.entity.Player;
 import server.entity.Question;
 import server.network.GameSessionProtocol;
@@ -17,136 +16,146 @@ import java.util.List;
 
 public class NetworkHandler {
     private WindowManager windowManager;
-    static int port = 55566;
-    static String ip = "127.0.0.1";
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
+        windowManager.setNetworkHandler(this);
+        windowManager.showWelcomeWindow();
+
+        int port = 55566;
+        String ip = "127.0.0.1";
 
 
-        
-
-        //Den här behövs för att inte skicka iväg null objekt med klient 2 - kanske finns något annat sätt att lösa detta på?
-        while (windowManager.getPlayer() == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try (Socket socket = new Socket(ip, port);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+        try {
             
-            
-            
-            //TODO Koppla till start random game knapp i GUI
-            startRandomGame(out, in);
-            
-            //TODO registrera metod
-            
-            //TODO logga in metod
-            
-            //TODO Topplista metod
-            
-
-
-            while (true) {
-                if (windowManager.hasUserGivenUp()) {
-                    sendGiveUpSignal(out);
-                    continue;
-                }
-                windowManager.nextRound();
-                GameSessionProtocol state = (GameSessionProtocol) in.readObject();
-                // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
-                switch (state) {
-                    case GameSessionProtocol.WAITING:
-                        windowManager.showScoreWindow();
-                        break;
-                    case GameSessionProtocol.SENT_CATEGORY:
-                        while (!windowManager.hasClickedPlay()) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        handleCategorySelection(out, in);
-                        break;
-                    case GameSessionProtocol.SENT_QUESTIONS:
-                        while (!windowManager.hasClickedPlay()) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        handleQuestionRound(out, in);
-                        windowManager.setHasClickedPlay(false);
-                        break;
-                    case GameSessionProtocol.SENT_ROUND_SCORE:
-                        List<Integer> opponentScore = (ArrayList<Integer>) in.readObject();
-                        windowManager.updateOpponentScore(opponentScore);
-                        break;
-                    case GameSessionProtocol.GAME_OVER:
-                        System.out.println("Game over");
-                        out.flush();
-                        String resultat = (String) in.readObject();
-                        System.out.println(resultat);
-                        break;
-                    case GameSessionProtocol.PLAYER_GAVE_UP:
-                        String message = (String) in.readObject();
-                        System.out.println(message);
-                }
-            }
-
+            Socket socket = new Socket(ip, port);
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
         } catch (UnknownHostException e) {
             System.err.println("Okänd värd: " + e.getMessage());
             e.printStackTrace();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             System.err.println("Fel vid anslutning eller dataläsning: " + e.getMessage());
             e.printStackTrace();
-        } catch (InterruptedException e) {
+        }
+
+
+        //TODO Koppla till start random game knapp i GUI
+
+
+        //TODO registrera metod
+
+        //TODO logga in metod
+
+        //TODO Topplista metod
+
+    }
+
+
+    public void startRandomGame(Player currentPlayer) {
+        //Berätta för server att vi vill spela mot en random spelare
+        try {
+            
+            outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
+            outputStream.flush();
+            
+            
+            //Vänta på att server svarar
+            GameSessionProtocol serverMessage = (GameSessionProtocol) inputStream.readObject();
+            if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
+                System.out.println("Waiting for an opponent...");
+            }
+            
+            
+            //Skickar spelaren till servern efter svar från server
+            outputStream.writeObject(currentPlayer);
+            outputStream.flush();
+
+            //Servern meddelar att en spelare är hittad och spelet startar
+            serverMessage = (GameSessionProtocol) inputStream.readObject();
+            if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
+                System.out.println("Game starting!");
+            }
+
+            Object serverResponse = inputStream.readObject();
+            if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
+                int rounds = (Integer) inputStream.readObject();
+                Player opponent = (Player) inputStream.readObject();
+                windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
+                windowManager.initScoreWindow();
+            }
+            
+            handleGameSession();
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void startRandomGame(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
-        //Berätta för server att vi vill spela mot en random spelare
-        out.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
-        out.flush();
+    public void handleGameSession() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    if (windowManager.hasUserGivenUp()) {
+                        sendGiveUpSignal(outputStream);
+                        continue;
+                    }
+                    windowManager.nextRound();
+                    GameSessionProtocol state = (GameSessionProtocol) inputStream.readObject();
+                    // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
+                    switch (state) {
+                        case GameSessionProtocol.WAITING:
+                            windowManager.showScoreWindow();
+                            break;
+                        case GameSessionProtocol.SENT_CATEGORY:
+                            while (!windowManager.hasClickedPlay()) {
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            handleCategorySelection(outputStream, inputStream);
+                            break;
+                        case GameSessionProtocol.SENT_QUESTIONS:
+                            while (!windowManager.hasClickedPlay()) {
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            handleQuestionRound(outputStream, inputStream);
+                            windowManager.setHasClickedPlay(false);
+                            break;
+                        case GameSessionProtocol.SENT_ROUND_SCORE:
+                            List<Integer> opponentScore = (ArrayList<Integer>) inputStream.readObject();
+                            windowManager.updateOpponentScore(opponentScore);
+                            break;
+                        case GameSessionProtocol.GAME_OVER:
+                            System.out.println("Game over");
+                            outputStream.flush();
+                            String resultat = (String) inputStream.readObject();
+                            System.out.println(resultat);
+                            break;
+                        case GameSessionProtocol.PLAYER_GAVE_UP:
+                            String message = (String) inputStream.readObject();
+                            System.out.println(message);
+                    }
+                }
+            } catch (IOException | InterruptedException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
 
-        //Vänta på att server svarar
-        GameSessionProtocol serverMessage = (GameSessionProtocol) in.readObject();
-        if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
-            System.out.println("Waiting for an opponent...");
-        }
-
-
-        //Skickar spelaren till servern efter svar från server
-        out.writeObject(windowManager.getPlayer());
-        out.flush();
-
-        //Servern meddelar att en spelare är hittad och spelet startar
-        serverMessage = (GameSessionProtocol) in.readObject();
-        if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
-            System.out.println("Game starting!");
-        }
-
-        Object serverResponse = in.readObject();
-        if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
-            int rounds = (Integer) in.readObject();
-            Player opponent = (Player) in.readObject();
-            windowManager.initScoreWindowData(rounds, windowManager.getPlayer(), opponent);
-            windowManager.initScoreWindow();
-        }
+        }).start();
     }
 
 
-    private void handleCategorySelection(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException, InterruptedException {
+    private void handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream) throws
+            IOException, ClassNotFoundException, InterruptedException {
         // Läser in kategorier från servern
-        ArrayList<String> categories = (ArrayList<String>) in.readObject();
+        ArrayList<String> categories = (ArrayList<String>) inputStream.readObject();
 
         // Använder WindowManager till att visa CategoryWindow
         windowManager.showCategoryWindow(categories);
@@ -155,27 +164,28 @@ public class NetworkHandler {
         // Vänta tills användaren väljer en kategori
         while (windowManager.getSelectedCategory() == null) {
             if (windowManager.hasUserGivenUp()) {
-                sendGiveUpSignal(out);
+                sendGiveUpSignal(outputStream);
                 return;
             }
             Thread.sleep(100);
         }
 
         // Skicka vald kategori till servern
-        out.writeObject(windowManager.getSelectedCategory());
-        out.flush();
+        outputStream.writeObject(windowManager.getSelectedCategory());
+        outputStream.flush();
         windowManager.setSelectedCategory(null);
     }
 
-    private void sendGiveUpSignal(ObjectOutputStream out) throws IOException {
-        out.writeObject(GameSessionProtocol.CLIENT_GAVE_UP);
+    private void sendGiveUpSignal(ObjectOutputStream outputStream) throws IOException {
+        outputStream.writeObject(GameSessionProtocol.CLIENT_GAVE_UP);
     }
 
-    private void handleQuestionRound(ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private void handleQuestionRound(ObjectOutputStream outputStream, ObjectInputStream inputStream) throws
+            IOException, ClassNotFoundException {
         windowManager.resetRound();
 
         //Läs in tre frågor
-        ArrayList<Question> questions = (ArrayList<Question>) in.readObject();
+        ArrayList<Question> questions = (ArrayList<Question>) inputStream.readObject();
 
         List<Integer> scoreList = new ArrayList<>();
 
@@ -212,7 +222,6 @@ public class NetworkHandler {
                 scoreList.add(0);
 
 
-
             while (!windowManager.getGameWindow().isHasAnswered()) {
                 try {
                     Thread.sleep(100);
@@ -230,46 +239,49 @@ public class NetworkHandler {
 
         windowManager.showScoreWindow();
         //Skickar antal rätt till server
-        out.writeObject(scoreList);
-        out.flush();
+        outputStream.writeObject(scoreList);
+        outputStream.flush();
     }
-    public static boolean registerUser(String username, String password, String name, String avatarPath) {
-        try (Socket socket = new Socket(ip, port);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            // mddela för servern att vi vill registrera en användare
-            out.writeObject(ClientPreGameProtocol.REGISTER_USER);
-            out.flush();
 
-            // Skapa spelarobjekt och skicka till servern
-            Player newPlayer = new Player(name, avatarPath);
-            newPlayer.setPassword(password);
-            out.writeObject(newPlayer);
-            out.flush();
+    public boolean loginUser(String username, String password) {
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.LOGIN_USER);
+            outputStream.writeObject(new String[]{username, password});
+            outputStream.flush();
 
-            // Tar emot svar från servern
-            ServerPreGameProtocol response = (ServerPreGameProtocol) in.readObject();
-            return response == ServerPreGameProtocol.REGISTER_SUCCESS;
+            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+            if (response.equals(ServerPreGameProtocol.LOGIN_SUCCESS)) {
+                Player currentPlayer = (Player) inputStream.readObject();
+                windowManager.initMenuWindow(currentPlayer);
+                return true;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
 
+        return false;
+
+    }
+
+    public ArrayList<Player> getAllPLayersRanked() {
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.SHOW_TOP_LIST);
+            
+            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+            if (response.equals(ServerPreGameProtocol.TOP_LIST_SENT)) {
+                return (ArrayList<Player>) inputStream.readObject();
+            } else if (response.equals(ServerPreGameProtocol.NO_REGISTERED_PLAYERS)) {
+                return null;
+            }
+            
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException(e);
         }
-    }
-
-    public Player loginUser(String username, String password) {
-        UserDataManager userDataManager = UserDataManager.getInstance();
-        Player loggedInPlayer = userDataManager.authenticatePlayer(username, password);
-
-        if (loggedInPlayer != null) {
-            System.out.println("Inloggningen lyckades!");
-            return loggedInPlayer;
-        } else {
-            System.out.println("Felaktigt användarnamn eller lösenord.");
-            return null;
-        }
+        
+        return null;
     }
 }
-
 

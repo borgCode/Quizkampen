@@ -1,7 +1,6 @@
-package client.windows;
+package client.gui.windows;
 
-import client.WindowManager;
-import server.entity.Player;
+import client.gui.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,12 +95,10 @@ public class LoginWindow extends JFrame {
             }
 
             // Anropa servern för inloggning
-            Player loggedInPlayer = windowManager.getNetworkHandler().loginUser(username, password);
-            if (loggedInPlayer != null) {
+            boolean isSuccessful = windowManager.getNetworkHandler().loginUser(username, password);
+            if (isSuccessful) {
                 JOptionPane.showMessageDialog(this, "Inloggning lyckades!");
-                windowManager.setLoggedInPlayer(loggedInPlayer); // Spara spelaren
-                windowManager.showScoreWindow(); // Skicka användaren till scorefönstret
-                setVisible(false);
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Felaktigt användarnamn eller lösenord.");
             }
@@ -109,7 +106,7 @@ public class LoginWindow extends JFrame {
 
         // Action listener för backButton
         backButton.addActionListener(e -> {
-            setVisible(false);
+            dispose();
             windowManager.showWelcomeWindow();
         });
 
@@ -120,5 +117,7 @@ public class LoginWindow extends JFrame {
 
         setVisible(true);
     }
+    
+    
 }
 

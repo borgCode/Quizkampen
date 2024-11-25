@@ -1,34 +1,25 @@
-package client;
+package client.gui;
 
-import client.network.ClientPreGameProtocol;
+import client.gui.windows.*;
 import client.network.NetworkHandler;
-import client.windows.*;
 import server.entity.Player;
 import server.entity.Question;
-import server.network.ServerPreGameProtocol;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WindowManager {
-    private StartWindow startWindow;
+    private final StartWindow startWindow;
     private final QuestionWindow questionWindow;
     private final CategoryWindow categoryWindow;
+    private MenuWindow menuWindow;
     private String selectedCategory;
     private final ScoreWindow scoreWindow;
-    private WelcomeWindow welcomeWindow;
-    private LoginWindow loginWindow;
-    private RegisterWindow registerWindow;
-    private Player loggedInPlayer;
     private NetworkHandler networkHandler;
+    
 
     public WindowManager() {
-        //this.networkHandler = new NetworkHandler(this);
-        startWindow = new StartWindow(this);
+        startWindow = new StartWindow();
 //        startWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
@@ -38,24 +29,15 @@ public class WindowManager {
         categoryWindow = new CategoryWindow();
     }
     public void showWelcomeWindow() {
-        welcomeWindow = new WelcomeWindow(this);
+        WelcomeWindow welcomeWindow = new WelcomeWindow(this);
         welcomeWindow.setVisible(true);
     }
 
     public void showLoginWindow() {
-        loginWindow = new LoginWindow(this);
+        LoginWindow loginWindow = new LoginWindow(this);
         loginWindow.setVisible(true);
     }
-
-    public void showRegisterWindow() {
-        registerWindow = new RegisterWindow(this);
-        registerWindow.setVisible(true);
-    }
-
-    public void showStartWindow() {
-        startWindow = new StartWindow(this);
-        startWindow.setVisible(true);
-    }
+    
 
 
     public void initScoreWindowData(int rounds, Player player, Player opponent) {
@@ -67,6 +49,7 @@ public class WindowManager {
     public void initScoreWindow() {
         scoreWindow.initScoreWindow();
         scoreWindow.setVisible(true);
+        menuWindow.setVisible(false);
     }
 
     public void showCategoryWindow(ArrayList<String> categories) {
@@ -89,19 +72,11 @@ public class WindowManager {
 
 
     public Player getPlayer() {
-        if (loggedInPlayer != null) {
-            return loggedInPlayer;
-        } else {
-            return startWindow.getPlayer();
-        }
+        return startWindow.getPlayer();
     }
 
     public void displayQuestion(Question question) {
         questionWindow.updateQuestion(question);
-    }
-
-    public void setLoggedInPlayer(Player player) {
-        this.loggedInPlayer = player;
     }
 
     public QuestionWindow getGameWindow() {
@@ -145,12 +120,18 @@ public class WindowManager {
     public void setHasClickedPlay(boolean hasClicked) {
         scoreWindow.setHasClickedPlay(hasClicked);
     }
+
     public NetworkHandler getNetworkHandler() {
         return networkHandler;
     }
 
-    public Player getLoggedInPlayer() {
-        return loggedInPlayer;
+    public void setNetworkHandler(NetworkHandler networkHandler) {
+        this.networkHandler = networkHandler;
+    }
+    
+
+    public void initMenuWindow(Player currentPlayer) {
+        menuWindow = new MenuWindow(currentPlayer, this);
     }
 }
 

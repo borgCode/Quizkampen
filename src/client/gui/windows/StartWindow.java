@@ -1,4 +1,4 @@
-package client.windows;
+package client.gui.windows;
 
 import client.WindowManager;
 import client.network.NetworkHandler;
@@ -133,7 +133,7 @@ public class StartWindow extends JFrame {
         // Lägger till bakgrundsbilden till fönstret
         setContentPane(backgroundLabel);
 
-        setVisible(true);
+//        setVisible(true);
     }
 
     // Metod för att ladda avatarer

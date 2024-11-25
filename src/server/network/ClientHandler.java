@@ -7,7 +7,6 @@ import server.entity.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final GameServer gameServer;
-    private boolean isInGame;
+    private boolean isLookingForGame;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     UserDataManager userDataManager;
@@ -38,7 +37,9 @@ public class ClientHandler implements Runnable {
             
             while (true) {
                 //Titta vad det är klienten vill göra
+                System.out.println("Receiving request");
                 ClientPreGameProtocol request = (ClientPreGameProtocol) inputStream.readObject();
+                System.out.println(request);
                 if (request == null) {
                     break;
                 }
@@ -51,6 +52,7 @@ public class ClientHandler implements Runnable {
                         loginUser();
                         break;
                     case ClientPreGameProtocol.START_RANDOM_GAME:
+                        this.isLookingForGame = true;
                         findMatch();
                         return;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
@@ -87,40 +89,31 @@ public class ClientHandler implements Runnable {
             outputStream.writeObject(ServerPreGameProtocol.LOGIN_FAIL);
             outputStream.flush();
         }
-
     }
 
     private void findMatch() {
         synchronized (gameServer) {
-
-                //Hitta en annan client som väntar på att få spela
-                List<ClientHandler> clients = gameServer.getClientHandlers();
-                for (ClientHandler otherClient : clients) {
-                    if (otherClient != this && !otherClient.isInGame) {
-                        otherClient.isInGame = true;
-                        this.isInGame = true;
-                        gameServer.startGame(this, otherClient);
-                        return;
-                    }
-                }
-            // Ingen motståndare hittad, väntar
-                try {
-                    outputStream.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
-                    outputStream.flush();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+            
+            //Hitta en annan client som väntar på att få spela
+            List<ClientHandler> clients = gameServer.getClientHandlers();
+            for (ClientHandler otherClient : clients) {
+                if (otherClient != this && otherClient.isLookingForGame) {
+                    otherClient.isLookingForGame = false;
+                    this.isLookingForGame = false;
+                    gameServer.startGame(this, otherClient);
+                    return;
                 }
             }
+        }
     }
 
     private void sendListOfAllPlayers() throws IOException {
-        ArrayList<Player> allPLayers = userDataManager.getAllPlayers();
+        ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
         if (allPLayers.isEmpty()) {
             outputStream.writeObject(ServerPreGameProtocol.NO_REGISTERED_PLAYERS);
         } else {
             outputStream.writeObject(ServerPreGameProtocol.TOP_LIST_SENT);
-            outputStream.writeObject(userDataManager.getAllPlayers());
+            outputStream.writeObject(userDataManager.getAllPlayersRanked());
             outputStream.flush();
         }
     }
