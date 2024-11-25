@@ -17,11 +17,12 @@ public class MenuWindow extends JFrame {
         setResizable(false);
         setFocusable(false);
 
+
         JLabel background = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
         background.setLayout(new BorderLayout());
 
-        JPanel topPanel = createTopPanel();
         JPanel centerPanel = getCenterPanel(currentPlayer, windowManager);
+        JPanel topPanel = createTopPanel(currentPlayer);
 
         background.add(topPanel, BorderLayout.NORTH);
         background.add(centerPanel, BorderLayout.CENTER);
@@ -30,18 +31,21 @@ public class MenuWindow extends JFrame {
         setVisible(true);
     }
 
-    private JPanel createTopPanel() {
-        JPanel topPanel = new JPanel(new BorderLayout());
+    private JPanel createTopPanel(Player currentPlayer) {
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.setOpaque(false);
 
-        JButton topRightButton = new JButton("Inställningar");
-        topRightButton.setPreferredSize(new Dimension(80, 25));
-        topPanel.add(topRightButton, BorderLayout.EAST);
+        JLabel welcomeLabel = new JLabel("Välkommen, " + currentPlayer.getName());
+        welcomeLabel.setForeground(Color.WHITE);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
+        topPanel.add(welcomeLabel);
         return topPanel;
     }
 
     private JPanel getCenterPanel(Player currentPlayer, WindowManager windowManager) {
+        // Center panel with buttons
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         centerPanel.setOpaque(false);
 
@@ -54,19 +58,15 @@ public class MenuWindow extends JFrame {
         button3.addActionListener(e -> {
             ArrayList<Player> players = windowManager.getNetworkHandler().getAllPLayersRanked();
             if (players == null) {
-                JOptionPane.showConfirmDialog(this, "Inga spelare i topplistan");
+                JOptionPane.showMessageDialog(this, "Inga spelare i topplistan");
             } else {
                 initPlayerRankings(players);
             }
         });
 
-        JLabel label = new JLabel("Välkommen, " + currentPlayer.getName());
-        label.setForeground(Color.WHITE);
-
         centerPanel.add(button1);
         centerPanel.add(button2);
         centerPanel.add(button3);
-        centerPanel.add(label);
 
         return centerPanel;
     }
