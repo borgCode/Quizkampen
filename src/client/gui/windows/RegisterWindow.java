@@ -114,7 +114,7 @@ public class RegisterWindow extends JFrame {
                 return;
             }
 
-            if (windowManager.getNetworkHandler().registerUser(username, name, password, selectedAvatarPath)) {
+            if (windowManager.getNetworkHandler().registerUser(username, password, name, selectedAvatarPath)) {
                 JOptionPane.showMessageDialog(this, "Registrering lyckades!");
                 windowManager.showLoginWindow();
                 setVisible(false);

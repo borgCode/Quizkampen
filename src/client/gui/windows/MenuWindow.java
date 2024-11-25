@@ -9,43 +9,46 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class MenuWindow extends JFrame {
-    
-    
-    public MenuWindow(Player currentPlayer, WindowManager windowManager) {
 
+    public MenuWindow(Player currentPlayer, WindowManager windowManager) {
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 550);
         setResizable(false);
         setFocusable(false);
-        
-        
-        JPanel mainPanel = new JPanel(new BorderLayout());
 
+        JLabel background = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
+        background.setLayout(new BorderLayout());
+
+        JPanel topPanel = createTopPanel();
         JPanel centerPanel = getCenterPanel(currentPlayer, windowManager);
 
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        
-        JButton topRightButton = new JButton("Inställningar");
-        topRightButton.setPreferredSize(new Dimension(80, 25)); 
-        
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(topRightButton, BorderLayout.EAST);
-        
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        add(mainPanel);
-        
+        background.add(topPanel, BorderLayout.NORTH);
+        background.add(centerPanel, BorderLayout.CENTER);
+        add(background);
+
         setVisible(true);
+    }
+
+    private JPanel createTopPanel() {
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setOpaque(false);
+
+        JButton topRightButton = new JButton("Inställningar");
+        topRightButton.setPreferredSize(new Dimension(80, 25));
+        topPanel.add(topRightButton, BorderLayout.EAST);
+
+        return topPanel;
     }
 
     private JPanel getCenterPanel(Player currentPlayer, WindowManager windowManager) {
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        centerPanel.setOpaque(false);
 
         JButton button1 = new JButton("Spela mot slumpmässig motståndare");
         button1.addActionListener(e -> windowManager.getNetworkHandler().startRandomGame(currentPlayer));
 
         JButton button2 = new JButton("Leta efter spelare att spela mot");
-
 
         JButton button3 = new JButton("Se topplista");
         button3.addActionListener(e -> {
@@ -55,29 +58,27 @@ public class MenuWindow extends JFrame {
             } else {
                 initPlayerRankings(players);
             }
-            
         });
+
+        JLabel label = new JLabel("Välkommen, " + currentPlayer.getName());
+        label.setForeground(Color.WHITE);
+
         centerPanel.add(button1);
         centerPanel.add(button2);
         centerPanel.add(button3);
-
-        JLabel label = new JLabel(currentPlayer.getName());
-
         centerPanel.add(label);
+
         return centerPanel;
     }
 
     private void initPlayerRankings(ArrayList<Player> players) {
-        
         JList<Player> playerJList = new JList<>(players.toArray(new Player[0]));
         playerJList.setCellRenderer(new PlayerRenderer());
-        
+
         JScrollPane scrollPane = new JScrollPane(playerJList);
 
         JButton closeButton = new JButton("Stäng");
-        closeButton.addActionListener(e -> {
-            SwingUtilities.getWindowAncestor(closeButton).dispose();
-        });
+        closeButton.addActionListener(e -> SwingUtilities.getWindowAncestor(closeButton).dispose());
 
         JFrame rankingsFrame = new JFrame("Topplista");
         rankingsFrame.setSize(400, 550);
@@ -86,5 +87,4 @@ public class MenuWindow extends JFrame {
         rankingsFrame.add(closeButton, BorderLayout.SOUTH);
         rankingsFrame.setVisible(true);
     }
-
 }
