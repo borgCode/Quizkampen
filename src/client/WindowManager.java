@@ -13,6 +13,7 @@ public class WindowManager {
     private final StartWindow startWindow;
     private final QuestionWindow questionWindow;
     private final CategoryWindow categoryWindow;
+    private MenuWindow menuWindow;
     private String selectedCategory;
     private final ScoreWindow scoreWindow;
     private NetworkHandler networkHandler;
@@ -49,6 +50,7 @@ public class WindowManager {
     public void initScoreWindow() {
         scoreWindow.initScoreWindow();
         scoreWindow.setVisible(true);
+        menuWindow.setVisible(false);
     }
 
     public void showCategoryWindow(ArrayList<String> categories) {
@@ -130,7 +132,7 @@ public class WindowManager {
     
 
     public void initMenuWindow(Player currentPlayer) {
-        MenuWindow menuWindow = new MenuWindow(currentPlayer, this);
+        menuWindow = new MenuWindow(currentPlayer, this);
     }
 }
 

@@ -57,11 +57,11 @@ public class NetworkHandler {
     public void startRandomGame(Player currentPlayer) {
         //Berätta för server att vi vill spela mot en random spelare
         try {
-
-            System.out.println(currentPlayer.getName() + " wants to start game");
+            
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
-
+            
+            
             //Vänta på att server svarar
             GameSessionProtocol serverMessage = (GameSessionProtocol) inputStream.readObject();
             if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {

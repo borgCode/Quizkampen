@@ -1,6 +1,5 @@
 package server.network;
 
-import client.network.ClientGameSessionProtocol;
 import server.data.QuestionManager;
 import server.entity.Game;
 import server.entity.Player;

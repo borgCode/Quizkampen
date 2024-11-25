@@ -14,7 +14,7 @@ import java.util.List;
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final GameServer gameServer;
-    private boolean isInGame;
+    private boolean isLookingForGame;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     UserDataManager userDataManager;
@@ -52,6 +52,7 @@ public class ClientHandler implements Runnable {
                         loginUser();
                         break;
                     case ClientPreGameProtocol.START_RANDOM_GAME:
+                        this.isLookingForGame = true;
                         findMatch();
                         return;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
@@ -96,9 +97,9 @@ public class ClientHandler implements Runnable {
             //Hitta en annan client som väntar på att få spela
             List<ClientHandler> clients = gameServer.getClientHandlers();
             for (ClientHandler otherClient : clients) {
-                if (otherClient != this && !otherClient.isInGame) {
-                    otherClient.isInGame = true;
-                    this.isInGame = true;
+                if (otherClient != this && otherClient.isLookingForGame) {
+                    otherClient.isLookingForGame = false;
+                    this.isLookingForGame = false;
                     gameServer.startGame(this, otherClient);
                     return;
                 }
