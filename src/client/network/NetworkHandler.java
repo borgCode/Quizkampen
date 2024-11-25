@@ -17,8 +17,8 @@ import java.util.List;
 
 public class NetworkHandler {
     private WindowManager windowManager;
-    int port = 55566;
-    String ip = "127.0.0.1";
+    static int port = 55566;
+    static String ip = "127.0.0.1";
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
@@ -233,7 +233,7 @@ public class NetworkHandler {
         out.writeObject(scoreList);
         out.flush();
     }
-    public boolean registerUser(String username, String password, String name, String avatarPath) {
+    public static boolean registerUser(String username, String password, String name, String avatarPath) {
         try (Socket socket = new Socket(ip, port);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
@@ -244,11 +244,11 @@ public class NetworkHandler {
 
             // Skapa spelarobjekt och skicka till servern
             Player newPlayer = new Player(name, avatarPath);
-            newPlayer.setPassword(password); // Sätt lösenordet
+            newPlayer.setPassword(password);
             out.writeObject(newPlayer);
             out.flush();
 
-            // Ta emot svar från servern
+            // Tar emot svar från servern
             ServerPreGameProtocol response = (ServerPreGameProtocol) in.readObject();
             return response == ServerPreGameProtocol.REGISTER_SUCCESS;
 

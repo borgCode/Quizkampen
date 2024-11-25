@@ -1,6 +1,7 @@
 package client.windows;
 
 import client.WindowManager;
+import client.network.NetworkHandler;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -113,10 +114,9 @@ public class RegisterWindow extends JFrame {
                 return;
             }
 
-            // Skicka registreringsförfrågan till servern via WindowManager
-            if (windowManager.registerUser(username, name, password, selectedAvatarPath)) {
+            if (NetworkHandler.registerUser(username, name, password, selectedAvatarPath)) {
                 JOptionPane.showMessageDialog(this, "Registrering lyckades!");
-                windowManager.showStartWindow();
+                windowManager.showLoginWindow();
                 setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(this, "Registreringen misslyckades. Försök igen.");

@@ -152,21 +152,6 @@ public class WindowManager {
     public Player getLoggedInPlayer() {
         return loggedInPlayer;
     }
-
-    public boolean registerUser(String username, String name, String password, String avatar) {
-        return networkHandler.registerUser(username, name, password, avatar);
-    }
-
-
-
-        // TILLFÄLLIG MAIN FÖR TEST
-        public static void main(String[] args) {
-            WindowManager windowManager = new WindowManager();
-
-            windowManager.showWelcomeWindow();
-        }
-
-
 }
 
 
