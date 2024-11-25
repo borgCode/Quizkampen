@@ -51,7 +51,7 @@ public class MenuWindow extends JFrame {
         button3.addActionListener(e -> {
             ArrayList<Player> players = windowManager.getNetworkHandler().getAllPLayersRanked();
             if (players == null) {
-                JOptionPane.showConfirmDialog(this, "No players in toplist");
+                JOptionPane.showConfirmDialog(this, "Inga spelare i topplistan");
             } else {
                 initPlayerRankings(players);
             }
@@ -74,12 +74,12 @@ public class MenuWindow extends JFrame {
         
         JScrollPane scrollPane = new JScrollPane(playerJList);
 
-        JButton closeButton = new JButton("Close");
+        JButton closeButton = new JButton("Stäng");
         closeButton.addActionListener(e -> {
             SwingUtilities.getWindowAncestor(closeButton).dispose();
         });
 
-        JFrame rankingsFrame = new JFrame("Rankings");
+        JFrame rankingsFrame = new JFrame("Topplista");
         rankingsFrame.setSize(400, 550);
         rankingsFrame.setLayout(new BorderLayout());
         rankingsFrame.add(scrollPane, BorderLayout.CENTER);
