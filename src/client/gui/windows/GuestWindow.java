@@ -63,7 +63,7 @@ public class GuestWindow extends JFrame {
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         nameField = new JTextField(20); // Textfält för namn
-        nameField.setFont(new Font("Arial", Font.BOLD, 16));
+        nameField.setFont(new Font("Arial", Font.PLAIN, 14));
         nameField.setMaximumSize(new Dimension(300, 30));
         nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
