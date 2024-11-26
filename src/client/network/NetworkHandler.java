@@ -49,26 +49,11 @@ public class NetworkHandler {
 
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
-
-            
-            //Vänta på att server svarar
-            ServerGameSessionProtocol serverMessage = (ServerGameSessionProtocol) inputStream.readObject();
-            if (serverMessage.equals(ServerGameSessionProtocol.WAITING_FOR_OPPONENT)) {
-                //TODO Visa i GUI
-                System.out.println("Waiting for an opponent...");
-            }
             
 
             //Skickar spelaren till servern efter svar från server
             outputStream.writeObject(currentPlayer);
             outputStream.flush();
-
-            //Servern meddelar att en spelare är hittad och spelet startar
-            serverMessage = (ServerGameSessionProtocol) inputStream.readObject();
-            if (serverMessage.equals(ServerGameSessionProtocol.GAME_START)) {
-                //TODO GUI
-                System.out.println("Game starting!");
-            }
 
             Object serverResponse = inputStream.readObject();
             if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
@@ -155,7 +140,6 @@ public class NetworkHandler {
                         case ServerGameSessionProtocol.PLAY_AGAIN_DENIED:
                             outputStream.writeObject("En spelare avbröt");
                             windowManager.backToMenu();
-                            //TODO Gå tillbaka till menuwindow
                             break;
                     }
                 }

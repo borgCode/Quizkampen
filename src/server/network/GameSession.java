@@ -38,24 +38,12 @@ public class GameSession implements Runnable {
                 ObjectOutputStream outPlayer2 = player2.getOutputStream();
                 ObjectInputStream inPlayer2 = player2.getInputStream();
         ) {
-
-            outPlayer1.writeObject(ServerGameSessionProtocol.WAITING_FOR_OPPONENT);
-            outPlayer2.writeObject(ServerGameSessionProtocol.WAITING_FOR_OPPONENT);
-            outPlayer1.flush();
-            outPlayer2.flush();
             
             
             //Hämta spelar objekt från båda klienterna
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
             
-
-            outPlayer1.writeObject(ServerGameSessionProtocol.GAME_START);
-            outPlayer2.writeObject(ServerGameSessionProtocol.GAME_START);
-            outPlayer1.flush();
-            outPlayer2.flush();
-
-
             //Lägg streamsen och players i arrays som används i loop för att växla mellan dem
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
             ObjectInputStream[] inputStreams = {inPlayer1, inPlayer2};
@@ -217,8 +205,7 @@ public class GameSession implements Runnable {
 
     private void handlePlayerGaveUp(int currentPlayer, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2) throws IOException {
         //TODO Hantera give up på server sida
-
-        //TODO Visa i GUI
+        
         if (currentPlayer == 0) {
             outPlayer1.writeObject(ServerGameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Du gav upp! Din motståndare vann");

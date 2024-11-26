@@ -225,7 +225,6 @@ public class ScoreWindow extends JFrame {
         playAgainButton.addActionListener(e -> {
             windowManager.getNetworkHandler().sendPlayAgainSignal();
             playAgainButton.setEnabled(false);
-            //TODO Väntar på andra spelaren
         });
         
         playAgainButton.setEnabled(true);
