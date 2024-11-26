@@ -20,6 +20,7 @@ public class RegisterWindow extends JFrame {
         setFocusable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setLocationRelativeTo(null);
 
         // Lägger till bakgrundsbilden
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));

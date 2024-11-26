@@ -14,6 +14,7 @@ public class LoginWindow extends JFrame {
         setResizable(false);
         setFocusable(false);
         setLayout(new GridLayout(3,1,10,10));
+        setLocationRelativeTo(null);
 
         // Lägger till bakgrundsbilden
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));

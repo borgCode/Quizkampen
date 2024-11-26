@@ -14,6 +14,7 @@ public class WelcomeWindow extends JFrame {
         setLayout(new GridLayout(3,1,10,10));
         setResizable(false);
         setFocusable(false);
+        setLocationRelativeTo(null);
 
         // Lägger till bakgrundsbilden
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));

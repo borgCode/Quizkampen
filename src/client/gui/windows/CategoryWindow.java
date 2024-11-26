@@ -27,6 +27,7 @@ public class CategoryWindow extends JFrame {
         setResizable(false);
         setFocusable(false);
         setLayout(null);
+        setLocationRelativeTo(null);
 
         // Lägger till bakgrundsbilden
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));

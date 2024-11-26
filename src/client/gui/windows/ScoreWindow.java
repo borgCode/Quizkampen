@@ -34,6 +34,7 @@ public class ScoreWindow extends JFrame {
         setResizable(false);
         setFocusable(false);
         setLayout(new BorderLayout());
+        setLocationRelativeTo(null);
 
         //Sätter ikoner för rätt och fel
         checkImageIcon = new ImageIcon("src/resources/images/check.png");

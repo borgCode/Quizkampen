@@ -16,6 +16,7 @@ public class MenuWindow extends JFrame {
         setSize(400, 550);
         setResizable(false);
         setFocusable(false);
+        setLocationRelativeTo(null);
 
         // Bakgrundsbild
         JLabel background = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));

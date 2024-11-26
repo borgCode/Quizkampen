@@ -141,6 +141,7 @@ public class QuestionWindow extends JFrame implements ActionListener {
         setResizable(false);
         setFocusable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
 
     }
