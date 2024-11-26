@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 public class MenuWindow extends JFrame {
 
+    
+    //TODO Kunna starta match efter att man lämnat en annan match
     public MenuWindow(Player currentPlayer, WindowManager windowManager) {
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

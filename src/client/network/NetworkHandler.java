@@ -4,7 +4,7 @@ package client.network;
 import client.gui.WindowManager;
 import server.entity.Player;
 import server.entity.Question;
-import server.network.GameSessionProtocol;
+import server.network.ServerGameSessionProtocol;
 import server.network.ServerPreGameProtocol;
 
 import javax.swing.*;
@@ -52,8 +52,8 @@ public class NetworkHandler {
 
             
             //Vänta på att server svarar
-            GameSessionProtocol serverMessage = (GameSessionProtocol) inputStream.readObject();
-            if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
+            ServerGameSessionProtocol serverMessage = (ServerGameSessionProtocol) inputStream.readObject();
+            if (serverMessage.equals(ServerGameSessionProtocol.WAITING_FOR_OPPONENT)) {
                 //TODO Visa i GUI
                 System.out.println("Waiting for an opponent...");
             }
@@ -64,14 +64,14 @@ public class NetworkHandler {
             outputStream.flush();
 
             //Servern meddelar att en spelare är hittad och spelet startar
-            serverMessage = (GameSessionProtocol) inputStream.readObject();
-            if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
+            serverMessage = (ServerGameSessionProtocol) inputStream.readObject();
+            if (serverMessage.equals(ServerGameSessionProtocol.GAME_START)) {
                 //TODO GUI
                 System.out.println("Game starting!");
             }
 
             Object serverResponse = inputStream.readObject();
-            if (serverResponse.equals(GameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
+            if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
                 int rounds = (Integer) inputStream.readObject();
                 Player opponent = (Player) inputStream.readObject();
                 windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
@@ -90,16 +90,21 @@ public class NetworkHandler {
                 while (true) {
                     if (windowManager.hasUserGivenUp()) {
                         sendGiveUpSignal(outputStream);
+                        JOptionPane.showMessageDialog(null, "Du har gett upp!");
+                        windowManager.switchBottomPanel();
+                        windowManager.setHasGivenUp(false);
                         continue;
                     }
                     windowManager.nextRound();
-                    GameSessionProtocol state = (GameSessionProtocol) inputStream.readObject();
-                    // Kollar om skickat total rounds och skriver ut i konsolen antalet rundor
+                    ServerGameSessionProtocol state = (ServerGameSessionProtocol) inputStream.readObject();
                     switch (state) {
-                        case GameSessionProtocol.WAITING:
+                        case ServerGameSessionProtocol.WAITING:
                             windowManager.showScoreWindow();
+                            windowManager.setPlayButtonIsEnabled(false);
+                            outputStream.flush();
                             break;
-                        case GameSessionProtocol.SENT_CATEGORY:
+                        case ServerGameSessionProtocol.SENT_CATEGORY:
+                            windowManager.setPlayButtonIsEnabled(true);
                             while (!windowManager.hasClickedPlay()) {
                                 try {
                                     Thread.sleep(100);
@@ -109,12 +114,13 @@ public class NetworkHandler {
                             }
                             handleCategorySelection(outputStream, inputStream);
                             break;
-                        case GameSessionProtocol.SENT_CATEGORY_TO_OPPONENT:
+                        case ServerGameSessionProtocol.SENT_CATEGORY_TO_OPPONENT:
                             String currentCategory = (String) inputStream.readObject();
                             windowManager.setCurrentCategory(currentCategory);
                             windowManager.updateCategory();
                             break;
-                        case GameSessionProtocol.SENT_QUESTIONS:
+                        case ServerGameSessionProtocol.SENT_QUESTIONS:
+                            windowManager.setPlayButtonIsEnabled(true);
                             while (!windowManager.hasClickedPlay()) {
                                 try {
                                     Thread.sleep(100);
@@ -123,39 +129,33 @@ public class NetworkHandler {
                                 }
                             }
                             handleQuestionRound(outputStream, inputStream);
+                            windowManager.setPlayButtonIsEnabled(false);
                             windowManager.setHasClickedPlay(false);
                             break;
-                        case GameSessionProtocol.SENT_ROUND_SCORE:
+                        case ServerGameSessionProtocol.SENT_ROUND_SCORE:
                             List<Integer> opponentScore = (ArrayList<Integer>) inputStream.readObject();
                             windowManager.updateOpponentScore(opponentScore);
                             break;
-                        case GameSessionProtocol.GAME_OVER:
-                            outputStream.flush();
+                        case ServerGameSessionProtocol.GAME_OVER:
+                            windowManager.switchBottomPanel();
+                            windowManager.showScoreWindow();
                             String resultat = (String) inputStream.readObject();
                             JOptionPane.showMessageDialog(null, resultat);
                             break;
-                        case GameSessionProtocol.PLAYER_GAVE_UP:
-                            //TODO Hantera i GUI
+                        case ServerGameSessionProtocol.PLAYER_GAVE_UP:
+                            windowManager.switchBottomPanel();
+                            windowManager.showScoreWindow();
                             String message = (String) inputStream.readObject();
-                            System.out.println(message);
+                            JOptionPane.showMessageDialog(null, message);
                             break;
-                        case GameSessionProtocol.SENT_PLAY_AGAIN:
-
-                            int response = JOptionPane.showConfirmDialog(null,"Vill du spela igen?", "Spela igen?", JOptionPane.YES_NO_OPTION);
-                            boolean answer = (response == JOptionPane.YES_OPTION);
-                            outputStream.writeObject(answer);
-                            outputStream.flush();
-                            if (!answer) {
-                                System.out.println("Spelet avslutas");
-                                //TODO Gå tillbaka till menu window
-                                System.exit(0);
-                            }
+                        case ServerGameSessionProtocol.PLAY_AGAIN_SUCCESS:
                             windowManager.resetScoreList();
+                            windowManager.showScoreWindow();
                             break;
-                        case GameSessionProtocol.PLAY_AGAIN_DENIED:
+                        case ServerGameSessionProtocol.PLAY_AGAIN_DENIED:
                             outputStream.writeObject("En spelare avbröt");
+                            windowManager.backToMenu();
                             //TODO Gå tillbaka till menuwindow
-                            System.exit(0);
                             break;
                     }
                 }
@@ -194,7 +194,7 @@ public class NetworkHandler {
     }
 
     private void sendGiveUpSignal(ObjectOutputStream outputStream) throws IOException {
-        outputStream.writeObject(GameSessionProtocol.CLIENT_GAVE_UP);
+        outputStream.writeObject(ClientGameSessionProtocol.CLIENT_GAVE_UP);
     }
 
     private void handleQuestionRound(ObjectOutputStream outputStream, ObjectInputStream inputStream) throws
@@ -259,7 +259,6 @@ public class NetworkHandler {
 
     public boolean registerUser(String username, String password, String name, String avatarPath) {
 
-
             // meddela för servern att vi vill registrera en användare
         try {
             outputStream.writeObject(ClientPreGameProtocol.REGISTER_USER);
@@ -281,10 +280,7 @@ public class NetworkHandler {
         }
 
     }
-
-
-
-
+    
     public boolean loginUser(String username, String password) {
         try {
             outputStream.writeObject(ClientPreGameProtocol.LOGIN_USER);
@@ -323,6 +319,22 @@ public class NetworkHandler {
         }
 
         return null;
+    }
+    public void sendPlayAgainSignal() {
+        try {
+            outputStream.writeObject(ClientGameSessionProtocol.PLAY_AGAIN);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void sendPlayAgainDenied() {
+        try {
+            outputStream.writeObject(ClientGameSessionProtocol.DENY_PLAY_AGAIN);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

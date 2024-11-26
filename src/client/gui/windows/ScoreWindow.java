@@ -5,6 +5,7 @@ import server.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,13 @@ public class ScoreWindow extends JFrame {
     private boolean hasClickedPlay;
     private JButton playButton;
     private JLabel categoryLabel;
+    private WindowManager windowManager;
+    private JPanel cardPanel;
+    private JButton playAgainButton;
 
+    public ScoreWindow(WindowManager windowManager) {
+        this.windowManager = windowManager;
+    }
 
 
     public void initScoreWindow() {
@@ -92,12 +99,19 @@ public class ScoreWindow extends JFrame {
         //Mitt panelen med ronderna
         JPanel rondPanel = getRoundPanel();
 
-        //Nedre panel för knappar
-        JPanel bottomPanel = getBottomPanel();
 
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(rondPanel, BorderLayout.CENTER);
-        panel.add(bottomPanel, BorderLayout.SOUTH);
+
+        
+
+        
+        cardPanel = new JPanel(new CardLayout());
+        cardPanel.add(getBottomPanel(), "bottomPanel");
+        cardPanel.add(getBottomPanelEnd(), "bottomEndPanel");
+
+        panel.add(cardPanel, BorderLayout.SOUTH);
+
         setVisible(true);
     }
 
@@ -118,7 +132,6 @@ public class ScoreWindow extends JFrame {
     }
 
 
-    
     private JPanel getRoundPanel() {
         JPanel rondPanel = new JPanel(new GridLayout(gritLayoutRounds, 1));
         rondPanel.setOpaque(false);
@@ -148,7 +161,7 @@ public class ScoreWindow extends JFrame {
             JPanel rondLabelPanel = new JPanel();
 
             rondLabelPanel.setLayout(new BoxLayout(rondLabelPanel, BoxLayout.Y_AXIS));
-            
+
             rondLabelPanel.setOpaque(false); // Gör bakgrunden genomskinlig
 
             // Första JLabel
@@ -166,7 +179,6 @@ public class ScoreWindow extends JFrame {
             rowPanel.add(rondLabelPanel);
 
 
-
             //Knappar spelare 2:
             for (int u = 1; u <= 3; u++) {
                 JButton buttonPlayer2 = new JButton();
@@ -181,19 +193,47 @@ public class ScoreWindow extends JFrame {
         }
         return rondPanel;
     }
+
     private JPanel getBottomPanel() {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
         bottomPanel.setOpaque(false);
         JButton giveUpButton = new JButton("Ge upp");
         giveUpButton.addActionListener(e -> this.hasUserGivenUp = true);
         playButton = new JButton("Spela");
-        playButton.addActionListener(e -> this.hasClickedPlay = true);
+        playButton.addActionListener(e -> {
+            this.hasClickedPlay = true;
+            playButton.setEnabled(false);
+        });
         playButton.setEnabled(true);
         bottomPanel.add(giveUpButton);
         bottomPanel.add(playButton);
         return bottomPanel;
     }
-    
+
+    private JPanel getBottomPanelEnd() {
+
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
+        bottomPanel.setOpaque(false);
+        JButton menuButton = new JButton("Meny");
+        menuButton.addActionListener(e -> {
+            windowManager.getNetworkHandler().sendPlayAgainDenied();
+            windowManager.backToMenu();
+            dispose();
+        });
+        
+        playAgainButton = new JButton("Spela igen");
+        playAgainButton.addActionListener(e -> {
+            windowManager.getNetworkHandler().sendPlayAgainSignal();
+            playAgainButton.setEnabled(false);
+            //TODO Väntar på andra spelaren
+        });
+        
+        playAgainButton.setEnabled(true);
+        bottomPanel.add(menuButton);
+        bottomPanel.add(playAgainButton);
+        return bottomPanel;
+    }
+
 
     public void setPlayers(Player player1, Player player2) {
         this.player1 = player1;
@@ -280,17 +320,40 @@ public class ScoreWindow extends JFrame {
                 button.setEnabled(true);
             }
         }
+        
+        playAgainButton.setEnabled(true);
+        
+        CardLayout cl = (CardLayout) (cardPanel.getLayout());
+        cl.show(cardPanel, "bottomPanel");
 
         updateRounds();
     }
 
-    public void switchPlayButton() {
-        //TODO
+    public void setPlayButtonIsEnabled(boolean isEnabled) {
+        if (isEnabled) {
+            playButton.setText("Spela");
+            playButton.setEnabled(true);
+        } else {
+            playButton.setText("Väntar");
+            playButton.setEnabled(false);
+        }
+
 
     }
+
 
     public void updateCategory(String currentCategory) {
         categories.get(currentRound - 1).setText(currentCategory);
 
+    }
+
+    public void switchBottomPanel() {
+        CardLayout cl = (CardLayout) (cardPanel.getLayout());
+        cl.show(cardPanel, "bottomEndPanel");
+    }
+    
+
+    public void setHasUserGivenUp(boolean hasUserGivenUp) {
+        this.hasUserGivenUp = hasUserGivenUp;
     }
 }

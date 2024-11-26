@@ -26,7 +26,7 @@ public class WindowManager {
         questionWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
         });
-        scoreWindow = new ScoreWindow();
+        scoreWindow = new ScoreWindow(this);
         categoryWindow = new CategoryWindow();
     }
     public void showWelcomeWindow() {
@@ -54,6 +54,9 @@ public class WindowManager {
         scoreWindow.initScoreWindow();
         scoreWindow.setVisible(true);
         menuWindow.setVisible(false);
+    }
+    public void backToMenu() {
+        menuWindow.setVisible(true);
     }
 
     public void showCategoryWindow(ArrayList<String> categories) {
@@ -94,8 +97,8 @@ public class WindowManager {
     public void resetRound() {
         questionWindow.resetRound();
     }
-    public void switchPlayButton() {
-        scoreWindow.switchPlayButton();
+    public void setPlayButtonIsEnabled(boolean isEnabled) {
+        scoreWindow.setPlayButtonIsEnabled(isEnabled);
     }
 
 
@@ -150,16 +153,20 @@ public class WindowManager {
         guestWindow.setVisible(true);
     }
 
-    public String getCurrentCategory() {
-        return currentCategory;
-    }
-
     public void setCurrentCategory(String currentCategory) {
         this.currentCategory = currentCategory;
     }
 
     public void updateCategory() {
         scoreWindow.updateCategory(currentCategory);
+    }
+
+    public void switchBottomPanel() {
+        scoreWindow.switchBottomPanel();
+    }
+
+    public void setHasGivenUp(boolean hasGivenUp) {
+        scoreWindow.setHasUserGivenUp(hasGivenUp);
     }
 }
 
