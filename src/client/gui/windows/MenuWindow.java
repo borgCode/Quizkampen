@@ -70,6 +70,10 @@ public class MenuWindow extends JFrame {
         button2.setForeground(Color.WHITE);
         button2.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         button2.setFocusable(false);
+        button2.addActionListener(e -> {
+            // Tillfällig för det inte finns funktion till knappen, ta bort vid fix
+            JOptionPane.showMessageDialog(this, "Spela mot en vän är under utveckling :)", "Uppdatering", JOptionPane.INFORMATION_MESSAGE);
+        });
 
         // Lägger till bild i knappen
         ImageIcon friendIcon = new ImageIcon("src/resources/images/vän.png");
@@ -104,6 +108,24 @@ public class MenuWindow extends JFrame {
         gbc.gridy = 2;
         gbc.gridwidth = 3; // Tar hela bredden
         background.add(button3, gbc);
+
+        // Knapp 4 - Inställningar
+        JButton button4 = new JButton("Inställningar");
+        button4.setFont(new Font("Arial", Font.BOLD, 16));
+        button4.setPreferredSize(new Dimension(200, 50));
+        button4.setBackground(new Color(67, 120, 189)); // TILLFÄLLIG FÄRG KANSKE
+        button4.setForeground(Color.WHITE);
+        button4.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+        button4.setFocusable(false);
+        button4.addActionListener(e -> {
+            // Tillfällig för det inte finns funktion till knappen
+            JOptionPane.showMessageDialog(this, "Inställningar är under utveckling :)", "Uppdatering", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 3; // Placerar under topplista
+        gbc.gridwidth = 3; // Tar hela bredden
+        background.add(button4, gbc);
 
         add(background);
         setVisible(true);
