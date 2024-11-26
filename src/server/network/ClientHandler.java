@@ -114,7 +114,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-
     private void sendListOfPlayersRanked() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
         if (allPLayers.isEmpty()) {
