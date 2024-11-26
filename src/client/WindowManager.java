@@ -73,6 +73,9 @@ public class WindowManager {
     public void resetRound() {
         questionWindow.resetRound();
     }
+    public void switchPlayButton() {
+        scoreWindow.switchPlayButton();
+    }
 
 
     public void setSelectedCategory(String category) {

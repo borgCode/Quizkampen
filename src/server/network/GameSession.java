@@ -18,7 +18,7 @@ public class GameSession implements Runnable {
     private final ClientHandler player2;
     private final QuestionBank questionBank;
     private final int totalRounds;
-    
+
 
 
     public GameSession(ClientHandler player1, ClientHandler player2) {
@@ -63,10 +63,10 @@ public class GameSession implements Runnable {
             Player[] players = {player1, player2};
             int currentPlayer = 0;
 
-            
+
             sendScoreWindowData(player1, player2, outPlayer1, outPlayer2, totalRounds);
-            
-            
+
+
             while (true) {
                 Game game = new Game(player1, player2);
 
@@ -88,7 +88,7 @@ public class GameSession implements Runnable {
                         handlePlayerGaveUp(currentPlayer, (currentPlayer + 1) % 2, outPlayer1, outPlayer2);
                         return;
                     }
-                    
+
                     ArrayList<Integer> player1Score = round.getOpponentRoundScore();
 
                     // Andra spelaren får svara
@@ -96,11 +96,11 @@ public class GameSession implements Runnable {
                         handlePlayerGaveUp((currentPlayer + 1) % 2, currentPlayer, outPlayer1, outPlayer2);
                         return;
                     }
-                    
+
                     ArrayList<Integer> player2Score = round.getOpponentRoundScore();
-                    
+
                     sendResultsToOpponent(outputStreams[(currentPlayer + 1) % 2], player1Score);
-                    
+
                     sendResultsToOpponent(outputStreams[currentPlayer], player2Score);
 
                     // Informera om att vänta
@@ -111,8 +111,6 @@ public class GameSession implements Runnable {
 
 
 
-                //TODO end game logic
-
                 outPlayer1.writeObject(GameSessionProtocol.GAME_OVER);
                 outPlayer1.flush();
                 outPlayer2.writeObject(GameSessionProtocol.GAME_OVER);
@@ -121,29 +119,17 @@ public class GameSession implements Runnable {
 
                 GameLogic.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
 
-                outPlayer1.writeObject(GameSessionProtocol.SENT_PLAY_AGAIN);
-                outPlayer2.writeObject(GameSessionProtocol.SENT_PLAY_AGAIN);
-                outPlayer1.flush();
-                outPlayer2.flush();
 
-                boolean playAgainPlayer1 = (Boolean) inPlayer1.readObject();
-                boolean playAgainPlayer2 = (Boolean) inPlayer2.readObject();
-
-                if (playAgainPlayer1 && playAgainPlayer2) {
-                    resetGameState(player1,player2,game);
-                    continue;
-                } else {
-                    System.out.println("Spelarna vill inte spela igen");
+                if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
+                    System.out.println("Avbryter spelet");
+                    break;
                 }
-                break;
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    private void resetGameState(Player player1, Player player2, Game game) {
-        game.resetScores();
     }
 
     private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
@@ -164,9 +150,9 @@ public class GameSession implements Runnable {
         //Skickar tre kategorier till client
         outputStream.writeObject(randomCategories);
         outputStream.flush();
-        
+
         Object clientResponse = inputStream.readObject();
-        
+
         //Kollar om spelaren gav upp
         if (clientResponse.equals(GameSessionProtocol.CLIENT_GAVE_UP)) {
             return null;
@@ -177,12 +163,12 @@ public class GameSession implements Runnable {
 
         //Ta bort kategorin som redan är spelad
         GameLogic.removeCategoryFromList(categories, categoryInput);
-        
+
         return categoryInput;
     }
 
     private boolean processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player1, Round round) throws IOException, ClassNotFoundException {
-        
+
         outputStream.writeObject(GameSessionProtocol.SENT_QUESTIONS);
         outputStream.writeObject(round.getCurrentQuestions());
         outputStream.flush();
@@ -197,7 +183,7 @@ public class GameSession implements Runnable {
         ArrayList<Integer> opponentRoundScore = (ArrayList<Integer>) clientResponse;
         game.incrementScore(player1, opponentRoundScore);
         round.setOpponentRoundScore(opponentRoundScore);
-        
+
         return true;
     }
 
@@ -211,7 +197,7 @@ public class GameSession implements Runnable {
     private void handlePlayerGaveUp(int currentPlayer, int i, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2) throws IOException {
         System.out.println("Player " + (currentPlayer + 1) + " gav upp!");
 
-        
+
         if (currentPlayer == 0) {
             outPlayer1.writeObject(GameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Du gav upp! Din motståndare vann");
@@ -223,7 +209,49 @@ public class GameSession implements Runnable {
             outPlayer1.writeObject(GameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Den andra spelaren gav upp! Du vann");
         }
+
+        }
+    private boolean handlePlayAgain(ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2,
+                                    ObjectInputStream inPlayer1, ObjectInputStream inPlayer2) throws IOException, ClassNotFoundException {
+
+        outPlayer1.writeObject(GameSessionProtocol.SENT_PLAY_AGAIN);
+        outPlayer2.writeObject(GameSessionProtocol.SENT_PLAY_AGAIN);
+        outPlayer1.flush();
+        outPlayer2.flush();
+
+        boolean playAgainPlayer1, playAgainPlayer2;
+        try {
+            playAgainPlayer1 = (boolean) inPlayer1.readObject();
+        } catch (Exception e) {
+            outPlayer2.writeObject(GameSessionProtocol.PLAY_AGAIN_DENIED);
+            outPlayer2.flush();
+            //player2.getClientSocket().close();
+            //player1.getClientSocket().close();
+            return false;
+        }
+
+        try {
+            playAgainPlayer2 = (boolean) inPlayer2.readObject();
+        } catch (Exception e) {
+            outPlayer1.writeObject(GameSessionProtocol.PLAY_AGAIN_DENIED);
+            outPlayer1.flush();
+            player1.getClientSocket().close();
+            player2.getClientSocket().close();
+            return false;
+        }
+
+        if (playAgainPlayer1 && playAgainPlayer2) {
+            return true;
+        } else {
+            outPlayer1.writeObject(GameSessionProtocol.PLAY_AGAIN_DENIED);
+            outPlayer2.writeObject(GameSessionProtocol.PLAY_AGAIN_DENIED);
+            outPlayer1.flush();
+            outPlayer2.flush();
+            return false;
+        }
     }
+
+
 }
 
 

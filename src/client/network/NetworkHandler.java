@@ -4,6 +4,7 @@ package client.network;
 import client.WindowManager;
 import server.entity.Player;
 import server.entity.Question;
+import server.network.GameSession;
 import server.network.GameSessionProtocol;
 
 import javax.swing.*;
@@ -115,14 +116,20 @@ public class NetworkHandler {
                         System.out.println(message);
                         break;
                     case GameSessionProtocol.SENT_PLAY_AGAIN:
+
                         int response = JOptionPane.showConfirmDialog(null,"Vill du spela igen?", "Spela igen?", JOptionPane.YES_NO_OPTION);
                         boolean answer = (response == JOptionPane.YES_OPTION);
                         out.writeObject(answer);
                         out.flush();
                         if (!answer) {
                             System.out.println("Spelet avslutas");
+                            System.exit(0);
                         }
                         windowManager.resetScoreList();
+                        break;
+                    case GameSessionProtocol.PLAY_AGAIN_DENIED:
+                        out.writeObject("En spelare avbröt");
+                        System.exit(0);
                         break;
 
                 }
@@ -162,11 +169,6 @@ public class NetworkHandler {
         out.writeObject(windowManager.getSelectedCategory());
         out.flush();
         windowManager.setSelectedCategory(null);
-    }
-    private boolean askToPlayAgain(){
-        int choice = JOptionPane.showConfirmDialog(null,"Vill du spela igen?","Spela igen?",JOptionPane.YES_NO_OPTION);
-
-        return choice == JOptionPane.YES_OPTION;
     }
 
     private void sendGiveUpSignal(ObjectOutputStream out) throws IOException {

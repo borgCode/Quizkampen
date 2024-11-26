@@ -4,6 +4,7 @@ import server.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class ScoreWindow extends JFrame {
     private int currentRound = 1;
     private JLabel score;
     private boolean hasClickedPlay;
+    private ActionListener playAgainListener;
+    private JButton playButton;
 
 
     public void initScoreWindow() {
@@ -150,7 +153,7 @@ public class ScoreWindow extends JFrame {
         bottomPanel.setOpaque(false);
         JButton giveUpButton = new JButton("Ge upp");
         giveUpButton.addActionListener(e -> this.hasUserGivenUp = true);
-        JButton playButton = new JButton("Spela");
+        playButton = new JButton("Spela");
         playButton.addActionListener(e -> this.hasClickedPlay = true);
         playButton.setEnabled(true);
         bottomPanel.add(giveUpButton);
@@ -229,11 +232,30 @@ public class ScoreWindow extends JFrame {
         score.setFont(new Font("Arial", Font.BOLD, 32));
         score.setHorizontalAlignment(SwingConstants.CENTER);
     }
+
     public void resetScoreList() {
         this.playerCurrentScore = 0;
         this.playerOpponentScore = 0;
-        currentRound = 1;
-        player1buttons.clear();
-        player2buttons.clear();
+        this.currentRound = 1;
+
+        for (List<JButton> buttonRow : player1buttons) {
+            for (JButton button : buttonRow) {
+                button.setIcon(null);
+                button.setEnabled(true);
+            }
+        }
+
+        for (List<JButton> buttonRow : player2buttons) {
+            for (JButton button : buttonRow) {
+                button.setIcon(null);
+                button.setEnabled(true);
+            }
+        }
+
+        updateRounds();
+    }
+
+    public void switchPlayButton() {
+
     }
 }

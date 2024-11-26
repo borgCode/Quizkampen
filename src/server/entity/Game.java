@@ -30,11 +30,6 @@ public class Game {
             }
         }
     }
-    public void resetScores (){
-        player1Score = 0;
-        player2Score = 0;
-
-    }
     
     public void setWinner(String winner) {
         this.winner = winner;
