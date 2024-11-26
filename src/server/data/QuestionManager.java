@@ -1,6 +1,5 @@
 package server.data;
 
-import server.entity.Player;
 import server.entity.Question;
 
 import java.io.BufferedReader;

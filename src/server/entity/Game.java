@@ -7,14 +7,11 @@ import java.util.ArrayList;
 
 public class Game {
     private Player player1;
-    private Player player2;
     private int player1Score;
     private int player2Score;
-    private String winner;
 
-    public Game(Player player1, Player player2) {
+    public Game(Player player1) {
         this.player1 = player1;
-        this.player2 = player2;
         this.player1Score = 0;
         this.player2Score = 0;
     }
@@ -31,9 +28,6 @@ public class Game {
         }
     }
     
-    public void setWinner(String winner) {
-        this.winner = winner;
-    }
 
     public int getPlayer1Score() {
         return player1Score;
@@ -45,4 +39,3 @@ public class Game {
     
 }
 
-// https://youtrack.jetbrains.com/issue/CWM-9503 check this URL !

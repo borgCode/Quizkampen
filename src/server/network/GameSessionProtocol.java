@@ -5,6 +5,7 @@ public enum GameSessionProtocol {
     GAME_START,
     WAITING,
     SENT_CATEGORY,
+    SENT_CATEGORY_TO_OPPONENT,
     SENT_QUESTIONS,
     SENT_ROUND_SCORE,
     GAME_OVER,
