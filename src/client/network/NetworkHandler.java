@@ -49,24 +49,29 @@ public class NetworkHandler {
 
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
-            
 
-            //Skickar spelaren till servern efter svar från server
-            outputStream.writeObject(currentPlayer);
-            outputStream.flush();
+            initGameSetup(currentPlayer);
 
-            Object serverResponse = inputStream.readObject();
-            if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
-                int rounds = (Integer) inputStream.readObject();
-                Player opponent = (Player) inputStream.readObject();
-                windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
-                windowManager.initScoreWindow();
-            }
 
-            handleGameSession();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void initGameSetup(Player currentPlayer) throws IOException, ClassNotFoundException {
+        //Skickar spelaren till servern efter svar från server
+        outputStream.writeObject(currentPlayer);
+        outputStream.flush();
+
+        Object serverResponse = inputStream.readObject();
+        if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
+            int rounds = (Integer) inputStream.readObject();
+            Player opponent = (Player) inputStream.readObject();
+            windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
+            windowManager.initScoreWindow();
+        }
+
+        handleGameSession();
     }
 
     public void handleGameSession() {
@@ -105,7 +110,7 @@ public class NetworkHandler {
                             windowManager.updateCategory();
                             break;
                         case PRE_QUESTIONS_CHECK:
-                            if(windowManager.hasUserGivenUp()) {
+                            if (windowManager.hasUserGivenUp()) {
                                 sendGiveUpSignal(outputStream);
                             } else {
                                 outputStream.writeObject(ClientGameSessionProtocol.QUESTION_READY);
@@ -272,7 +277,7 @@ public class NetworkHandler {
         }
 
     }
-    
+
     public boolean loginUser(String username, String password) {
         try {
             outputStream.writeObject(ClientPreGameProtocol.LOGIN_USER);
@@ -312,9 +317,11 @@ public class NetworkHandler {
 
         return null;
     }
+
     public void sendPlayAgainSignal() {
         try {
             outputStream.writeObject(ClientGameSessionProtocol.PLAY_AGAIN);
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -324,9 +331,88 @@ public class NetworkHandler {
     public void sendPlayAgainDenied() {
         try {
             outputStream.writeObject(ClientGameSessionProtocol.DENY_PLAY_AGAIN);
+            outputStream.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int inviteFriendToPlay(String friendName) {
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.SEARCH_FOR_PLAYER);
+            outputStream.writeObject(friendName);
+            outputStream.flush();
+
+            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+            if (response.equals(ServerPreGameProtocol.INVITE_ACCEPTED)) {
+                return 0;
+            } else if (response.equals(ServerPreGameProtocol.INVITE_REJECTED)) {
+                return 1;
+            } else if (response.equals(ServerPreGameProtocol.PLAYER_NOT_FOUND)) {
+                return 2;
+            } else {
+                return 3;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void startFriendGame(Player currentPlayer) {
+        try {
+            outputStream.writeObject(currentPlayer);
+            outputStream.flush();
+
+            initGameSetup(currentPlayer);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void listenForInvitations() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    synchronized (inputStream) {
+                        ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+
+                        if (response == ServerPreGameProtocol.FRIEND_INVITE) {
+
+                            String opponentName = (String) inputStream.readObject();
+                            SwingUtilities.invokeLater(() -> {
+                                int responseOption = JOptionPane.showConfirmDialog(
+                                        null,
+                                        opponentName + " har bjudit in dig till en match!",
+                                        "Inbjudan",
+                                        JOptionPane.YES_NO_OPTION
+                                );
+
+                                try {
+                                    synchronized (outputStream) {
+                                        if (responseOption == JOptionPane.YES_OPTION) {
+                                            outputStream.writeObject(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED);
+                                            outputStream.flush();
+                                            windowManager.getNetworkHandler().startFriendGame(windowManager.getCurrentPlayer());
+                                        } else {
+                                            outputStream.writeObject(ClientPreGameProtocol.REJECT_INVITE);
+                                            outputStream.flush();
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                        }
+                    }
+
+
+                    Thread.sleep(1000); 
+                }
+            } catch (IOException | InterruptedException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }
 

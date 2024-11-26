@@ -84,4 +84,7 @@ public class UserDataManager {
         return players.containsKey(username);
     }
 
+    public Player getPlayerByUsername(String friendName) {
+        return players.get(friendName);
+    }
 }

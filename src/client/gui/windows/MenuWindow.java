@@ -71,6 +71,21 @@ public class MenuWindow extends JFrame {
         button2.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
         button2.setFocusable(false);
         button2.addActionListener(e -> {
+            String friendName = JOptionPane.showInputDialog("Skriv in vännens använarnamn");
+            if (friendName == null) {
+                return;
+            }
+            JOptionPane.showMessageDialog(this, "Inbjudan har skickats, vänta");
+            int response = windowManager.getNetworkHandler().inviteFriendToPlay(friendName);
+            if (response == 0) {
+                windowManager.getNetworkHandler().startFriendGame(currentPlayer);
+            } else if (response == 1) {
+                JOptionPane.showMessageDialog(this, "Din vän har tackat nej till spelet");
+            } else if (response == 2) {
+                JOptionPane.showMessageDialog(this, "Spelaren finns inte registrerad");
+            } else if (response == 3) {
+                JOptionPane.showMessageDialog(this, "Spelaren är inte online");
+            }
             // Tillfällig för det inte finns funktion till knappen, ta bort vid fix
             JOptionPane.showMessageDialog(this, "Spela mot en vän är under utveckling :)", "Uppdatering", JOptionPane.INFORMATION_MESSAGE);
         });
@@ -129,6 +144,8 @@ public class MenuWindow extends JFrame {
 
         add(background);
         setVisible(true);
+        
+        windowManager.getNetworkHandler().listenForInvitations();
     }
 
     private void initPlayerRankings(ArrayList<Player> players) {

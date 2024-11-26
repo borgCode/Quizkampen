@@ -17,7 +17,8 @@ public class ClientHandler implements Runnable {
     private boolean isLookingForGame;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
-    UserDataManager userDataManager;
+    private final UserDataManager userDataManager;
+    private Player currentPlayer;
 
     
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
@@ -54,6 +55,8 @@ public class ClientHandler implements Runnable {
                         findMatch();
                         return;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
+                        findFriend();
+                        return;
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfPlayersRanked();
 
@@ -65,6 +68,7 @@ public class ClientHandler implements Runnable {
             throw new RuntimeException(e);
         }
     }
+    
 
 
     private void registerUser() throws IOException, ClassNotFoundException {
@@ -90,6 +94,7 @@ public class ClientHandler implements Runnable {
         String[] nameAndPass = (String[]) inputStream.readObject();
         Player player = userDataManager.authenticatePlayer(nameAndPass[0], nameAndPass[1]);
         if (player != null) {
+            this.currentPlayer = player;
             outputStream.writeObject(ServerPreGameProtocol.LOGIN_SUCCESS);
             outputStream.writeObject(player);
             outputStream.flush();
@@ -113,6 +118,49 @@ public class ClientHandler implements Runnable {
                 }
             }
         }
+    }
+    private void findFriend() throws IOException, ClassNotFoundException {
+        String friendName = (String) inputStream.readObject();
+        
+        Player friendPlayer = userDataManager.getPlayerByUsername(friendName);
+        if (friendPlayer == null) {
+            outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_FOUND);
+            outputStream.flush();
+            return;
+        }
+        
+        synchronized (gameServer) {
+            List<ClientHandler> clients = gameServer.getClientHandlers();
+            for (ClientHandler otherClient : clients) {
+                if (otherClient != this 
+                        && otherClient.currentPlayer != null 
+                        && otherClient.currentPlayer.getUsername().equals(friendName) 
+                        && !otherClient.isLookingForGame) {
+                    otherClient.getOutputStream().writeObject(ServerPreGameProtocol.FRIEND_INVITE);
+                    otherClient.getOutputStream().writeObject(currentPlayer.getName());
+                    otherClient.getOutputStream().flush();
+                    
+                    ClientPreGameProtocol friendResponse = (ClientPreGameProtocol) otherClient.getInputStream().readObject();
+                    if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
+                        outputStream.writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
+                        this.isLookingForGame = false;
+                        otherClient.isLookingForGame = false;
+                        gameServer.startGame(this, otherClient);
+                        return;
+                    } else {
+                        outputStream.writeObject(ServerPreGameProtocol.INVITE_REJECTED);
+                        outputStream.flush();
+                        return;
+                    }
+                    
+                }
+            }
+            
+        }
+        outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_AVAILABLE);
+        outputStream.flush();
+        
+        
     }
     private void sendListOfPlayersRanked() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
