@@ -68,6 +68,8 @@ public class ClientHandler implements Runnable {
 
 
     private void registerUser() throws IOException, ClassNotFoundException {
+
+        //TODO Kolla om användaren finns
         Player newPlayer = (Player) inputStream.readObject();
         if (userDataManager.registerNewUser(newPlayer)) {
             outputStream.writeObject(ServerPreGameProtocol.REGISTER_SUCCESS);
@@ -104,11 +106,6 @@ public class ClientHandler implements Runnable {
             }
         }
     }
-
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
-
 
     private void sendListOfPlayersRanked() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();

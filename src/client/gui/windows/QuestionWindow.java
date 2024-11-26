@@ -109,9 +109,7 @@ public class QuestionWindow extends JFrame implements ActionListener {
         questionAndAnswerPanel.add(answerPanel, BorderLayout.CENTER);
         backgroundLabel.add(questionAndAnswerPanel, BorderLayout.CENTER);
 
-
-
-        // TODO: getSelectedCategory för att få fram rätt frågor + Lägg in frågorna i rätt button + Kontrollera svaret
+        
         for (int i = 0; i < answerButtons.length; i++) {
             answerButtons[i] = new JButton("" + (i + 1));
             answerButtons[i].addActionListener(this);
@@ -126,6 +124,8 @@ public class QuestionWindow extends JFrame implements ActionListener {
         nextButton.addActionListener(e -> {
             for (JButton button : answerButtons) {
                 button.setBackground(null);
+                button.setOpaque(true);
+                button.setBorderPainted(false);
             }
             setHasAnswered(true);
         });

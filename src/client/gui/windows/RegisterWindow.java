@@ -36,7 +36,7 @@ public class RegisterWindow extends JFrame {
         JTextField usernameField = new JTextField();
         usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JLabel nameLabel = new JLabel("Namn:");
+        JLabel nameLabel = new JLabel("Visningsnamn:");
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         JTextField nameField = new JTextField();
         nameField.setFont(new Font("Arial", Font.PLAIN, 14));

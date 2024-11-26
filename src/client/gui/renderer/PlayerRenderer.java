@@ -1,4 +1,4 @@
-package client.gui;
+package client.gui.renderer;
 
 import server.entity.Player;
 
@@ -37,7 +37,7 @@ public class PlayerRenderer extends JPanel implements ListCellRenderer<Player> {
         avatarLabel.setIcon(new ImageIcon(scaledAvatar));
 
         nameLabel.setText(player.getName());
-        statsLabel.setText("Wins: " + player.getNumOfWins() + " | Losses: " + player.getNumOfLosses());
+        statsLabel.setText("Vinster: " + player.getNumOfWins() + " | Förluster: " + player.getNumOfLosses());
         
 
         return this;
