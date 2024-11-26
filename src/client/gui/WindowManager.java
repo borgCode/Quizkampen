@@ -18,10 +18,10 @@ public class WindowManager {
     private NetworkHandler networkHandler;
     private RegisterWindow registerWindow;
     private WelcomeWindow welcomeWindow;
+    private String currentCategory;
 
     public WindowManager() {
         guestWindow = new GuestWindow(this);
-//        guestWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
@@ -148,6 +148,18 @@ public class WindowManager {
     public void showStartWindow() {
         guestWindow = new GuestWindow(this);
         guestWindow.setVisible(true);
+    }
+
+    public String getCurrentCategory() {
+        return currentCategory;
+    }
+
+    public void setCurrentCategory(String currentCategory) {
+        this.currentCategory = currentCategory;
+    }
+
+    public void updateCategory() {
+        scoreWindow.updateCategory(currentCategory);
     }
 }
 

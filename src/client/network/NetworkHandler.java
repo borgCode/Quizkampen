@@ -109,6 +109,11 @@ public class NetworkHandler {
                             }
                             handleCategorySelection(outputStream, inputStream);
                             break;
+                        case GameSessionProtocol.SENT_CATEGORY_TO_OPPONENT:
+                            String currentCategory = (String) inputStream.readObject();
+                            windowManager.setCurrentCategory(currentCategory);
+                            windowManager.updateCategory();
+                            break;
                         case GameSessionProtocol.SENT_QUESTIONS:
                             while (!windowManager.hasClickedPlay()) {
                                 try {
@@ -183,6 +188,8 @@ public class NetworkHandler {
         // Skicka vald kategori till servern
         outputStream.writeObject(windowManager.getSelectedCategory());
         outputStream.flush();
+        windowManager.setCurrentCategory(windowManager.getSelectedCategory());
+        windowManager.updateCategory();
         windowManager.setSelectedCategory(null);
     }
 

@@ -78,7 +78,10 @@ public class GameSession implements Runnable {
                         return;
                     }
 
-                    //TODO skicka kategori till andra spelaren med outputStreams[(currentPlayer + 1) % 2]
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(GameSessionProtocol.SENT_CATEGORY_TO_OPPONENT);
+                    outputStreams[(currentPlayer + 1) % 2].writeObject(selectedCategory);
+                    outputStreams[(currentPlayer + 1) % 2].flush();
+
 
                     //Hämta random frågor från questionManager och skapa Round object
                     Round round = new Round(questionManager.getRandomQuestionsByCategory(selectedCategory.toLowerCase()));

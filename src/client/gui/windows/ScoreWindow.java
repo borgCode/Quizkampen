@@ -1,5 +1,6 @@
 package client.gui.windows;
 
+import client.gui.WindowManager;
 import server.entity.Player;
 
 import javax.swing.*;
@@ -21,10 +22,13 @@ public class ScoreWindow extends JFrame {
     private boolean hasUpdatedOpponentScore;
     private List<List<JButton>> player1buttons = new ArrayList<>();
     private List<List<JButton>> player2buttons = new ArrayList<>();
+    private List<JLabel> categories = new ArrayList<>();
     private int currentRound = 1;
     private JLabel score;
     private boolean hasClickedPlay;
     private JButton playButton;
+    private JLabel categoryLabel;
+
 
 
     public void initScoreWindow() {
@@ -113,6 +117,8 @@ public class ScoreWindow extends JFrame {
         return playerPanel;
     }
 
+
+    
     private JPanel getRoundPanel() {
         JPanel rondPanel = new JPanel(new GridLayout(gritLayoutRounds, 1));
         rondPanel.setOpaque(false);
@@ -138,9 +144,28 @@ public class ScoreWindow extends JFrame {
             player1buttons.add(rowPlayer1);
 
             //Rond
+
+            JPanel rondLabelPanel = new JPanel();
+
+            rondLabelPanel.setLayout(new BoxLayout(rondLabelPanel, BoxLayout.Y_AXIS));
+            
+            rondLabelPanel.setOpaque(false); // Gör bakgrunden genomskinlig
+
+            // Första JLabel
             JLabel rondLabel = new JLabel("Rond " + i, SwingConstants.CENTER);
             rondLabel.setFont(new Font("Arial", Font.BOLD, 14));
-            rowPanel.add(rondLabel);
+            rondLabelPanel.add(rondLabel);
+
+            //Kategori JLabel
+            categoryLabel = new JLabel(" ", SwingConstants.CENTER);
+            categoryLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+            rondLabelPanel.add(categoryLabel);
+            categories.add(categoryLabel);
+
+            // Lägg till panelen i radpanelen
+            rowPanel.add(rondLabelPanel);
+
+
 
             //Knappar spelare 2:
             for (int u = 1; u <= 3; u++) {
@@ -261,6 +286,11 @@ public class ScoreWindow extends JFrame {
 
     public void switchPlayButton() {
         //TODO
+
+    }
+
+    public void updateCategory(String currentCategory) {
+        categories.get(currentRound - 1).setText(currentCategory);
 
     }
 }
