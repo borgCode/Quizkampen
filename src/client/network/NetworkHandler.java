@@ -77,19 +77,18 @@ public class NetworkHandler {
                         sendGiveUpSignal(outputStream);
                         JOptionPane.showMessageDialog(null, "Du har gett upp!");
                         windowManager.switchBottomPanel();
-                        windowManager.setHasGivenUp(false);
                         continue;
                     }
                     windowManager.nextRound();
                     ServerGameSessionProtocol state = (ServerGameSessionProtocol) inputStream.readObject();
                     System.out.println(state);
                     switch (state) {
-                        case ServerGameSessionProtocol.WAITING:
+                        case WAITING:
                             windowManager.showScoreWindow();
                             windowManager.setPlayButtonIsEnabled(false);
                             outputStream.flush();
                             break;
-                        case ServerGameSessionProtocol.SENT_CATEGORY:
+                        case SENT_CATEGORY:
                             windowManager.setPlayButtonIsEnabled(true);
                             while (!windowManager.hasClickedPlay()) {
                                 try {
@@ -104,6 +103,13 @@ public class NetworkHandler {
                             String currentCategory = (String) inputStream.readObject();
                             windowManager.setCurrentCategory(currentCategory);
                             windowManager.updateCategory();
+                            break;
+                        case PRE_QUESTIONS_CHECK:
+                            if(windowManager.hasUserGivenUp()) {
+                                sendGiveUpSignal(outputStream);
+                            } else {
+                                outputStream.writeObject(ClientGameSessionProtocol.QUESTION_READY);
+                            }
                             break;
                         case ServerGameSessionProtocol.SENT_QUESTIONS:
                             windowManager.setPlayButtonIsEnabled(true);
@@ -139,7 +145,7 @@ public class NetworkHandler {
                             windowManager.showScoreWindow();
                             break;
                         case ServerGameSessionProtocol.PLAY_AGAIN_DENIED:
-                            outputStream.writeObject("En spelare avbröt");
+                            System.out.println("Andra spelaren avbröt");
                             windowManager.backToMenu();
                             break;
                     }
@@ -180,6 +186,7 @@ public class NetworkHandler {
 
     private void sendGiveUpSignal(ObjectOutputStream outputStream) throws IOException {
         outputStream.writeObject(ClientGameSessionProtocol.CLIENT_GAVE_UP);
+        windowManager.setHasGivenUp(false);
     }
 
     private void handleQuestionRound(ObjectOutputStream outputStream, ObjectInputStream inputStream) throws
