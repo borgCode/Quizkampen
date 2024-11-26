@@ -244,10 +244,9 @@ public class NetworkHandler {
 
     public boolean registerUser(String username, String password, String name, String avatarPath) {
 
-            // meddela för servern att vi vill registrera en användare
+
         try {
             outputStream.writeObject(ClientPreGameProtocol.REGISTER_USER);
-
             outputStream.flush();
 
             // Skapa spelarobjekt och skicka till servern
@@ -260,6 +259,7 @@ public class NetworkHandler {
             // Tar emot svar från servern
             ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
             return response == ServerPreGameProtocol.REGISTER_SUCCESS;
+
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

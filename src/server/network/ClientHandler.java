@@ -69,13 +69,21 @@ public class ClientHandler implements Runnable {
 
     private void registerUser() throws IOException, ClassNotFoundException {
 
-        //TODO Kolla om användaren finns
         Player newPlayer = (Player) inputStream.readObject();
-        if (userDataManager.registerNewUser(newPlayer)) {
+
+        // Kontrollerar om användarnamnet redan finns
+        if (userDataManager.doesUsernameExist(newPlayer.getUsername())) {
+            outputStream.writeObject(ServerPreGameProtocol.REGISTER_FAIL_USERNAME_TAKEN);
+            outputStream.flush();
+            return;
+        }
+        boolean success = userDataManager.registerNewUser(newPlayer);
+        if (success) {
             outputStream.writeObject(ServerPreGameProtocol.REGISTER_SUCCESS);
         } else {
             outputStream.writeObject(ServerPreGameProtocol.REGISTER_FAIL);
         }
+        outputStream.flush();
     }
 
     private void loginUser() throws IOException, ClassNotFoundException {
