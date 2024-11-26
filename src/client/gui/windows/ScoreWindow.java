@@ -4,7 +4,6 @@ import server.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ public class ScoreWindow extends JFrame {
     private int currentRound = 1;
     private JLabel score;
     private boolean hasClickedPlay;
-    private ActionListener playAgainListener;
     private JButton playButton;
 
 
@@ -37,7 +35,6 @@ public class ScoreWindow extends JFrame {
         setFocusable(false);
         setLayout(new BorderLayout());
 
-        //TODO: KONTROLLERA STORLEK!!!!!!
         //Sätter ikoner för rätt och fel
         checkImageIcon = new ImageIcon("src/resources/images/check.png");
         Image scaledCheckImage = checkImageIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
@@ -64,35 +61,14 @@ public class ScoreWindow extends JFrame {
 
 
         //Avatar och spelare nr 1
-        JButton avatar1 = new JButton(player1.getAvatar(player1.getAvatarPath()));
-        avatar1.setContentAreaFilled(false); // Tar bort bakgrund
-        avatar1.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
-        avatar1.setFocusable(false);
-        avatar1.setOpaque(false);
-
-        JLabel name1 = new JLabel(player1.getName(), SwingConstants.CENTER);
-        JPanel player1Panel = new JPanel(new BorderLayout());
-        player1Panel.setOpaque(false);
-        player1Panel.add(avatar1, BorderLayout.NORTH);
-        player1Panel.add(name1, BorderLayout.CENTER);
+        JPanel player1Panel = getPlayerPanel(player1);
 
         // Poäng
-        //TODO :OBS! HÅRDKODAT POÄNGEN!!
         score = new JLabel(playerCurrentScore + " - " + playerOpponentScore, SwingConstants.CENTER);
         score.setFont(new Font("Arial", Font.BOLD, 32));
 
         //Avatar och spelare nr 2
-        JButton avatar2 = new JButton(player2.getAvatar(player2.getAvatarPath()));
-        avatar2.setContentAreaFilled(false); // Tar bort bakgrund
-        avatar2.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
-        avatar2.setFocusable(false);
-        avatar2.setOpaque(false);
-
-        JLabel name2 = new JLabel(player2.getName(), SwingConstants.CENTER);
-        JPanel player2Panel = new JPanel(new BorderLayout());
-        player2Panel.setOpaque(false);
-        player2Panel.add(avatar2, BorderLayout.NORTH);
-        player2Panel.add(name2, BorderLayout.CENTER);
+        JPanel player2Panel = getPlayerPanel(player2);
 
         //Lägg till spelare och poäng i top-panelen
         topPanel.add(player1Panel);
@@ -109,6 +85,34 @@ public class ScoreWindow extends JFrame {
 
 
         //Mitt panelen med ronderna
+        JPanel rondPanel = getRoundPanel();
+
+        //Nedre panel för knappar
+        JPanel bottomPanel = getBottomPanel();
+
+        panel.add(topPanel, BorderLayout.NORTH);
+        panel.add(rondPanel, BorderLayout.CENTER);
+        panel.add(bottomPanel, BorderLayout.SOUTH);
+        setVisible(true);
+    }
+
+
+    private JPanel getPlayerPanel(Player player) {
+        JButton avatar1 = new JButton(player.getAvatar(player.getAvatarPath()));
+        avatar1.setContentAreaFilled(false); // Tar bort bakgrund
+        avatar1.setBorder(BorderFactory.createEmptyBorder()); // Tar bort kantlinje
+        avatar1.setFocusable(false);
+        avatar1.setOpaque(false);
+
+        JLabel name1 = new JLabel(player.getName(), SwingConstants.CENTER);
+        JPanel playerPanel = new JPanel(new BorderLayout());
+        playerPanel.setOpaque(false);
+        playerPanel.add(avatar1, BorderLayout.NORTH);
+        playerPanel.add(name1, BorderLayout.CENTER);
+        return playerPanel;
+    }
+
+    private JPanel getRoundPanel() {
         JPanel rondPanel = new JPanel(new GridLayout(gritLayoutRounds, 1));
         rondPanel.setOpaque(false);
         for (int i = 1; i <= this.rounds; i++) {
@@ -149,8 +153,9 @@ public class ScoreWindow extends JFrame {
             //Lägg till i panel rondPanel
             rondPanel.add(rowPanel);
         }
-
-        //Nedre panel för knappar
+        return rondPanel;
+    }
+    private JPanel getBottomPanel() {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
         bottomPanel.setOpaque(false);
         JButton giveUpButton = new JButton("Ge upp");
@@ -160,13 +165,9 @@ public class ScoreWindow extends JFrame {
         playButton.setEnabled(true);
         bottomPanel.add(giveUpButton);
         bottomPanel.add(playButton);
-
-
-        panel.add(topPanel, BorderLayout.NORTH);
-        panel.add(rondPanel, BorderLayout.CENTER);
-        panel.add(bottomPanel, BorderLayout.SOUTH);
-        setVisible(true);
+        return bottomPanel;
     }
+    
 
     public void setPlayers(Player player1, Player player2) {
         this.player1 = player1;

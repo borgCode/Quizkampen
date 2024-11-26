@@ -1,7 +1,6 @@
 package client.gui.windows;
 
 import client.gui.WindowManager;
-import client.network.NetworkHandler;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

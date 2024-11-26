@@ -19,8 +19,8 @@ public class NetworkHandler {
     private WindowManager windowManager;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
-    static int port = 55566;
-    static String ip = "127.0.0.1";
+    private final int port = 55566;
+    private String ip = "127.0.0.1";
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
@@ -28,10 +28,7 @@ public class NetworkHandler {
         windowManager.showWelcomeWindow();
 
 
-
-
         try {
-
             Socket socket = new Socket(ip, port);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
@@ -252,29 +249,28 @@ public class NetworkHandler {
     }
 
     public boolean registerUser(String username, String password, String name, String avatarPath) {
-        try (Socket socket = new Socket(ip, port);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            // mddela för servern att vi vill registrera en användare
-            out.writeObject(ClientPreGameProtocol.REGISTER_USER);
-            out.flush();
+
+            // meddela för servern att vi vill registrera en användare
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.REGISTER_USER);
+
+            outputStream.flush();
 
             // Skapa spelarobjekt och skicka till servern
-            Player newPlayer = new Player(username, avatarPath);
+            Player newPlayer = new Player(name, avatarPath);
             newPlayer.setPassword(password);
-            newPlayer.setName(name);
-            out.writeObject(newPlayer);
-            out.flush();
+            newPlayer.setUsername(username);
+            outputStream.writeObject(newPlayer);
+            outputStream.flush();
 
             // Tar emot svar från servern
-            ServerPreGameProtocol response = (ServerPreGameProtocol) in.readObject();
+            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
             return response == ServerPreGameProtocol.REGISTER_SUCCESS;
-
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException(e);
         }
+
     }
 
 
