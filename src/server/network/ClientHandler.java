@@ -37,9 +37,7 @@ public class ClientHandler implements Runnable {
             
             while (true) {
                 //Titta vad det är klienten vill göra
-                System.out.println("Receiving request");
                 ClientPreGameProtocol request = (ClientPreGameProtocol) inputStream.readObject();
-                System.out.println(request);
                 if (request == null) {
                     break;
                 }
@@ -57,7 +55,7 @@ public class ClientHandler implements Runnable {
                         return;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
-                        sendListOfAllPlayers();
+                        sendListOfPlayersRanked();
 
                 }
             }
@@ -112,7 +110,7 @@ public class ClientHandler implements Runnable {
     }
 
 
-    private void sendListOfAllPlayers() throws IOException {
+    private void sendListOfPlayersRanked() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
         if (allPLayers.isEmpty()) {
             outputStream.writeObject(ServerPreGameProtocol.NO_REGISTERED_PLAYERS);

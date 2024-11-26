@@ -4,12 +4,12 @@ import server.data.QuestionManager;
 import server.entity.Game;
 import server.entity.Player;
 import server.entity.Round;
-import server.logic.GameLogic;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GameSession implements Runnable {
@@ -22,7 +22,6 @@ public class GameSession implements Runnable {
 
 
     public GameSession(ClientHandler player1, ClientHandler player2) {
-        System.out.println("Två spelare anslutna");
         this.player1 = player1;
         this.player2 = player2;
         this.questionManager = QuestionManager.getInstance();
@@ -39,7 +38,6 @@ public class GameSession implements Runnable {
                 ObjectInputStream inPlayer2 = player2.getInputStream();
         ) {
 
-            System.out.println("About to send waiting for opponenet");
             outPlayer1.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
             outPlayer2.writeObject(GameSessionProtocol.WAITING_FOR_OPPONENT);
             outPlayer1.flush();
@@ -71,7 +69,6 @@ public class GameSession implements Runnable {
                 Game game = new Game(player1, player2);
 
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
-                outPlayer2.writeObject(GameSessionProtocol.WAITING);
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV-serier", "TV-spel", "Mat", "Litteratur", "Sport"));
                 for (int i = 0; i < totalRounds; i++){
                     // Låt currentplayer välja kategori
@@ -117,7 +114,7 @@ public class GameSession implements Runnable {
                 outPlayer2.flush();
 
 
-                GameLogic.findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
+                findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
 
 
                 if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
@@ -131,6 +128,7 @@ public class GameSession implements Runnable {
             e.printStackTrace();
         }
     }
+    
 
     private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
         outPlayer1.writeObject(GameSessionProtocol.SEND_SCORE_WINDOW_DATA);
@@ -145,7 +143,7 @@ public class GameSession implements Runnable {
     private String handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream, ArrayList<String> categories) throws IOException, ClassNotFoundException {
         //Hämta random lista med 3 kategorier
         outputStream.writeObject(GameSessionProtocol.SENT_CATEGORY);
-        ArrayList<String> randomCategories = GameLogic.getRandomCategories(categories);
+        ArrayList<String> randomCategories = getRandomCategories(categories);
 
         //Skickar tre kategorier till client
         outputStream.writeObject(randomCategories);
@@ -162,9 +160,19 @@ public class GameSession implements Runnable {
         String categoryInput = (String) clientResponse;
 
         //Ta bort kategorin som redan är spelad
-        GameLogic.removeCategoryFromList(categories, categoryInput);
+        removeCategoryFromList(categories, categoryInput);
 
         return categoryInput;
+    }
+
+    
+    private ArrayList<String> getRandomCategories(ArrayList<String> categories) {
+        Collections.shuffle(categories);
+        return new ArrayList<>(categories.subList(0, 3));
+        
+    }
+    private void removeCategoryFromList(ArrayList<String> categories, String categoryInput) {
+        categories.remove(categoryInput);
     }
 
     private boolean processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player1, Round round) throws IOException, ClassNotFoundException {
@@ -251,6 +259,21 @@ public class GameSession implements Runnable {
         }
     }
 
+    private void findWinner(ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int player1Score, int player2Score) throws IOException {
+        String tie = "Spelet blev lika!";
+        String loser = "Du Förlora!";
+        String winner = "Du vann!";
+        if (player1Score == player2Score) {
+            outPlayer1.writeObject(tie);
+            outPlayer2.writeObject(tie);
+        } else if (player1Score > player2Score) {
+            outPlayer1.writeObject(winner);
+            outPlayer2.writeObject(loser);
+        } else if (player2Score > player1Score) {
+            outPlayer1.writeObject(loser);
+            outPlayer2.writeObject(winner);
+        }
+    }
 
 }
 
