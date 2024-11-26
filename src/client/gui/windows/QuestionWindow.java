@@ -34,7 +34,7 @@ public class QuestionWindow extends JFrame implements ActionListener {
 
     public QuestionWindow() {
 
-        // Sätter bakgrundsbilden och ställer in layouten
+        // bakgrundsbilden och ställer in layouten
         JLabel backgroundLabel = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
         backgroundLabel.setBounds(0, 0, 400, 500);
         backgroundLabel.setLayout(new BorderLayout());
@@ -138,6 +138,8 @@ public class QuestionWindow extends JFrame implements ActionListener {
 
         setTitle("Quizkampen");
         setSize(400, 500);
+        setResizable(false);
+        setFocusable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 

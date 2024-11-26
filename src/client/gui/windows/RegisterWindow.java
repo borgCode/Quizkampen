@@ -17,6 +17,8 @@ public class RegisterWindow extends JFrame {
     public RegisterWindow(WindowManager windowManager) {
         setTitle("Registrera dig");
         setSize(400, 550);
+        setResizable(false);
+        setFocusable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -31,9 +33,9 @@ public class RegisterWindow extends JFrame {
         fieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel usernameLabel = new JLabel("Användarnamn:");
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 16)); // Ändra teckensnitt och storlek
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 16));
         JTextField usernameField = new JTextField();
-        usernameField.setFont(new Font("Arial", Font.PLAIN, 14)); // Ändra storlek för text i textfält
+        usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
 
         JLabel nameLabel = new JLabel("Namn:");
         nameLabel.setFont(new Font("Arial", Font.BOLD, 16));

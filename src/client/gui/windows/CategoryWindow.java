@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class CategoryWindow extends JFrame {
 
     private JPanel categoryPanel = new JPanel();
-    private JLabel topLabel = new JLabel("Välj en kategori:");
+    private JLabel topLabel = new JLabel("Välj en kategori");
     private HashMap<String, String> categoryImages;
     private ArrayList<String> selectedCategories = new ArrayList<>();
     private CategorySelectionListener listener;
@@ -25,6 +25,7 @@ public class CategoryWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 500);
         setResizable(false);
+        setFocusable(false);
         setLayout(null);
 
         // Lägger till bakgrundsbilden

@@ -11,6 +11,8 @@ public class LoginWindow extends JFrame {
         setTitle("Logga in");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400,500);
+        setResizable(false);
+        setFocusable(false);
         setLayout(new GridLayout(3,1,10,10));
 
         // Lägger till bakgrundsbilden

@@ -31,6 +31,8 @@ public class ScoreWindow extends JFrame {
         setTitle("QuizKampen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 500);
+        setResizable(false);
+        setFocusable(false);
         setLayout(new BorderLayout());
 
         //TODO: KONTROLLERA STORLEK!!!!!!
