@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-public class StartWindow extends JFrame {
+public class GuestWindow extends JFrame {
 
     private JTextField nameField;
     private String selectedAvatarPath;
@@ -22,7 +22,7 @@ public class StartWindow extends JFrame {
         return player;
     }
 
-    public StartWindow(WindowManager windowManager) {
+    public GuestWindow(WindowManager windowManager) {
 
         // Grundinställningar för startfönstret
         setTitle("Quizkampen");
@@ -211,12 +211,12 @@ public class StartWindow extends JFrame {
         WindowManager windowManager = new WindowManager();
         windowManager.setLoggedInPlayer(player);
 
-        // Starta NetworkHandler i en ny tråd
+        // NetworkHandler i en ny tråd
         new Thread(() -> new NetworkHandler(windowManager)).start();
 
-        // Stänger StartWindow
+        // Stänger GuestWindow
         dispose();
-
+        SwingUtilities.invokeLater(() -> new MenuWindow(player, windowManager)); // Lägg till i windwomanager så man kan anropa startgame() direkt
     }
 
 }

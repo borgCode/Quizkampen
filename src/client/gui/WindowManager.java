@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WindowManager {
-    private final StartWindow startWindow;
+    private GuestWindow guestWindow;
     private final QuestionWindow questionWindow;
     private final CategoryWindow categoryWindow;
     private MenuWindow menuWindow;
@@ -20,8 +20,8 @@ public class WindowManager {
     private WelcomeWindow welcomeWindow;
 
     public WindowManager() {
-        startWindow = new StartWindow(this);
-//        startWindow.setVisible(true);
+        guestWindow = new GuestWindow(this);
+//        guestWindow.setVisible(true);
         questionWindow = new QuestionWindow();
         questionWindow.setAnswerListener(selectedAnswer -> {
             System.out.println("Selected answer: " + selectedAnswer);
@@ -80,7 +80,7 @@ public class WindowManager {
 
 
     public Player getPlayer() {
-        return startWindow.getPlayer();
+        return guestWindow.getPlayer();
     }
 
     public void displayQuestion(Question question) {
@@ -132,7 +132,7 @@ public class WindowManager {
     public void setNetworkHandler(NetworkHandler networkHandler) {
         this.networkHandler = networkHandler;
     }
-    
+
 
     public void initMenuWindow(Player currentPlayer) {
         menuWindow = new MenuWindow(currentPlayer, this);
@@ -142,6 +142,8 @@ public class WindowManager {
     }
 
     public void showStartWindow() {
+        guestWindow = new GuestWindow(this);
+        guestWindow.setVisible(true);
     }
 }
 

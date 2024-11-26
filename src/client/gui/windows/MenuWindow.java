@@ -123,11 +123,4 @@ public class MenuWindow extends JFrame {
         rankingsFrame.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        // TILLFÄLLIG MAIN FÖR TEST
-        Player dummyPlayer = new Player("TestSpelare", "src/resources/avatars/Poliwag.png");
-        WindowManager dummyWindowManager = new WindowManager();
-
-        SwingUtilities.invokeLater(() -> new MenuWindow(dummyPlayer, dummyWindowManager));
-    }
 }
