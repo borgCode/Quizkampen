@@ -193,12 +193,20 @@ public class GameSession implements Runnable {
     }
 
     private boolean processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player, Round round) throws IOException, ClassNotFoundException {
-        
-        
-        outputStream.writeObject(ServerGameSessionProtocol.SENT_QUESTIONS);
-        outputStream.writeObject(round.getCurrentQuestions());
+        outputStream.writeObject(ServerGameSessionProtocol.PRE_QUESTIONS_CHECK);
         outputStream.flush();
 
+        ClientGameSessionProtocol response = (ClientGameSessionProtocol) inputStream.readObject();
+        System.out.println(response);
+        if (response.equals(ClientGameSessionProtocol.QUESTION_READY)) {
+            outputStream.writeObject(ServerGameSessionProtocol.SENT_QUESTIONS);
+            outputStream.writeObject(round.getCurrentQuestions());
+            outputStream.flush();
+        } else {
+            return false;
+        }
+        
+        
         //Kollar om spelaren har gett up
         Object clientResponse = inputStream.readObject();
         if (clientResponse.equals(ClientGameSessionProtocol.CLIENT_GAVE_UP)) {
@@ -221,7 +229,6 @@ public class GameSession implements Runnable {
     }
 
     private void handlePlayerGaveUp(int currentPlayer, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2) throws IOException {
-        //TODO Hantera give up på server sida
         
         if (currentPlayer == 0) {
             outPlayer1.writeObject(ServerGameSessionProtocol.PLAYER_GAVE_UP);
@@ -242,23 +249,28 @@ public class GameSession implements Runnable {
 
         ClientGameSessionProtocol responsePlayer1 = (ClientGameSessionProtocol) inPlayer1.readObject();
         ClientGameSessionProtocol responsePlayer2 = (ClientGameSessionProtocol) inPlayer2.readObject();
+        System.out.println("Reponse 1 :" + responsePlayer1);
+        System.out.println("Reponse 2 :" +  responsePlayer2);
+
         
         if (responsePlayer1.equals(ClientGameSessionProtocol.PLAY_AGAIN) && responsePlayer2.equals(ClientGameSessionProtocol.PLAY_AGAIN)) {
             System.out.println("Play again success");
             outPlayer1.writeObject(ServerGameSessionProtocol.PLAY_AGAIN_SUCCESS);
             outPlayer2.writeObject(ServerGameSessionProtocol.PLAY_AGAIN_SUCCESS);
             return true;
-        } else if (!responsePlayer1.equals(ClientGameSessionProtocol.PLAY_AGAIN)){
-            System.out.println("Play again denied ");
-            outPlayer2.writeObject(ServerGameSessionProtocol.PLAY_AGAIN_DENIED);
-            outPlayer2.flush();
-            return false;
-        } else {
-            System.out.println("Play again denied ");
+        }
+        
+        if (!responsePlayer1.equals(ClientGameSessionProtocol.PLAY_AGAIN)) {
+            System.out.println("Play again denied by Player 1");
             outPlayer1.writeObject(ServerGameSessionProtocol.PLAY_AGAIN_DENIED);
             outPlayer1.flush();
             return false;
         }
+        
+        System.out.println("Play again denied by Player 2");
+        outPlayer2.writeObject(ServerGameSessionProtocol.PLAY_AGAIN_DENIED);
+        outPlayer2.flush();
+        return false;
     }
 
     private void findWinner(ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int player1Score, int player2Score) throws IOException {
