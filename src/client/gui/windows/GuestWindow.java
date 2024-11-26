@@ -17,6 +17,7 @@ public class GuestWindow extends JFrame {
     private String selectedAvatarPath;
     private ArrayList<JButton> avatarButtons = new ArrayList<>();
     private Player player;
+    private WindowManager windowManager;
 
     public Player getPlayer() {
         return player;
@@ -24,6 +25,7 @@ public class GuestWindow extends JFrame {
 
     public GuestWindow(WindowManager windowManager) {
 
+        this.windowManager = windowManager;
         // Grundinställningar för startfönstret
         setTitle("Quizkampen");
         setSize(400, 550);
@@ -208,15 +210,11 @@ public class GuestWindow extends JFrame {
         player = new Player(playerName, selectedAvatarPath);
 
         // Skicka spelaren till WindowManager och starta NetworkHandler
-        WindowManager windowManager = new WindowManager();
-        windowManager.setLoggedInPlayer(player);
-
-        // NetworkHandler i en ny tråd
-        new Thread(() -> new NetworkHandler(windowManager)).start();
+        windowManager.initMenuWindow(player);
+        
 
         // Stänger GuestWindow
         dispose();
-        SwingUtilities.invokeLater(() -> new MenuWindow(player, windowManager)); // Lägg till i windwomanager så man kan anropa startgame() direkt
     }
 
 }

@@ -143,9 +143,7 @@ public class WindowManager {
     public void initMenuWindow(Player currentPlayer) {
         menuWindow = new MenuWindow(currentPlayer, this);
     }
-
-    public void setLoggedInPlayer(Player player) {
-    }
+    
 
     public void showStartWindow() {
         guestWindow = new GuestWindow(this);
