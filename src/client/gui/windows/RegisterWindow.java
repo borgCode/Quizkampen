@@ -121,7 +121,7 @@ public class RegisterWindow extends JFrame {
                 windowManager.showLoginWindow();
                 setVisible(false);
             } else {
-                JOptionPane.showMessageDialog(this, "Registreringen misslyckades. Försök igen.");
+                JOptionPane.showMessageDialog(this, "Användarnamnet är upptaget. Försök igen!", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
             }
         });
 

@@ -79,4 +79,9 @@ public class UserDataManager {
         
         return playersList;
     }
+
+    public boolean doesUsernameExist(String username) {
+        return players.containsKey(username);
+    }
+
 }

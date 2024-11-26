@@ -6,6 +6,7 @@ public enum ServerPreGameProtocol {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     TOP_LIST_SENT,
-    NO_REGISTERED_PLAYERS
+    NO_REGISTERED_PLAYERS,
+    REGISTER_FAIL_USERNAME_TAKEN,
     
 }
