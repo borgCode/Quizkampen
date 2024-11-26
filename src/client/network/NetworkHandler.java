@@ -54,6 +54,7 @@ public class NetworkHandler {
             //Vänta på att server svarar
             GameSessionProtocol serverMessage = (GameSessionProtocol) inputStream.readObject();
             if (serverMessage.equals(GameSessionProtocol.WAITING_FOR_OPPONENT)) {
+                //TODO Visa i GUI
                 System.out.println("Waiting for an opponent...");
             }
             
@@ -65,6 +66,7 @@ public class NetworkHandler {
             //Servern meddelar att en spelare är hittad och spelet startar
             serverMessage = (GameSessionProtocol) inputStream.readObject();
             if (serverMessage.equals(GameSessionProtocol.GAME_START)) {
+                //TODO GUI
                 System.out.println("Game starting!");
             }
 
@@ -128,6 +130,7 @@ public class NetworkHandler {
                             JOptionPane.showMessageDialog(null, resultat);
                             break;
                         case GameSessionProtocol.PLAYER_GAVE_UP:
+                            //TODO Hantera i GUI
                             String message = (String) inputStream.readObject();
                             System.out.println(message);
                             break;
@@ -139,12 +142,14 @@ public class NetworkHandler {
                             outputStream.flush();
                             if (!answer) {
                                 System.out.println("Spelet avslutas");
+                                //TODO Gå tillbaka till menu window
                                 System.exit(0);
                             }
                             windowManager.resetScoreList();
                             break;
                         case GameSessionProtocol.PLAY_AGAIN_DENIED:
                             outputStream.writeObject("En spelare avbröt");
+                            //TODO Gå tillbaka till menuwindow
                             System.exit(0);
                             break;
                     }
@@ -237,10 +242,7 @@ public class NetworkHandler {
             windowManager.getGameWindow().setHasAnswered(false);
 
         }
-        System.out.println(scoreList.size());
         windowManager.updatePlayerScore(scoreList);
-
-        //TODO skapa metod för att updatea GUI med rondresultat
 
         windowManager.showScoreWindow();
         //Skickar antal rätt till server
