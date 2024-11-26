@@ -94,6 +94,9 @@ public class WindowManager {
     public void resetRound() {
         questionWindow.resetRound();
     }
+    public void switchPlayButton() {
+        scoreWindow.switchPlayButton();
+    }
 
 
     public void setSelectedCategory(String category) {
@@ -110,6 +113,9 @@ public class WindowManager {
 
     public void updatePlayerScore(List<Integer> scoreList) {
         scoreWindow.updatePlayerScore(scoreList);
+    }
+    public void resetScoreList() {
+        scoreWindow.resetScoreList();
     }
 
     public void updateOpponentScore(List<Integer> opponentScore) {

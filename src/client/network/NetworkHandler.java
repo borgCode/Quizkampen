@@ -7,6 +7,7 @@ import server.entity.Question;
 import server.network.GameSessionProtocol;
 import server.network.ServerPreGameProtocol;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -30,7 +31,7 @@ public class NetworkHandler {
 
 
         try {
-            
+
             Socket socket = new Socket(ip, port);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
@@ -42,26 +43,16 @@ public class NetworkHandler {
             e.printStackTrace();
         }
 
-
-        //TODO Koppla till start random game knapp i GUI
-
-
-        //TODO registrera metod
-
-        //TODO logga in metod
-
-        //TODO Topplista metod
-
     }
 
 
     public void startRandomGame(Player currentPlayer) {
         //Berätta för server att vi vill spela mot en random spelare
         try {
-            
+
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
-            
+
             
             //Vänta på att server svarar
             GameSessionProtocol serverMessage = (GameSessionProtocol) inputStream.readObject();
@@ -69,7 +60,7 @@ public class NetworkHandler {
                 System.out.println("Waiting for an opponent...");
             }
             
-            
+
             //Skickar spelaren till servern efter svar från server
             outputStream.writeObject(currentPlayer);
             outputStream.flush();
@@ -87,7 +78,7 @@ public class NetworkHandler {
                 windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
                 windowManager.initScoreWindow();
             }
-            
+
             handleGameSession();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -135,14 +126,30 @@ public class NetworkHandler {
                             windowManager.updateOpponentScore(opponentScore);
                             break;
                         case GameSessionProtocol.GAME_OVER:
-                            System.out.println("Game over");
                             outputStream.flush();
                             String resultat = (String) inputStream.readObject();
-                            System.out.println(resultat);
+                            JOptionPane.showMessageDialog(null, resultat);
                             break;
                         case GameSessionProtocol.PLAYER_GAVE_UP:
                             String message = (String) inputStream.readObject();
                             System.out.println(message);
+                            break;
+                        case GameSessionProtocol.SENT_PLAY_AGAIN:
+
+                            int response = JOptionPane.showConfirmDialog(null,"Vill du spela igen?", "Spela igen?", JOptionPane.YES_NO_OPTION);
+                            boolean answer = (response == JOptionPane.YES_OPTION);
+                            outputStream.writeObject(answer);
+                            outputStream.flush();
+                            if (!answer) {
+                                System.out.println("Spelet avslutas");
+                                System.exit(0);
+                            }
+                            windowManager.resetScoreList();
+                            break;
+                        case GameSessionProtocol.PLAY_AGAIN_DENIED:
+                            outputStream.writeObject("En spelare avbröt");
+                            System.exit(0);
+                            break;
                     }
                 }
             } catch (IOException | InterruptedException | ClassNotFoundException e) {
@@ -298,18 +305,18 @@ public class NetworkHandler {
     public ArrayList<Player> getAllPLayersRanked() {
         try {
             outputStream.writeObject(ClientPreGameProtocol.SHOW_TOP_LIST);
-            
+
             ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
             if (response.equals(ServerPreGameProtocol.TOP_LIST_SENT)) {
                 return (ArrayList<Player>) inputStream.readObject();
             } else if (response.equals(ServerPreGameProtocol.NO_REGISTERED_PLAYERS)) {
                 return null;
             }
-            
+
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        
+
         return null;
     }
 }

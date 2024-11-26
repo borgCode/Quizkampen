@@ -18,14 +18,14 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     UserDataManager userDataManager;
-    
+
     
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
         this.clientSocket = clientSocket;
         this.gameServer = gameServer;
         userDataManager = UserDataManager.getInstance();
-        
-        
+
+
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ClientHandler implements Runnable {
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfAllPlayers();
-                        
+
                 }
             }
             
@@ -68,7 +68,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    
+
     private void registerUser() throws IOException, ClassNotFoundException {
         Player newPlayer = (Player) inputStream.readObject();
         if (userDataManager.registerNewUser(newPlayer)) {
@@ -107,6 +107,11 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
+
     private void sendListOfAllPlayers() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
         if (allPLayers.isEmpty()) {
@@ -117,7 +122,7 @@ public class ClientHandler implements Runnable {
             outputStream.flush();
         }
     }
-    
+
     public ObjectOutputStream getOutputStream() {
         return outputStream;
     }
