@@ -1,8 +1,6 @@
 package server.network;
 
 public enum ServerGameSessionProtocol {
-    WAITING_FOR_OPPONENT,
-    GAME_START,
     WAITING,
     SENT_CATEGORY,
     SENT_CATEGORY_TO_OPPONENT,
@@ -12,5 +10,5 @@ public enum ServerGameSessionProtocol {
     SEND_SCORE_WINDOW_DATA,
     PLAYER_GAVE_UP,
     PLAY_AGAIN_SUCCESS,
-    PLAY_AGAIN_DENIED,
+    PLAY_AGAIN_DENIED, PRE_QUESTIONS_CHECK,
 }

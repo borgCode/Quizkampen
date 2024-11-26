@@ -82,6 +82,7 @@ public class NetworkHandler {
                     }
                     windowManager.nextRound();
                     ServerGameSessionProtocol state = (ServerGameSessionProtocol) inputStream.readObject();
+                    System.out.println(state);
                     switch (state) {
                         case ServerGameSessionProtocol.WAITING:
                             windowManager.showScoreWindow();

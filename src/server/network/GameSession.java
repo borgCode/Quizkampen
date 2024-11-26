@@ -56,14 +56,17 @@ public class GameSession implements Runnable {
             
             mainLoop:
             while (true) {
+                
+                
                 Game game = new Game(player1);
-
+                
                 //Berätta för klient 2 att den ska vänta på andra spelarens tur
                 ArrayList<String> categories = new ArrayList<>(List.of("Geografi", "Historia", "Vetenskap", "Nöje", "TV-serier", "TV-spel", "Mat", "Litteratur", "Sport"));
                 for (int i = 0; i < totalRounds; i++){
                     outputStreams[(currentPlayer + 1) % 2].writeObject(ServerGameSessionProtocol.WAITING);
                     outputStreams[(currentPlayer + 1) % 2].flush();
-                    
+
+
                     
                     // Låt currentplayer välja kategori
                     String selectedCategory = handleCategorySelection(outputStreams[currentPlayer], inputStreams[currentPlayer], categories);
@@ -79,9 +82,16 @@ public class GameSession implements Runnable {
 
                     //Hämta random frågor från questionManager och skapa Round object
                     Round round = new Round(questionManager.getRandomQuestionsByCategory(selectedCategory.toLowerCase()));
+                    
+                    
+                    
                     // Spelaren som valde kategori får svara
                     if (!processQuestions(outputStreams[currentPlayer], inputStreams[currentPlayer], game, players[currentPlayer], round)) {
                         handlePlayerGaveUp(currentPlayer,  outPlayer1, outPlayer2);
+                        if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
+                            System.out.println("Avbryter spelet");
+                            return;
+                        }
                         continue mainLoop;
                     }
 
@@ -90,6 +100,10 @@ public class GameSession implements Runnable {
                     // Andra spelaren får svara
                     if (!processQuestions(outputStreams[(currentPlayer + 1) % 2], inputStreams[(currentPlayer + 1) % 2], game, players[(currentPlayer + 1) % 2], round)) {
                         handlePlayerGaveUp((currentPlayer + 1) % 2, outPlayer1, outPlayer2);
+                        if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
+                            System.out.println("Avbryter spelet");
+                            return;
+                        }
                         continue mainLoop;
                     }
 
@@ -122,6 +136,7 @@ public class GameSession implements Runnable {
                     System.out.println("Avbryter spelet");
                     break;
                 }
+                
 
             }
 
@@ -129,7 +144,7 @@ public class GameSession implements Runnable {
             e.printStackTrace();
         }
     }
-    
+
 
     private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
         outPlayer1.writeObject(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA);
@@ -142,6 +157,7 @@ public class GameSession implements Runnable {
 
 
     private String handleCategorySelection(ObjectOutputStream outputStream, ObjectInputStream inputStream, ArrayList<String> categories) throws IOException, ClassNotFoundException {
+        
         //Hämta random lista med 3 kategorier
         outputStream.writeObject(ServerGameSessionProtocol.SENT_CATEGORY);
         ArrayList<String> randomCategories = getRandomCategories(categories);
@@ -177,7 +193,8 @@ public class GameSession implements Runnable {
     }
 
     private boolean processQuestions(ObjectOutputStream outputStream, ObjectInputStream inputStream, Game game, Player player, Round round) throws IOException, ClassNotFoundException {
- 
+        
+        
         outputStream.writeObject(ServerGameSessionProtocol.SENT_QUESTIONS);
         outputStream.writeObject(round.getCurrentQuestions());
         outputStream.flush();
@@ -217,6 +234,7 @@ public class GameSession implements Runnable {
             outPlayer1.writeObject(ServerGameSessionProtocol.PLAYER_GAVE_UP);
             outPlayer1.writeObject("Den andra spelaren gav upp! Du vann");
         }
+        
 
         }
     private boolean handlePlayAgain(ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2,
@@ -224,9 +242,6 @@ public class GameSession implements Runnable {
 
         ClientGameSessionProtocol responsePlayer1 = (ClientGameSessionProtocol) inPlayer1.readObject();
         ClientGameSessionProtocol responsePlayer2 = (ClientGameSessionProtocol) inPlayer2.readObject();
-
-        System.out.println("play again" + responsePlayer1);
-        System.out.println("play again" + responsePlayer2);
         
         if (responsePlayer1.equals(ClientGameSessionProtocol.PLAY_AGAIN) && responsePlayer2.equals(ClientGameSessionProtocol.PLAY_AGAIN)) {
             System.out.println("Play again success");
