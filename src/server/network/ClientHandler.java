@@ -46,6 +46,7 @@ public class ClientHandler implements Runnable {
 
                 if (clientSocket.isClosed()) {
                     System.out.println("Socket closed");
+                    return;
                 }
 
                 //Titta vad det är klienten vill göra
@@ -76,6 +77,7 @@ public class ClientHandler implements Runnable {
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfPlayersRanked();
                     case ClientPreGameProtocol.EXIT_CLIENT:
+                        System.out.println("Closing socket");
                         clientSocket.close();
                         break;
 

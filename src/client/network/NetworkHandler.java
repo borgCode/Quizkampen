@@ -24,6 +24,7 @@ public class NetworkHandler {
     private ServerPreGameProtocol inviteResponseTemp;
     private boolean hasInitScoreWindow;
     private Socket socket;
+    private boolean isRunning;
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
@@ -41,6 +42,8 @@ public class NetworkHandler {
         } catch (IOException e) {
             System.err.println("Fel vid anslutning eller dataläsning: " + e.getMessage());
             e.printStackTrace();
+        
+            
         }
 
     }
@@ -48,7 +51,7 @@ public class NetworkHandler {
     public void startMessageLoop() {
         new Thread(() -> {
             try {
-                while (true) {
+                while (isRunning) {
                     ServerPreGameProtocol message = (ServerPreGameProtocol) inputStream.readObject();
                     System.out.println(message);
                     switch (message) {
@@ -61,7 +64,6 @@ public class NetworkHandler {
                         case INVITE_RESPONSE:
                             ServerPreGameProtocol inviteResponse = (ServerPreGameProtocol) inputStream.readObject();
                             inviteResponseTemp = inviteResponse;
-                            System.out.println("Invite response: " + inviteResponseTemp);
                             break;
 
                     }
@@ -186,9 +188,8 @@ public class NetworkHandler {
                 case LEAVING_GAME:
                     System.out.println("Leaving game");
                     windowManager.resetScoreList();
-
                     return;
-                case PLAYER_EXIT_GAME:
+                
             }
         }
 
@@ -447,9 +448,19 @@ public class NetworkHandler {
         }
     }
 
-    public void sendExitsignal() throws IOException {
-        outputStream.writeObject(ClientPreGameProtocol.EXIT_CLIENT);
-        windowManager.setHasExitedGame(true);
+    public void sendExitSignal()  {
+        isRunning = false;
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.EXIT_CLIENT);
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        
+      
     }
 
 

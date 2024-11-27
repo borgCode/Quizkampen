@@ -174,9 +174,6 @@ public class WindowManager {
     public void setHasGivenUp(boolean hasGivenUp) {
         scoreWindow.setHasUserGivenUp(hasGivenUp);
     }
-    public void setHasExitedGame(boolean hasExitedGame) {
-        menuWindow.setHasExitedGame(hasExitedGame);
-    }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
