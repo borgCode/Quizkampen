@@ -42,36 +42,59 @@ public class NetworkHandler {
 
     }
 
+    public void startMessageLoop() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    ServerPreGameProtocol message = (ServerPreGameProtocol) inputStream.readObject();
+                    System.out.println(message);
+                    switch (message) {
+                        case GAME_START:
+                            startGame();
+                            break;
+                        case INVITE:
+                            handleInviteMessage();
+                            break;
+
+                    }
+                }
+            } catch (IOException | ClassNotFoundException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    
+    
 
     public void startRandomGame(Player currentPlayer) {
         //Berätta för server att vi vill spela mot en random spelare
         try {
 
+            System.out.println("Sending random game start");
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
             
-
             //Skickar spelaren till servern efter svar från server
             outputStream.writeObject(currentPlayer);
             outputStream.flush();
+            
 
-            Object serverResponse = inputStream.readObject();
-            if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
-                int rounds = (Integer) inputStream.readObject();
-                Player opponent = (Player) inputStream.readObject();
-                windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
-                windowManager.initScoreWindow();
-            }
 
-            handleGameSession();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+    
 
-    public void handleGameSession() {
-        new Thread(() -> {
-            try {
+    private void startGame() throws IOException, ClassNotFoundException, InterruptedException {
+        Object serverResponse = inputStream.readObject();
+        if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
+            int rounds = (Integer) inputStream.readObject();
+            Player opponent = (Player) inputStream.readObject();
+            windowManager.initScoreWindowData(rounds, windowManager.getCurrentPlayer(), opponent);
+            windowManager.initScoreWindow();
+        }
+    
                 while (true) {
                     if (windowManager.hasUserGivenUp()) {
                         sendGiveUpSignal(outputStream);
@@ -153,11 +176,8 @@ public class NetworkHandler {
                             return;
                     }
                 }
-            } catch (IOException | InterruptedException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
-        }).start();
+            
+                
     }
 
 
@@ -354,15 +374,50 @@ public class NetworkHandler {
 
     }
 
-//    public void startFriendGame(Player currentPlayer) {
-//        try {
-//            outputStream.writeObject(currentPlayer);
-//            outputStream.flush();
-//
-//            initGameSetup(currentPlayer);
-//        } catch (IOException | ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public void startFriendGame(Player currentPlayer) {
+        try {
+            
+            //Skickar spelaren till servern efter svar från server
+            outputStream.writeObject(currentPlayer);
+            outputStream.flush();
+            
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void handleInviteMessage() throws IOException, ClassNotFoundException {
+
+        ServerPreGameProtocol message = (ServerPreGameProtocol) inputStream.readObject();
+
+        if (message.equals(ServerPreGameProtocol.FRIEND_INVITE)) {
+
+            String opponentName = (String) inputStream.readObject();
+            System.out.println(opponentName);
+            
+                int responseOption = JOptionPane.showConfirmDialog(
+                        null,
+                        opponentName + " har bjudit in dig till en match!",
+                        "Inbjudan",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                try {
+                    if (responseOption == JOptionPane.YES_OPTION) {
+                        System.out.println("Accepting invite");
+                        outputStream.writeObject(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED);
+
+                        System.out.println("Starting window");
+                        windowManager.getNetworkHandler().startFriendGame(windowManager.getCurrentPlayer());
+                    } else {
+                        outputStream.writeObject(ClientPreGameProtocol.REJECT_INVITE);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+    
 }
 

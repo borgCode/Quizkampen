@@ -116,7 +116,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void findMatch() {
+    private void findMatch() throws IOException {
         synchronized (gameServer) {
             
             //Hitta en annan client som väntar på att få spela
@@ -126,8 +126,9 @@ public class ClientHandler implements Runnable {
                     otherClient.isLookingForGame = false;
                     this.isLookingForGame = false;
                     otherClient.isOutsideMainLoop = true;
+                    outputStream.writeObject(ServerPreGameProtocol.GAME_START);
+                    otherClient.getOutputStream().writeObject(ServerPreGameProtocol.GAME_START);
                     gameServer.startGame(this, otherClient);
-                    
                     return;
                 }
             }
@@ -162,10 +163,13 @@ public class ClientHandler implements Runnable {
                     
                     ClientPreGameProtocol friendResponse = (ClientPreGameProtocol) otherClient.getInputStream().readObject();
                     if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
+                        System.out.println("Sending accepted");
                         outputStream.writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
                         this.isLookingForGame = false;
                         otherClient.isLookingForGame = false;
+                        System.out.println("Starting game");
                         gameServer.startGame(this, otherClient);
+                        System.out.println("Game started");
                         return;
                     } else {
                         outputStream.writeObject(ServerPreGameProtocol.INVITE_REJECTED);

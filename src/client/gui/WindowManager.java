@@ -19,6 +19,8 @@ public class WindowManager {
     private RegisterWindow registerWindow;
     private WelcomeWindow welcomeWindow;
     private String currentCategory;
+    private Player currentPlayer;
+    
 
     public WindowManager() {
         guestWindow = new GuestWindow(this);
@@ -144,7 +146,9 @@ public class WindowManager {
 
 
     public void initMenuWindow(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
         menuWindow = new MenuWindow(currentPlayer, this);
+        getNetworkHandler().startMessageLoop();
     }
     
 
@@ -168,6 +172,11 @@ public class WindowManager {
     public void setHasGivenUp(boolean hasGivenUp) {
         scoreWindow.setHasUserGivenUp(hasGivenUp);
     }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+    
 }
 
 
