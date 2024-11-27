@@ -1,9 +1,9 @@
-username,password,name,numOfWins,numOfLosses,avatarPath
-john_doe,pass123,John Doe,5,3,src/resources/avatars/Charmander.png
+Username,Password,Name,Wins,Losses,AvatarPath
 jane_doe,secret456,Jane Doe,10,1,src/resources/avatars/Clefairy.png
+john_doe,pass123,John Doe,5,3,src/resources/avatars/Charmander.png
+gary_oak,oaky123,Gary Oak,12,3,src/resources/avatars/Squirtle.png
 ash_ketchum,pokemon123,Ash Ketchum,20,2,src/resources/avatars/Drowzee.png
 misty_water,water789,Misty Water,15,5,src/resources/avatars/Gengar.png
 brock_stone,rock456,Brock Stone,8,4,src/resources/avatars/Poliwag.png
-gary_oak,oaky123,Gary Oak,12,3,src/resources/avatars/Squirtle.png
-Test123,123,Test,0,0,src/resources/avatars/Charmander.png
-nyreg,wqe,zlatan,0,0,src/resources/avatars/Charmander.png
+Test123,123,Test,0,2,src/resources/avatars/Charmander.png
+nyreg,wqe,zlatan,2,0,src/resources/avatars/Charmander.png

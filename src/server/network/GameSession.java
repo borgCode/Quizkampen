@@ -2,6 +2,7 @@ package server.network;
 
 import client.network.ClientGameSessionProtocol;
 import server.data.QuestionManager;
+import server.data.UserDataManager;
 import server.entity.Game;
 import server.entity.Player;
 import server.entity.Round;
@@ -19,6 +20,8 @@ public class GameSession implements Runnable {
     private final ClientHandler player2;
     private final QuestionManager questionManager;
     private final int totalRounds;
+    private String player1Username;
+    private String player2Username;
 
 
 
@@ -43,6 +46,10 @@ public class GameSession implements Runnable {
             //Hämta spelar objekt från båda klienterna
             Player player1 = (Player) inPlayer1.readObject();
             Player player2 = (Player) inPlayer2.readObject();
+
+            // Sparar användarnamn här också, visste inte annars hur jag löste det i findWinner
+            player1Username = player1.getUsername();
+            player2Username = player2.getUsername();
             
             //Lägg streamsen och players i arrays som används i loop för att växla mellan dem
             ObjectOutputStream[] outputStreams = {outPlayer1, outPlayer2};
@@ -286,15 +293,23 @@ public class GameSession implements Runnable {
         String tie = "Spelet blev lika!";
         String loser = "Du Förlora!";
         String winner = "Du vann!";
+
+        UserDataManager userDataManager = UserDataManager.getInstance();
+
+
         if (player1Score == player2Score) {
             outPlayer1.writeObject(tie);
             outPlayer2.writeObject(tie);
         } else if (player1Score > player2Score) {
             outPlayer1.writeObject(winner);
             outPlayer2.writeObject(loser);
+            userDataManager.updatePlayerStats(player1Username, true);
+            userDataManager.updatePlayerStats(player2Username, false);
         } else {
             outPlayer1.writeObject(loser);
             outPlayer2.writeObject(winner);
+            userDataManager.updatePlayerStats(player1Username, false);
+            userDataManager.updatePlayerStats(player2Username, true);
         }
     }
 
