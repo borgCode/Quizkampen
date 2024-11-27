@@ -22,6 +22,7 @@ public class NetworkHandler {
     private final int port = 55566;
     private String ip = "127.0.0.1";
     private ServerPreGameProtocol inviteResponseTemp;
+    private boolean hasInitScoreWindow;
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
@@ -98,7 +99,11 @@ public class NetworkHandler {
             int rounds = (Integer) inputStream.readObject();
             Player opponent = (Player) inputStream.readObject();
             windowManager.initScoreWindowData(rounds, windowManager.getCurrentPlayer(), opponent);
-            windowManager.initScoreWindow();
+            if (!hasInitScoreWindow) {
+                windowManager.initScoreWindow();
+            }
+            
+            hasInitScoreWindow = true;
         }
     
                 while (true) {

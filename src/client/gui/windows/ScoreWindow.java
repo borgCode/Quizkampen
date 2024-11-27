@@ -340,8 +340,7 @@ public class ScoreWindow extends JFrame {
             playButton.setText("Väntar");
             playButton.setEnabled(false);
         }
-
-
+        
     }
 
 

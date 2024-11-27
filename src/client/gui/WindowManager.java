@@ -57,6 +57,7 @@ public class WindowManager {
         scoreWindow.setVisible(true);
         menuWindow.setVisible(false);
     }
+    
     public void backToMenu() {
         menuWindow.setVisible(true);
     }
