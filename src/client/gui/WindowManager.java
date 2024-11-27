@@ -17,9 +17,12 @@ public class WindowManager {
     private final ScoreWindow scoreWindow;
     private NetworkHandler networkHandler;
     private RegisterWindow registerWindow;
-    private WelcomeWindow welcomeWindow;
     private String currentCategory;
     private Player currentPlayer;
+    private boolean isRegistrationComplete;
+    private boolean isLoginSuccessful;
+    private boolean isLoginComplete;
+    private boolean registrationSuccessful;
 
     public WindowManager() {
         guestWindow = new GuestWindow(this);
@@ -173,6 +176,42 @@ public class WindowManager {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public boolean isRegistrationComplete() {
+        return isRegistrationComplete;
+    }
+
+    public void setRegistrationComplete(boolean registrationComplete) {
+        isRegistrationComplete = registrationComplete;
+    }
+
+    public boolean isLoginSuccessful() {
+        return isLoginSuccessful;
+    }
+
+    public void setLoginSuccessful(boolean loginSuccessful) {
+        this.isLoginSuccessful = loginSuccessful;
+    }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public boolean isLoginComplete() {
+        return isLoginComplete;
+    }
+
+    public void setLoginComplete(boolean loginComplete) {
+        isLoginComplete = loginComplete;
+    }
+
+    public boolean isRegistrationSuccessful() {
+        return registrationSuccessful;
+    }
+
+    public void setRegistrationSuccessful(boolean registrationSuccessful) {
+        this.registrationSuccessful = registrationSuccessful;
     }
 }
 

@@ -147,9 +147,11 @@ public class GameSession implements Runnable {
 
 
     private void sendScoreWindowData(Player player1, Player player2, ObjectOutputStream outPlayer1, ObjectOutputStream outPlayer2, int totalRounds) throws IOException {
+        outPlayer1.writeObject(ServerPreGameProtocol.GAME_START);
         outPlayer1.writeObject(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA);
         outPlayer1.writeObject(totalRounds);
         outPlayer1.writeObject(player2);
+        outPlayer2.writeObject(ServerPreGameProtocol.GAME_START);
         outPlayer2.writeObject(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA);
         outPlayer2.writeObject(totalRounds);
         outPlayer2.writeObject(player1);

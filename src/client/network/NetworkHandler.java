@@ -15,13 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class NetworkHandler {
     private WindowManager windowManager;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private final int port = 55566;
     private String ip = "127.0.0.1";
-
+    
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
         windowManager.setNetworkHandler(this);
@@ -32,6 +33,8 @@ public class NetworkHandler {
             Socket socket = new Socket(ip, port);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
+            
+            handleIncomingMessages();
         } catch (UnknownHostException e) {
             System.err.println("Okänd värd: " + e.getMessage());
             e.printStackTrace();
@@ -42,6 +45,59 @@ public class NetworkHandler {
 
     }
 
+    private void handleIncomingMessages() {
+        new Thread(() -> {
+            try {
+                while (true) {
+                    ServerPreGameProtocol message = (ServerPreGameProtocol) inputStream.readObject(); 
+                    
+                    switch (message) {
+                        case REGISTER_SUCCESS:
+                            windowManager.setRegistrationComplete(true);
+                            windowManager.setRegistrationSuccessful(true);
+                            synchronized (this) {
+                                notifyAll();
+                            }
+                            break;
+                        case REGISTER_FAIL_USERNAME_TAKEN:
+                            windowManager.setRegistrationComplete(true);
+                            synchronized (this) {
+                                notifyAll();
+                            }
+                            break;
+                        case LOGIN_SUCCESS:
+                            windowManager.setLoginSuccessful(true);
+                            Player currentPlayer = (Player) inputStream.readObject();
+                            windowManager.setCurrentPlayer(currentPlayer);
+                            windowManager.setLoginComplete(true);
+                            synchronized (this) {
+                                notifyAll();
+                            }
+                            break;
+                        case LOGIN_FAIL:
+                            windowManager.setLoginComplete(true);
+                            windowManager.setLoginSuccessful(false);
+                            synchronized (this) {
+                                notifyAll();
+                            }
+                            break;
+                        case GAME_START:
+                            startGame();
+                            break;
+                        case INVITE:
+                            handleInviteMessage();
+                            break;
+                            
+                    }
+                }
+            } catch (IOException | ClassNotFoundException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    
+
 
     public void startRandomGame(Player currentPlayer) {
         //Berätta för server att vi vill spela mot en random spelare
@@ -50,115 +106,103 @@ public class NetworkHandler {
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
 
-            initGameSetup(currentPlayer);
+            //Skickar spelaren till servern efter svar från server
+            outputStream.writeObject(currentPlayer);
+            outputStream.flush();
+            
 
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+    
 
-    private void initGameSetup(Player currentPlayer) throws IOException, ClassNotFoundException {
-        //Skickar spelaren till servern efter svar från server
-        outputStream.writeObject(currentPlayer);
-        outputStream.flush();
-
+    private void startGame() throws IOException, ClassNotFoundException, InterruptedException {
         Object serverResponse = inputStream.readObject();
         if (serverResponse.equals(ServerGameSessionProtocol.SEND_SCORE_WINDOW_DATA)) {
             int rounds = (Integer) inputStream.readObject();
             Player opponent = (Player) inputStream.readObject();
-            windowManager.initScoreWindowData(rounds, currentPlayer, opponent);
+            windowManager.initScoreWindowData(rounds, windowManager.getCurrentPlayer(), opponent);
             windowManager.initScoreWindow();
         }
-
-        handleGameSession();
-    }
-
-    public void handleGameSession() {
-        new Thread(() -> {
-            try {
-                while (true) {
+        while (true) {
+            if (windowManager.hasUserGivenUp()) {
+                sendGiveUpSignal(outputStream);
+                windowManager.switchBottomPanel();
+                continue;
+            }
+            windowManager.nextRound();
+            ServerGameSessionProtocol state = (ServerGameSessionProtocol) inputStream.readObject();
+            System.out.println(state);
+            switch (state) {
+                case WAITING:
+                    windowManager.showScoreWindow();
+                    windowManager.setPlayButtonIsEnabled(false);
+                    outputStream.flush();
+                    break;
+                case SENT_CATEGORY:
+                    windowManager.setPlayButtonIsEnabled(true);
+                    while (!windowManager.hasClickedPlay()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    handleCategorySelection(outputStream, inputStream);
+                    break;
+                case ServerGameSessionProtocol.SENT_CATEGORY_TO_OPPONENT:
+                    String currentCategory = (String) inputStream.readObject();
+                    windowManager.setCurrentCategory(currentCategory);
+                    windowManager.updateCategory();
+                    break;
+                case PRE_QUESTIONS_CHECK:
                     if (windowManager.hasUserGivenUp()) {
                         sendGiveUpSignal(outputStream);
-                        windowManager.switchBottomPanel();
-                        continue;
+                    } else {
+                        outputStream.writeObject(ClientGameSessionProtocol.QUESTION_READY);
                     }
-                    windowManager.nextRound();
-                    ServerGameSessionProtocol state = (ServerGameSessionProtocol) inputStream.readObject();
-                    System.out.println(state);
-                    switch (state) {
-                        case WAITING:
-                            windowManager.showScoreWindow();
-                            windowManager.setPlayButtonIsEnabled(false);
-                            outputStream.flush();
-                            break;
-                        case SENT_CATEGORY:
-                            windowManager.setPlayButtonIsEnabled(true);
-                            while (!windowManager.hasClickedPlay()) {
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            handleCategorySelection(outputStream, inputStream);
-                            break;
-                        case ServerGameSessionProtocol.SENT_CATEGORY_TO_OPPONENT:
-                            String currentCategory = (String) inputStream.readObject();
-                            windowManager.setCurrentCategory(currentCategory);
-                            windowManager.updateCategory();
-                            break;
-                        case PRE_QUESTIONS_CHECK:
-                            if (windowManager.hasUserGivenUp()) {
-                                sendGiveUpSignal(outputStream);
-                            } else {
-                                outputStream.writeObject(ClientGameSessionProtocol.QUESTION_READY);
-                            }
-                            break;
-                        case ServerGameSessionProtocol.SENT_QUESTIONS:
-                            windowManager.setPlayButtonIsEnabled(true);
-                            while (!windowManager.hasClickedPlay()) {
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            handleQuestionRound(outputStream, inputStream);
-                            windowManager.setPlayButtonIsEnabled(false);
-                            windowManager.setHasClickedPlay(false);
-                            break;
-                        case ServerGameSessionProtocol.SENT_ROUND_SCORE:
-                            List<Integer> opponentScore = (ArrayList<Integer>) inputStream.readObject();
-                            windowManager.updateOpponentScore(opponentScore);
-                            break;
-                        case ServerGameSessionProtocol.GAME_OVER:
-                            windowManager.switchBottomPanel();
-                            windowManager.showScoreWindow();
-                            String resultat = (String) inputStream.readObject();
-                            JOptionPane.showMessageDialog(null, resultat);
-                            break;
-                        case ServerGameSessionProtocol.PLAYER_GAVE_UP:
-                            windowManager.switchBottomPanel();
-                            windowManager.showScoreWindow();
-                            String message = (String) inputStream.readObject();
-                            JOptionPane.showMessageDialog(null, message);
-                            break;
-                        case ServerGameSessionProtocol.PLAY_AGAIN_SUCCESS:
-                            windowManager.resetScoreList();
-                            windowManager.showScoreWindow();
-                            break;
-                        case ServerGameSessionProtocol.PLAY_AGAIN_DENIED:
-                            System.out.println("Andra spelaren avbröt");
-                            windowManager.backToMenu();
-                            break;
+                    break;
+                case ServerGameSessionProtocol.SENT_QUESTIONS:
+                    windowManager.setPlayButtonIsEnabled(true);
+                    while (!windowManager.hasClickedPlay()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            } catch (IOException | InterruptedException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                    handleQuestionRound(outputStream, inputStream);
+                    windowManager.setPlayButtonIsEnabled(false);
+                    windowManager.setHasClickedPlay(false);
+                    break;
+                case ServerGameSessionProtocol.SENT_ROUND_SCORE:
+                    List<Integer> opponentScore = (ArrayList<Integer>) inputStream.readObject();
+                    windowManager.updateOpponentScore(opponentScore);
+                    break;
+                case ServerGameSessionProtocol.GAME_OVER:
+                    windowManager.switchBottomPanel();
+                    windowManager.showScoreWindow();
+                    String resultat = (String) inputStream.readObject();
+                    JOptionPane.showMessageDialog(null, resultat);
+                    break;
+                case ServerGameSessionProtocol.PLAYER_GAVE_UP:
+                    windowManager.switchBottomPanel();
+                    windowManager.showScoreWindow();
+                    String message = (String) inputStream.readObject();
+                    JOptionPane.showMessageDialog(null, message);
+                    break;
+                case ServerGameSessionProtocol.PLAY_AGAIN_SUCCESS:
+                    windowManager.resetScoreList();
+                    windowManager.showScoreWindow();
+                    break;
+                case ServerGameSessionProtocol.PLAY_AGAIN_DENIED:
+                    System.out.println("Andra spelaren avbröt");
+                    windowManager.backToMenu();
+                    break;
             }
-
-        }).start();
+        }
     }
 
 
@@ -267,15 +311,21 @@ public class NetworkHandler {
             outputStream.writeObject(newPlayer);
             outputStream.flush();
 
-            // Tar emot svar från servern
-            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
-            return response == ServerPreGameProtocol.REGISTER_SUCCESS;
+            synchronized (this) {
+                while (!windowManager.isRegistrationComplete()) {
+                    wait();
+                }
+            }
+            return windowManager.isRegistrationSuccessful();
+            
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
     }
+    
+    
 
     public boolean loginUser(String username, String password) {
         try {
@@ -283,19 +333,22 @@ public class NetworkHandler {
             outputStream.writeObject(new String[]{username, password});
             outputStream.flush();
 
-            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
-            if (response.equals(ServerPreGameProtocol.LOGIN_SUCCESS)) {
-                Player currentPlayer = (Player) inputStream.readObject();
-                windowManager.initMenuWindow(currentPlayer);
-                return true;
+            // Block until a response is received
+            synchronized (this) {
+                while (!windowManager.isLoginComplete()) {
+                    wait();
+                }
             }
+            windowManager.initMenuWindow(windowManager.getCurrentPlayer());
+            // Get the result from WindowManager
+            return windowManager.isLoginSuccessful();
+            
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        return false;
+        
 
     }
 
@@ -363,10 +416,45 @@ public class NetworkHandler {
             outputStream.writeObject(currentPlayer);
             outputStream.flush();
 
-            initGameSetup(currentPlayer);
-        } catch (IOException | ClassNotFoundException e) {
+            //Skickar spelaren till servern efter svar från server
+            outputStream.writeObject(currentPlayer);
+            outputStream.flush();
+            
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-}
+
+    private void handleInviteMessage() throws IOException, ClassNotFoundException {
+
+        ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+
+        if (response.equals(ServerPreGameProtocol.FRIEND_INVITE)) {
+
+            String opponentName = (String) inputStream.readObject();
+            
+                int responseOption = JOptionPane.showConfirmDialog(
+                        null,
+                        opponentName + " har bjudit in dig till en match!",
+                        "Inbjudan",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                try {
+                    if (responseOption == JOptionPane.YES_OPTION) {
+                        System.out.println("Accepting invite");
+                        outputStream.writeObject(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED);
+
+                        System.out.println("Starting window");
+                        windowManager.getNetworkHandler().startFriendGame(windowManager.getCurrentPlayer());
+                    } else {
+                        outputStream.writeObject(ClientPreGameProtocol.REJECT_INVITE);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
 

@@ -136,15 +136,17 @@ public class ClientHandler implements Runnable {
                         && otherClient.currentPlayer != null 
                         && otherClient.currentPlayer.getUsername().equals(friendName) 
                         && !otherClient.isLookingForGame) {
+                    otherClient.getOutputStream().writeObject(ServerPreGameProtocol.INVITE);
                     otherClient.getOutputStream().writeObject(ServerPreGameProtocol.FRIEND_INVITE);
                     otherClient.getOutputStream().writeObject(currentPlayer.getName());
                     otherClient.getOutputStream().flush();
                     
-                    ClientPreGameProtocol friendResponse = (ClientPreGameProtocol) otherClient.getInputStream().readObject();
+                    String friendResponse = (String) otherClient.getInputStream().readObject();
                     if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
                         outputStream.writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
                         this.isLookingForGame = false;
                         otherClient.isLookingForGame = false;
+                        System.out.println("Starting game iwth friend");
                         gameServer.startGame(this, otherClient);
                         return;
                     } else {
