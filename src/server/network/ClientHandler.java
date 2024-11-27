@@ -18,6 +18,7 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     UserDataManager userDataManager;
+    private boolean isInGame = false;
 
     
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
@@ -36,6 +37,14 @@ public class ClientHandler implements Runnable {
         
             
             while (true) {
+                while (isInGame) {
+                    Thread.sleep(100);
+                }
+                
+                if (clientSocket.isClosed()) {
+                    System.out.println("Socket closed");
+                }
+                
                 //Titta vad det är klienten vill göra
                 ClientPreGameProtocol request = (ClientPreGameProtocol) inputStream.readObject();
                 if (request == null) {
@@ -52,7 +61,8 @@ public class ClientHandler implements Runnable {
                     case ClientPreGameProtocol.START_RANDOM_GAME:
                         this.isLookingForGame = true;
                         findMatch();
-                        return;
+                        this.isInGame = true;
+                        break;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfPlayersRanked();
@@ -62,6 +72,8 @@ public class ClientHandler implements Runnable {
             
             
         } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -108,7 +120,9 @@ public class ClientHandler implements Runnable {
                 if (otherClient != this && otherClient.isLookingForGame) {
                     otherClient.isLookingForGame = false;
                     this.isLookingForGame = false;
+                    otherClient.isInGame = true;
                     gameServer.startGame(this, otherClient);
+                    
                     return;
                 }
             }
@@ -131,5 +145,9 @@ public class ClientHandler implements Runnable {
 
     public ObjectInputStream getInputStream() {
         return inputStream;
+    }
+
+    public void setInGame(boolean inGame) {
+        isInGame = inGame;
     }
 }

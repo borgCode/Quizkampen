@@ -147,6 +147,10 @@ public class NetworkHandler {
                             System.out.println("Andra spelaren avbröt");
                             windowManager.backToMenu();
                             break;
+                        case LEAVING_GAME:
+                            System.out.println("Leaving game");
+                            windowManager.resetScoreList();
+                            return;
                     }
                 }
             } catch (IOException | InterruptedException | ClassNotFoundException e) {

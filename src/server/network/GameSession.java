@@ -15,16 +15,16 @@ import java.util.List;
 
 public class GameSession implements Runnable {
 
-    private final ClientHandler player1;
-    private final ClientHandler player2;
+    private final ClientHandler playerClient1;
+    private final ClientHandler playerClient2;
     private final QuestionManager questionManager;
     private final int totalRounds;
 
 
 
-    public GameSession(ClientHandler player1, ClientHandler player2) {
-        this.player1 = player1;
-        this.player2 = player2;
+    public GameSession(ClientHandler playerClient1, ClientHandler playerClient2) {
+        this.playerClient1 = playerClient1;
+        this.playerClient2 = playerClient2;
         this.questionManager = QuestionManager.getInstance();
         // Sätter rundor på totalRounds från läsning av PropertiesManager
         this.totalRounds = PropertiesManager.totalRoundsSet();
@@ -32,12 +32,13 @@ public class GameSession implements Runnable {
 
     @Override
     public void run() {
-        try (
-                ObjectOutputStream outPlayer1 = player1.getOutputStream();
-                ObjectInputStream inPlayer1 = player1.getInputStream();
-                ObjectOutputStream outPlayer2 = player2.getOutputStream();
-                ObjectInputStream inPlayer2 = player2.getInputStream();
-        ) {
+        try
+         {
+
+            ObjectOutputStream outPlayer1 = playerClient1.getOutputStream();
+            ObjectInputStream inPlayer1 = playerClient1.getInputStream();
+            ObjectOutputStream outPlayer2 = playerClient2.getOutputStream();
+            ObjectInputStream inPlayer2 = playerClient2.getInputStream();
             
             
             //Hämta spelar objekt från båda klienterna
@@ -90,6 +91,10 @@ public class GameSession implements Runnable {
                         handlePlayerGaveUp(currentPlayer,  outPlayer1, outPlayer2);
                         if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
                             System.out.println("Avbryter spelet");
+                            outPlayer1.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
+                            outPlayer2.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
+                            playerClient1.setInGame(false);
+                            playerClient2.setInGame(false);
                             return;
                         }
                         continue mainLoop;
@@ -102,6 +107,10 @@ public class GameSession implements Runnable {
                         handlePlayerGaveUp((currentPlayer + 1) % 2, outPlayer1, outPlayer2);
                         if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
                             System.out.println("Avbryter spelet");
+                            outPlayer1.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
+                            outPlayer2.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
+                            playerClient1.setInGame(false);
+                            playerClient2.setInGame(false);
                             return;
                         }
                         continue mainLoop;
@@ -134,6 +143,10 @@ public class GameSession implements Runnable {
 
                 if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
                     System.out.println("Avbryter spelet");
+                    outPlayer1.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
+                    outPlayer2.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
+                    playerClient1.setInGame(false);
+                    playerClient2.setInGame(false);
                     break;
                 }
                 
