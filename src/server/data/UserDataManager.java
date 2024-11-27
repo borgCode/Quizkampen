@@ -43,6 +43,35 @@ public class UserDataManager {
         }
 
     }
+
+    public synchronized void updatePlayerStats(String username, boolean isWin) {
+        Player player = players.get(username);
+        if (player != null) {
+            if (isWin) {
+                player.setNumOfWins(player.getNumOfWins() + 1);
+            } else {
+                player.setNumOfLosses(player.getNumOfLosses() + 1);
+            }
+            saveUsersToFile();
+        }
+    }
+
+    private void saveUsersToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/server/data/userdata.csv"))) {
+            writer.write("Username,Password,Name,Wins,Losses,AvatarPath\n");
+            for (Player player : players.values()) {
+                writer.write(String.format("%s,%s,%s,%d,%d,%s\n",
+                        player.getUsername(),
+                        player.getPassword(),
+                        player.getName(),
+                        player.getNumOfWins(),
+                        player.getNumOfLosses(),
+                        player.getAvatarPath()));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving users to file", e);
+        }
+    }
     
     public Player authenticatePlayer(String userName, String password) {
         Player player = players.get(userName);
