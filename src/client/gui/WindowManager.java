@@ -58,7 +58,6 @@ public class WindowManager {
     }
     public void backToMenu() {
         menuWindow.setVisible(true);
-        getNetworkHandler().listenForInvitations();
     }
 
     public void showCategoryWindow(ArrayList<String> categories) {

@@ -145,7 +145,6 @@ public class MenuWindow extends JFrame {
         add(background);
         setVisible(true);
         
-        windowManager.getNetworkHandler().listenForInvitations();
     }
 
     private void initPlayerRankings(ArrayList<Player> players) {

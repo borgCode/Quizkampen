@@ -369,50 +369,5 @@ public class NetworkHandler {
             throw new RuntimeException(e);
         }
     }
-
-    public void listenForInvitations() {
-        new Thread(() -> {
-            try {
-                while (true) {
-                    synchronized (inputStream) {
-                        ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
-
-                        if (response == ServerPreGameProtocol.FRIEND_INVITE) {
-
-                            String opponentName = (String) inputStream.readObject();
-                            SwingUtilities.invokeLater(() -> {
-                                int responseOption = JOptionPane.showConfirmDialog(
-                                        null,
-                                        opponentName + " har bjudit in dig till en match!",
-                                        "Inbjudan",
-                                        JOptionPane.YES_NO_OPTION
-                                );
-
-                                try {
-                                    synchronized (outputStream) {
-                                        if (responseOption == JOptionPane.YES_OPTION) {
-                                            outputStream.writeObject(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED);
-                                            outputStream.flush();
-                                            windowManager.getNetworkHandler().startFriendGame(windowManager.getCurrentPlayer());
-                                        } else {
-                                            outputStream.writeObject(ClientPreGameProtocol.REJECT_INVITE);
-                                            outputStream.flush();
-                                        }
-                                    }
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-                        }
-                    }
-
-
-                    Thread.sleep(1000); 
-                }
-            } catch (IOException | InterruptedException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
 }
 
