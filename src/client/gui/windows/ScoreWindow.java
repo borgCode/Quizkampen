@@ -218,7 +218,7 @@ public class ScoreWindow extends JFrame {
         menuButton.addActionListener(e -> {
             windowManager.getNetworkHandler().sendPlayAgainDenied();
             windowManager.backToMenu();
-            dispose();
+            setVisible(false);
         });
         
         playAgainButton = new JButton("Spela igen");

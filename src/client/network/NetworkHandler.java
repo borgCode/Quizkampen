@@ -104,6 +104,7 @@ public class NetworkHandler {
             }
             
             hasInitScoreWindow = true;
+            windowManager.showScoreWindow();
         }
     
                 while (true) {

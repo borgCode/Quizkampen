@@ -78,6 +78,7 @@ public class WindowManager {
     public void showScoreWindow() {
         scoreWindow.setVisible(true);
         questionWindow.setVisible(false);
+        menuWindow.setVisible(false);
     }
 
     public NetworkHandler getNetworkHandler() {
