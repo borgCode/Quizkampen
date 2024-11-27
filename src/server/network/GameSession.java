@@ -248,7 +248,16 @@ public class GameSession implements Runnable {
                                     ObjectInputStream inPlayer1, ObjectInputStream inPlayer2) throws IOException, ClassNotFoundException {
 
         ClientGameSessionProtocol responsePlayer1 = (ClientGameSessionProtocol) inPlayer1.readObject();
+        if (responsePlayer1.equals(ClientGameSessionProtocol.QUESTION_READY)) {
+            responsePlayer1 = (ClientGameSessionProtocol) inPlayer1.readObject();
+        }
+
         ClientGameSessionProtocol responsePlayer2 = (ClientGameSessionProtocol) inPlayer2.readObject();
+        if (responsePlayer2.equals(ClientGameSessionProtocol.QUESTION_READY)) {
+            responsePlayer2 = (ClientGameSessionProtocol) inPlayer2.readObject();
+        }
+        
+        
         System.out.println("Reponse 1 :" + responsePlayer1);
         System.out.println("Reponse 2 :" +  responsePlayer2);
 

@@ -320,6 +320,10 @@ public class ScoreWindow extends JFrame {
             }
         }
         
+        for (JLabel categoryLabel : categories) {
+            categoryLabel.setText("");
+        }
+        
         playAgainButton.setEnabled(true);
         
         CardLayout cl = (CardLayout) (cardPanel.getLayout());
