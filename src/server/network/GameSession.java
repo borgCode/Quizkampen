@@ -135,8 +135,6 @@ public class GameSession implements Runnable {
 
 
                 findWinner(outPlayer1,outPlayer2,game.getPlayer1Score(),game.getPlayer2Score());
-                
-                //TODO Uppdatera vinster i fil/map
 
 
                 if (!handlePlayAgain(outPlayer1,outPlayer2,inPlayer1,inPlayer2)) {
