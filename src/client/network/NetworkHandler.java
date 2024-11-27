@@ -9,6 +9,7 @@ import server.network.ServerPreGameProtocol;
 
 import javax.swing.*;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class NetworkHandler {
     private final int port = 55566;
     private String ip = "127.0.0.1";
     private ServerPreGameProtocol inviteResponseTemp;
+    private ArrayList<Player> topList;
     private boolean hasInitScoreWindow;
 
     public NetworkHandler(WindowManager windowManager) {
@@ -59,6 +61,9 @@ public class NetworkHandler {
                             break;
                         case INVITE_RESPONSE:
                             inviteResponseTemp = (ServerPreGameProtocol) inputStream.readObject();
+                            break;
+                        case TOP_LIST_SENT:
+                            topList = (ArrayList<Player>) inputStream.readObject();
                             break;
 
                     }
@@ -327,18 +332,21 @@ public class NetworkHandler {
         try {
             outputStream.writeObject(ClientPreGameProtocol.SHOW_TOP_LIST);
 
-            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
-            if (response.equals(ServerPreGameProtocol.TOP_LIST_SENT)) {
-                return (ArrayList<Player>) inputStream.readObject();
-            } else if (response.equals(ServerPreGameProtocol.NO_REGISTERED_PLAYERS)) {
-                return null;
+            ArrayList<Player> topListTemp = getTopList();
+            while (topListTemp == null) {
+                try {
+                    Thread.sleep(100);
+                    topListTemp = getTopList();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-
-        } catch (IOException | ClassNotFoundException e) {
+            return topListTemp;
+            
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return null;
+        
     }
     public void sendPlayAgainSignal() {
         try {
@@ -427,6 +435,8 @@ public class NetworkHandler {
             }
         }
 
-    
+    public ArrayList<Player> getTopList() {
+        return topList;
+    }
 }
 
