@@ -93,8 +93,8 @@ public class GameSession implements Runnable {
                             System.out.println("Avbryter spelet");
                             outPlayer1.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
                             outPlayer2.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
-                            playerClient1.setInGame(false);
-                            playerClient2.setInGame(false);
+                            playerClient1.setOutsideMainLoop(false);
+                            playerClient2.setOutsideMainLoop(false);
                             return;
                         }
                         continue mainLoop;
@@ -109,8 +109,8 @@ public class GameSession implements Runnable {
                             System.out.println("Avbryter spelet");
                             outPlayer1.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
                             outPlayer2.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
-                            playerClient1.setInGame(false);
-                            playerClient2.setInGame(false);
+                            playerClient1.setOutsideMainLoop(false);
+                            playerClient2.setOutsideMainLoop(false);
                             return;
                         }
                         continue mainLoop;
@@ -145,8 +145,8 @@ public class GameSession implements Runnable {
                     System.out.println("Avbryter spelet");
                     outPlayer1.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
                     outPlayer2.writeObject(ServerGameSessionProtocol.LEAVING_GAME);
-                    playerClient1.setInGame(false);
-                    playerClient2.setInGame(false);
+                    playerClient1.setOutsideMainLoop(false);
+                    playerClient2.setOutsideMainLoop(false);
                     break;
                 }
                 

@@ -18,7 +18,8 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     UserDataManager userDataManager;
-    private boolean isInGame = false;
+    private boolean isOutsideMainLoop = false;
+    private Player currentPlayer;
 
     
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
@@ -37,7 +38,7 @@ public class ClientHandler implements Runnable {
         
             
             while (true) {
-                while (isInGame) {
+                while (isOutsideMainLoop) {
                     Thread.sleep(100);
                 }
                 
@@ -61,9 +62,12 @@ public class ClientHandler implements Runnable {
                     case ClientPreGameProtocol.START_RANDOM_GAME:
                         this.isLookingForGame = true;
                         findMatch();
-                        this.isInGame = true;
+                        this.isOutsideMainLoop = true;
                         break;
                     case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
+                        this.isOutsideMainLoop = true;
+                        findFriend();
+                        break;
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfPlayersRanked();
 
@@ -102,6 +106,7 @@ public class ClientHandler implements Runnable {
         String[] nameAndPass = (String[]) inputStream.readObject();
         Player player = userDataManager.authenticatePlayer(nameAndPass[0], nameAndPass[1]);
         if (player != null) {
+            this.currentPlayer = player;
             outputStream.writeObject(ServerPreGameProtocol.LOGIN_SUCCESS);
             outputStream.writeObject(player);
             outputStream.flush();
@@ -120,13 +125,62 @@ public class ClientHandler implements Runnable {
                 if (otherClient != this && otherClient.isLookingForGame) {
                     otherClient.isLookingForGame = false;
                     this.isLookingForGame = false;
-                    otherClient.isInGame = true;
+                    otherClient.isOutsideMainLoop = true;
                     gameServer.startGame(this, otherClient);
                     
                     return;
                 }
             }
         }
+    }
+    private void findFriend() throws IOException, ClassNotFoundException {
+        String friendName = (String) inputStream.readObject();
+        
+        Player friendPlayer = userDataManager.getPlayerByUsername(friendName);
+        if (friendPlayer == null) {
+            outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_FOUND);
+            outputStream.flush();
+            isOutsideMainLoop = false;
+            System.out.println("player not found");
+            return;
+        }
+        
+        synchronized (gameServer) {
+            List<ClientHandler> clients = gameServer.getClientHandlers();
+            for (ClientHandler otherClient : clients) {
+                if (otherClient != this 
+                        && otherClient.currentPlayer != null 
+                        && otherClient.currentPlayer.getUsername().equals(friendName) 
+                        && !otherClient.isLookingForGame) {
+
+                    System.out.println("Sent friend invite");
+                    otherClient.getOutputStream().writeObject(ServerPreGameProtocol.FRIEND_INVITE);
+                    otherClient.getOutputStream().writeObject(currentPlayer.getName());
+                    otherClient.getOutputStream().flush();
+
+                    
+                    
+                    ClientPreGameProtocol friendResponse = (ClientPreGameProtocol) otherClient.getInputStream().readObject();
+                    if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
+                        outputStream.writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
+                        this.isLookingForGame = false;
+                        otherClient.isLookingForGame = false;
+                        gameServer.startGame(this, otherClient);
+                        return;
+                    } else {
+                        outputStream.writeObject(ServerPreGameProtocol.INVITE_REJECTED);
+                        outputStream.flush();
+                        return;
+                    }
+                    
+                }
+            }
+            
+        }
+        outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_AVAILABLE);
+        outputStream.flush();
+        
+        
     }
     private void sendListOfPlayersRanked() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
@@ -147,7 +201,7 @@ public class ClientHandler implements Runnable {
         return inputStream;
     }
 
-    public void setInGame(boolean inGame) {
-        isInGame = inGame;
+    public void setOutsideMainLoop(boolean outsideMainLoop) {
+        isOutsideMainLoop = outsideMainLoop;
     }
 }

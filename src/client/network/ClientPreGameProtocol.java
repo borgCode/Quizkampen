@@ -5,5 +5,5 @@ public enum ClientPreGameProtocol {
     LOGIN_USER,
     SEARCH_FOR_PLAYER,
     START_RANDOM_GAME,
-    SHOW_TOP_LIST
+    CLIENT_INVITE_ACCEPTED, SHOW_TOP_LIST
 }

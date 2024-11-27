@@ -331,5 +331,38 @@ public class NetworkHandler {
             throw new RuntimeException(e);
         }
     }
+
+    public int inviteFriendToPlay(String friendName) {
+        try {
+            outputStream.writeObject(ClientPreGameProtocol.SEARCH_FOR_PLAYER);
+            outputStream.writeObject(friendName);
+            outputStream.flush();
+
+            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+            if (response.equals(ServerPreGameProtocol.INVITE_ACCEPTED)) {
+                return 0;
+            } else if (response.equals(ServerPreGameProtocol.INVITE_REJECTED)) {
+                return 1;
+            } else if (response.equals(ServerPreGameProtocol.PLAYER_NOT_FOUND)) {
+                return 2;
+            } else {
+                return 3;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+//    public void startFriendGame(Player currentPlayer) {
+//        try {
+//            outputStream.writeObject(currentPlayer);
+//            outputStream.flush();
+//
+//            initGameSetup(currentPlayer);
+//        } catch (IOException | ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
 
