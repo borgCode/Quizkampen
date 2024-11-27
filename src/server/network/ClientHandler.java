@@ -20,6 +20,8 @@ public class ClientHandler implements Runnable {
     UserDataManager userDataManager;
     private boolean isOutsideMainLoop = false;
     private Player currentPlayer;
+    private boolean saveResponse;
+    private ClientPreGameProtocol requestTemp;
 
     
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
@@ -48,6 +50,9 @@ public class ClientHandler implements Runnable {
                 
                 //Titta vad det är klienten vill göra
                 ClientPreGameProtocol request = (ClientPreGameProtocol) inputStream.readObject();
+                if (saveResponse) {
+                    requestTemp = request;
+                }
                 if (request == null) {
                     break;
                 }
@@ -154,20 +159,34 @@ public class ClientHandler implements Runnable {
                         && otherClient.currentPlayer.getUsername().equals(friendName) 
                         && !otherClient.isLookingForGame) {
 
+                    otherClient.isOutsideMainLoop = true;
                     System.out.println("Sent friend invite");
+                    otherClient.outputStream.writeObject(ServerPreGameProtocol.INVITE);
                     otherClient.getOutputStream().writeObject(ServerPreGameProtocol.FRIEND_INVITE);
                     otherClient.getOutputStream().writeObject(currentPlayer.getName());
                     otherClient.getOutputStream().flush();
 
+                    otherClient.saveResponse();
+                    ClientPreGameProtocol friendResponse =  otherClient.getResponse();
+                    while (friendResponse == null) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        friendResponse = otherClient.getResponse();
+                    }
                     
                     
-                    ClientPreGameProtocol friendResponse = (ClientPreGameProtocol) otherClient.getInputStream().readObject();
                     if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
                         System.out.println("Sending accepted");
+                        outputStream.writeObject(ServerPreGameProtocol.INVITE_RESPONSE);
                         outputStream.writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
                         this.isLookingForGame = false;
                         otherClient.isLookingForGame = false;
                         System.out.println("Starting game");
+                        outputStream.writeObject(ServerPreGameProtocol.GAME_START);
+                        otherClient.getOutputStream().writeObject(ServerPreGameProtocol.GAME_START);
                         gameServer.startGame(this, otherClient);
                         System.out.println("Game started");
                         return;
@@ -186,6 +205,15 @@ public class ClientHandler implements Runnable {
         
         
     }
+
+    private ClientPreGameProtocol getResponse() {
+        return requestTemp;
+    }
+
+    private void saveResponse() {
+        this.saveResponse = true;
+    }
+
     private void sendListOfPlayersRanked() throws IOException {
         ArrayList<Player> allPLayers = userDataManager.getAllPlayersRanked();
         if (allPLayers.isEmpty()) {

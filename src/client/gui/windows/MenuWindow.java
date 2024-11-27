@@ -78,7 +78,7 @@ public class MenuWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Inbjudan har skickats, vänta");
             int response = windowManager.getNetworkHandler().inviteFriendToPlay(friendName);
             if (response == 0) {
-//                windowManager.getNetworkHandler().startFriendGame(currentPlayer);
+                windowManager.getNetworkHandler().startFriendGame(currentPlayer);
             } else if (response == 1) {
                 JOptionPane.showMessageDialog(this, "Din vän har tackat nej till spelet");
             } else if (response == 2) {
@@ -86,8 +86,6 @@ public class MenuWindow extends JFrame {
             } else if (response == 3) {
                 JOptionPane.showMessageDialog(this, "Spelaren är inte online");
             }
-            // Tillfällig för det inte finns funktion till knappen, ta bort vid fix
-            JOptionPane.showMessageDialog(this, "Spela mot en vän är under utveckling :)", "Uppdatering", JOptionPane.INFORMATION_MESSAGE);
         });
 
         // Lägger till bild i knappen

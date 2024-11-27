@@ -21,6 +21,7 @@ public class NetworkHandler {
     private ObjectInputStream inputStream;
     private final int port = 55566;
     private String ip = "127.0.0.1";
+    private ServerPreGameProtocol inviteResponse;
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
@@ -54,6 +55,10 @@ public class NetworkHandler {
                             break;
                         case INVITE:
                             handleInviteMessage();
+                            break;
+                        case INVITE_RESPONSE:
+                            inviteResponse = message;
+                            System.out.println("Invite response: " + message);
                             break;
 
                     }
@@ -273,8 +278,6 @@ public class NetworkHandler {
     }
 
     public boolean registerUser(String username, String password, String name, String avatarPath) {
-
-
         try {
             outputStream.writeObject(ClientPreGameProtocol.REGISTER_USER);
             outputStream.flush();
@@ -357,9 +360,16 @@ public class NetworkHandler {
             outputStream.writeObject(ClientPreGameProtocol.SEARCH_FOR_PLAYER);
             outputStream.writeObject(friendName);
             outputStream.flush();
-
-            ServerPreGameProtocol response = (ServerPreGameProtocol) inputStream.readObject();
+            
+            ServerPreGameProtocol response = getInviteResponse();
+            while (response == null) {
+                Thread.sleep(100);
+                response = getInviteResponse();
+            }
+            
+            System.out.println("Invite saved response: " + response);
             if (response.equals(ServerPreGameProtocol.INVITE_ACCEPTED)) {
+                System.out.println("Returning 0");
                 return 0;
             } else if (response.equals(ServerPreGameProtocol.INVITE_REJECTED)) {
                 return 1;
@@ -368,10 +378,16 @@ public class NetworkHandler {
             } else {
                 return 3;
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private ServerPreGameProtocol getInviteResponse() {
+        return this.inviteResponse;
     }
 
     public void startFriendGame(Player currentPlayer) {
