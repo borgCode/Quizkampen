@@ -21,7 +21,7 @@ public class NetworkHandler {
     private ObjectInputStream inputStream;
     private final int port = 55566;
     private String ip = "127.0.0.1";
-    private ServerPreGameProtocol inviteResponse;
+    private ServerPreGameProtocol inviteResponseTemp;
 
     public NetworkHandler(WindowManager windowManager) {
         this.windowManager = windowManager;
@@ -57,8 +57,9 @@ public class NetworkHandler {
                             handleInviteMessage();
                             break;
                         case INVITE_RESPONSE:
-                            inviteResponse = message;
-                            System.out.println("Invite response: " + message);
+                            ServerPreGameProtocol inviteResponse = (ServerPreGameProtocol) inputStream.readObject();
+                            inviteResponseTemp = inviteResponse;
+                            System.out.println("Invite response: " + inviteResponseTemp);
                             break;
 
                     }
@@ -361,10 +362,10 @@ public class NetworkHandler {
             outputStream.writeObject(friendName);
             outputStream.flush();
             
-            ServerPreGameProtocol response = getInviteResponse();
+            ServerPreGameProtocol response = getInviteResponseTemp();
             while (response == null) {
                 Thread.sleep(100);
-                response = getInviteResponse();
+                response = getInviteResponseTemp();
             }
             
             System.out.println("Invite saved response: " + response);
@@ -372,10 +373,13 @@ public class NetworkHandler {
                 System.out.println("Returning 0");
                 return 0;
             } else if (response.equals(ServerPreGameProtocol.INVITE_REJECTED)) {
+                System.out.println("Returning 1");
                 return 1;
             } else if (response.equals(ServerPreGameProtocol.PLAYER_NOT_FOUND)) {
+                System.out.println("Returning 2");
                 return 2;
             } else {
+                System.out.println("Returning 3");
                 return 3;
             }
         } catch (IOException e) {
@@ -386,8 +390,8 @@ public class NetworkHandler {
 
     }
 
-    private ServerPreGameProtocol getInviteResponse() {
-        return this.inviteResponse;
+    private ServerPreGameProtocol getInviteResponseTemp() {
+        return this.inviteResponseTemp;
     }
 
     public void startFriendGame(Player currentPlayer) {
