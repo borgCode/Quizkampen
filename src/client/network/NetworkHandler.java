@@ -58,9 +58,7 @@ public class NetworkHandler {
                             handleInviteMessage();
                             break;
                         case INVITE_RESPONSE:
-                            ServerPreGameProtocol inviteResponse = (ServerPreGameProtocol) inputStream.readObject();
-                            inviteResponseTemp = inviteResponse;
-                            System.out.println("Invite response: " + inviteResponseTemp);
+                            inviteResponseTemp = (ServerPreGameProtocol) inputStream.readObject();
                             break;
 
                     }
@@ -76,8 +74,7 @@ public class NetworkHandler {
     public void startRandomGame(Player currentPlayer) {
         //Berätta för server att vi vill spela mot en random spelare
         try {
-
-            System.out.println("Sending random game start");
+            
             outputStream.writeObject(ClientPreGameProtocol.START_RANDOM_GAME);
             outputStream.flush();
             
@@ -179,11 +176,9 @@ public class NetworkHandler {
                             windowManager.showScoreWindow();
                             break;
                         case ServerGameSessionProtocol.PLAY_AGAIN_DENIED:
-                            System.out.println("Andra spelaren avbröt");
                             windowManager.backToMenu();
                             break;
                         case LEAVING_GAME:
-                            System.out.println("Leaving game");
                             windowManager.resetScoreList();
                             return;
                     }
@@ -373,19 +368,13 @@ public class NetworkHandler {
                 Thread.sleep(100);
                 response = getInviteResponseTemp();
             }
-            
-            System.out.println("Invite saved response: " + response);
             if (response.equals(ServerPreGameProtocol.INVITE_ACCEPTED)) {
-                System.out.println("Returning 0");
                 return 0;
             } else if (response.equals(ServerPreGameProtocol.INVITE_REJECTED)) {
-                System.out.println("Returning 1");
                 return 1;
             } else if (response.equals(ServerPreGameProtocol.PLAYER_NOT_FOUND)) {
-                System.out.println("Returning 2");
                 return 2;
             } else {
-                System.out.println("Returning 3");
                 return 3;
             }
         } catch (IOException e) {
@@ -402,7 +391,6 @@ public class NetworkHandler {
 
     public void startFriendGame(Player currentPlayer) {
         try {
-            
             //Skickar spelaren till servern efter svar från server
             outputStream.writeObject(currentPlayer);
             outputStream.flush();
@@ -413,9 +401,7 @@ public class NetworkHandler {
     }
 
     private void handleInviteMessage() throws IOException, ClassNotFoundException {
-
         ServerPreGameProtocol message = (ServerPreGameProtocol) inputStream.readObject();
-
         if (message.equals(ServerPreGameProtocol.FRIEND_INVITE)) {
 
             String opponentName = (String) inputStream.readObject();
@@ -430,10 +416,7 @@ public class NetworkHandler {
 
                 try {
                     if (responseOption == JOptionPane.YES_OPTION) {
-                        System.out.println("Accepting invite");
                         outputStream.writeObject(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED);
-
-                        System.out.println("Starting window");
                         windowManager.getNetworkHandler().startFriendGame(windowManager.getCurrentPlayer());
                     } else {
                         outputStream.writeObject(ClientPreGameProtocol.REJECT_INVITE);
