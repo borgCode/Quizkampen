@@ -19,10 +19,7 @@ public class WindowManager {
     private RegisterWindow registerWindow;
     private String currentCategory;
     private Player currentPlayer;
-    private boolean isRegistrationComplete;
-    private boolean isLoginSuccessful;
-    private boolean isLoginComplete;
-    private boolean registrationSuccessful;
+    
 
     public WindowManager() {
         guestWindow = new GuestWindow(this);
@@ -150,6 +147,7 @@ public class WindowManager {
     public void initMenuWindow(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
         menuWindow = new MenuWindow(currentPlayer, this);
+        getNetworkHandler().startMessageLoop();
     }
     
 
@@ -177,42 +175,7 @@ public class WindowManager {
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
-
-    public boolean isRegistrationComplete() {
-        return isRegistrationComplete;
-    }
-
-    public void setRegistrationComplete(boolean registrationComplete) {
-        isRegistrationComplete = registrationComplete;
-    }
-
-    public boolean isLoginSuccessful() {
-        return isLoginSuccessful;
-    }
-
-    public void setLoginSuccessful(boolean loginSuccessful) {
-        this.isLoginSuccessful = loginSuccessful;
-    }
-
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
-    public boolean isLoginComplete() {
-        return isLoginComplete;
-    }
-
-    public void setLoginComplete(boolean loginComplete) {
-        isLoginComplete = loginComplete;
-    }
-
-    public boolean isRegistrationSuccessful() {
-        return registrationSuccessful;
-    }
-
-    public void setRegistrationSuccessful(boolean registrationSuccessful) {
-        this.registrationSuccessful = registrationSuccessful;
-    }
+    
 }
 
 

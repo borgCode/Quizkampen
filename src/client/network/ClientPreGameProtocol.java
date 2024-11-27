@@ -3,7 +3,7 @@ package client.network;
 public enum ClientPreGameProtocol {
     REGISTER_USER,
     LOGIN_USER,
-    SEARCH_FOR_PLAYER,
+    INVITE_FRIEND,
     START_RANDOM_GAME,
     CLIENT_INVITE_ACCEPTED, REJECT_INVITE, SHOW_TOP_LIST
 }

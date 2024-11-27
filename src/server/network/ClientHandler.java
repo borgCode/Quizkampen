@@ -19,6 +19,7 @@ public class ClientHandler implements Runnable {
     private ObjectInputStream inputStream;
     private final UserDataManager userDataManager;
     private Player currentPlayer;
+    private ClientHandler otherClient;
 
     
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
@@ -35,6 +36,8 @@ public class ClientHandler implements Runnable {
                 outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
                 inputStream = new ObjectInputStream(clientSocket.getInputStream());
         
+                
+                //TODO Att kunna söka sedan igen
             
             while (true) {
                 //Titta vad det är klienten vill göra
@@ -54,8 +57,11 @@ public class ClientHandler implements Runnable {
                         this.isLookingForGame = true;
                         findMatch();
                         return;
-                    case ClientPreGameProtocol.SEARCH_FOR_PLAYER:
+                    case ClientPreGameProtocol.INVITE_FRIEND:
                         findFriend();
+                        break;
+                    case ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED:
+                        startMatchWithFriend();
                         return;
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfPlayersRanked();
@@ -124,6 +130,7 @@ public class ClientHandler implements Runnable {
         
         Player friendPlayer = userDataManager.getPlayerByUsername(friendName);
         if (friendPlayer == null) {
+            System.out.println("Friend not found");
             outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_FOUND);
             outputStream.flush();
             return;
@@ -140,21 +147,9 @@ public class ClientHandler implements Runnable {
                     otherClient.getOutputStream().writeObject(ServerPreGameProtocol.FRIEND_INVITE);
                     otherClient.getOutputStream().writeObject(currentPlayer.getName());
                     otherClient.getOutputStream().flush();
-                    
-                    String friendResponse = (String) otherClient.getInputStream().readObject();
-                    if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
-                        outputStream.writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
-                        this.isLookingForGame = false;
-                        otherClient.isLookingForGame = false;
-                        System.out.println("Starting game iwth friend");
-                        gameServer.startGame(this, otherClient);
-                        return;
-                    } else {
-                        outputStream.writeObject(ServerPreGameProtocol.INVITE_REJECTED);
-                        outputStream.flush();
-                        return;
-                    }
-                    
+                    this.otherClient = otherClient;
+                    otherClient.otherClient = this;
+                    return;
                 }
             }
             
@@ -162,6 +157,18 @@ public class ClientHandler implements Runnable {
         outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_AVAILABLE);
         outputStream.flush();
         
+        
+    }
+
+    private void startMatchWithFriend() throws IOException {
+        otherClient.getOutputStream().writeObject(ServerPreGameProtocol.INVITE_ACCEPTED);
+        otherClient.getOutputStream().flush();
+        this.isLookingForGame = false;
+        otherClient.isLookingForGame = false;
+        System.out.println("Starting game");
+        synchronized (gameServer) {
+            gameServer.startGame(this, otherClient);
+        }
         
     }
     private void sendListOfPlayersRanked() throws IOException {
