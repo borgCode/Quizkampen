@@ -80,7 +80,6 @@ public class NetworkHandler {
                 while (true) {
                     if (windowManager.hasUserGivenUp()) {
                         sendGiveUpSignal(outputStream);
-                        JOptionPane.showMessageDialog(null, "Du har gett upp!");
                         windowManager.switchBottomPanel();
                         continue;
                     }
