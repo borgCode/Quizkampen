@@ -6,19 +6,36 @@ import server.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuWindow extends JFrame {
+    private boolean hasExitedGame;
+    private WindowManager windowManager;
 
-    
-    //TODO Kunna starta match efter att man lämnat en annan match
+
     public MenuWindow(Player currentPlayer, WindowManager windowManager) {
+        this.windowManager = windowManager;
         setTitle("QuizKampen");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(400, 550);
         setResizable(false);
         setFocusable(false);
         setLocationRelativeTo(null);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    windowManager.getNetworkHandler().sendExitsignal();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.exit(0);
+            }
+        });
 
         // Bakgrundsbild
         JLabel background = new JLabel(new ImageIcon("src/resources/categoryImages/unknownAura.jpg"));
@@ -160,5 +177,19 @@ public class MenuWindow extends JFrame {
         rankingsFrame.add(closeButton, BorderLayout.SOUTH);
         rankingsFrame.setVisible(true);
     }
+    private void exitGame() {
+        int confirm = JOptionPane.showConfirmDialog(this, "Vill du avsluta spelet?", "Avsluta", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            hasExitedGame = true;
+            System.exit(0);  // Stänger applikationen
+        }
+    }
 
+    public void setHasExitedGame(boolean hasExitedGame){
+        this.hasExitedGame = hasExitedGame;
+    }
+
+    public boolean isHasExitedGame() {
+        return hasExitedGame;
+    }
 }

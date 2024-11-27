@@ -5,6 +5,8 @@ import server.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +42,31 @@ public class ScoreWindow extends JFrame {
 
     public void initScoreWindow() {
         setTitle("QuizKampen");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(400, 500);
         setResizable(false);
         setFocusable(false);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(
+                        ScoreWindow.this,
+                        "Är du säker på att du vill ge upp?",
+                        "Vill du redan ge upp?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    hasUserGivenUp = true;
+                    dispose();
+                }
+            }
+        });
+
+
+
 
         //Sätter ikoner för rätt och fel
         checkImageIcon = new ImageIcon("src/resources/images/check.png");
@@ -103,9 +124,9 @@ public class ScoreWindow extends JFrame {
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(rondPanel, BorderLayout.CENTER);
 
-        
 
-        
+
+
         cardPanel = new JPanel(new CardLayout());
         cardPanel.add(getBottomPanel(), "bottomPanel");
         cardPanel.add(getBottomPanelEnd(), "bottomEndPanel");
@@ -220,13 +241,13 @@ public class ScoreWindow extends JFrame {
             windowManager.backToMenu();
             setVisible(false);
         });
-        
+
         playAgainButton = new JButton("Spela igen");
         playAgainButton.addActionListener(e -> {
             windowManager.getNetworkHandler().sendPlayAgainSignal();
             playAgainButton.setEnabled(false);
         });
-        
+
         playAgainButton.setEnabled(true);
         bottomPanel.add(menuButton);
         bottomPanel.add(playAgainButton);
@@ -319,13 +340,13 @@ public class ScoreWindow extends JFrame {
                 button.setEnabled(true);
             }
         }
-        
+
         for (JLabel categoryLabel : categories) {
             categoryLabel.setText("");
         }
-        
+
         playAgainButton.setEnabled(true);
-        
+
         CardLayout cl = (CardLayout) (cardPanel.getLayout());
         cl.show(cardPanel, "bottomPanel");
 
@@ -340,7 +361,7 @@ public class ScoreWindow extends JFrame {
             playButton.setText("Väntar");
             playButton.setEnabled(false);
         }
-        
+
     }
 
 
@@ -353,7 +374,7 @@ public class ScoreWindow extends JFrame {
         CardLayout cl = (CardLayout) (cardPanel.getLayout());
         cl.show(cardPanel, "bottomEndPanel");
     }
-    
+
 
     public void setHasUserGivenUp(boolean hasUserGivenUp) {
         this.hasUserGivenUp = hasUserGivenUp;

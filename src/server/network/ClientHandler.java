@@ -23,7 +23,7 @@ public class ClientHandler implements Runnable {
     private boolean saveResponse;
     private ClientPreGameProtocol requestTemp;
 
-    
+
     public ClientHandler(Socket clientSocket, GameServer gameServer) {
         this.clientSocket = clientSocket;
         this.gameServer = gameServer;
@@ -35,19 +35,19 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-                outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                inputStream = new ObjectInputStream(clientSocket.getInputStream());
-        
-            
+            outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            inputStream = new ObjectInputStream(clientSocket.getInputStream());
+
+
             while (true) {
                 while (isOutsideMainLoop) {
                     Thread.sleep(100);
                 }
-                
+
                 if (clientSocket.isClosed()) {
                     System.out.println("Socket closed");
                 }
-                
+
                 //Titta vad det är klienten vill göra
                 ClientPreGameProtocol request = (ClientPreGameProtocol) inputStream.readObject();
                 if (saveResponse) {
@@ -56,7 +56,7 @@ public class ClientHandler implements Runnable {
                 if (request == null) {
                     break;
                 }
-                
+
                 switch (request) {
                     case ClientPreGameProtocol.REGISTER_USER:
                         registerUser();
@@ -75,11 +75,14 @@ public class ClientHandler implements Runnable {
                         break;
                     case ClientPreGameProtocol.SHOW_TOP_LIST:
                         sendListOfPlayersRanked();
+                    case ClientPreGameProtocol.EXIT_CLIENT:
+                        clientSocket.close();
+                        break;
 
                 }
             }
-            
-            
+
+
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -123,7 +126,7 @@ public class ClientHandler implements Runnable {
 
     private void findMatch() throws IOException {
         synchronized (gameServer) {
-            
+
             //Hitta en annan client som väntar på att få spela
             List<ClientHandler> clients = gameServer.getClientHandlers();
             for (ClientHandler otherClient : clients) {
@@ -141,7 +144,7 @@ public class ClientHandler implements Runnable {
     }
     private void findFriend() throws IOException, ClassNotFoundException {
         String friendName = (String) inputStream.readObject();
-        
+
         Player friendPlayer = userDataManager.getPlayerByUsername(friendName);
         if (friendPlayer == null) {
             outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_FOUND);
@@ -150,13 +153,13 @@ public class ClientHandler implements Runnable {
             System.out.println("player not found");
             return;
         }
-        
+
         synchronized (gameServer) {
             List<ClientHandler> clients = gameServer.getClientHandlers();
             for (ClientHandler otherClient : clients) {
-                if (otherClient != this 
-                        && otherClient.currentPlayer != null 
-                        && otherClient.currentPlayer.getUsername().equals(friendName) 
+                if (otherClient != this
+                        && otherClient.currentPlayer != null
+                        && otherClient.currentPlayer.getUsername().equals(friendName)
                         && !otherClient.isLookingForGame) {
 
                     otherClient.isOutsideMainLoop = true;
@@ -176,8 +179,8 @@ public class ClientHandler implements Runnable {
                         }
                         friendResponse = otherClient.getResponse();
                     }
-                    
-                    
+
+
                     if (friendResponse.equals(ClientPreGameProtocol.CLIENT_INVITE_ACCEPTED)) {
                         System.out.println("Sending accepted");
                         outputStream.writeObject(ServerPreGameProtocol.INVITE_RESPONSE);
@@ -195,15 +198,15 @@ public class ClientHandler implements Runnable {
                         outputStream.flush();
                         return;
                     }
-                    
+
                 }
             }
-            
+
         }
         outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_AVAILABLE);
         outputStream.flush();
-        
-        
+
+
     }
 
     private ClientPreGameProtocol getResponse() {
