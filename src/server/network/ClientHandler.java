@@ -144,6 +144,7 @@ public class ClientHandler implements Runnable {
         
         Player friendPlayer = userDataManager.getPlayerByUsername(friendName);
         if (friendPlayer == null) {
+            outputStream.writeObject(ServerPreGameProtocol.INVITE_RESPONSE);
             outputStream.writeObject(ServerPreGameProtocol.PLAYER_NOT_FOUND);
             outputStream.flush();
             isOutsideMainLoop = false;
@@ -191,8 +192,10 @@ public class ClientHandler implements Runnable {
                         System.out.println("Game started");
                         return;
                     } else {
+                        outputStream.writeObject(ServerPreGameProtocol.INVITE_RESPONSE);
                         outputStream.writeObject(ServerPreGameProtocol.INVITE_REJECTED);
                         outputStream.flush();
+                        isOutsideMainLoop = false;
                         return;
                     }
                     
